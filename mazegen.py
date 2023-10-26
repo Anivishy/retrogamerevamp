@@ -7,6 +7,7 @@
 
 
 
+# setup pygame project
 import pygame
 import random
 
@@ -31,10 +32,10 @@ clock = pygame.time.Clock()
 
 walls = set()
 
-wall_creation_threshold = 0.2
-
 startx = 0
 starty = 0
+
+
 
 def gen_walls(from_x, from_y):
     walls = set()
@@ -44,13 +45,20 @@ def gen_walls(from_x, from_y):
             rgen = random.Random((from_x + x) * SQUARE_SIZE + (from_y + y))
             threshold = rgen.randint(15, 35) / 100
             if rgen.random() < threshold:
-                walls.add((point, (point[0] + 1, point[1])))
+                walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
             if rgen.random() < threshold:
-                walls.add((point, (point[0], point[1] + 1)))
+                walls.add(tuple(sorted([point, (point[0], point[1] + 1)])))
             if rgen.random() < threshold:
-                walls.add((point, (point[0] - 1, point[1])))
+                walls.add(tuple(sorted([point, (point[0] - 1, point[1])])))
             if rgen.random() < threshold:
-                walls.add((point, (point[0], point[1] - 1)))
+                walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
+
+    for x in range(-2, WIDTH // SQUARE_SIZE + 3):
+        for y in range(-2, HEIGHT // SQUARE_SIZE + 3):
+            point = ((from_x + x), (from_y + y))
+            rgen = random.Random((from_x + x) * SQUARE_SIZE + (from_y + y))
+
+
     return walls
 
 walls = gen_walls(0, 0)
@@ -60,6 +68,9 @@ frame_count = 0
 last_walls = walls
 lastx = 0
 lasty = 0
+
+playerx = WIDTH // 2 + SQUARE_SIZE // 2
+playery = HEIGHT // 2 + SQUARE_SIZE // 2
 
 while True:
     # events
@@ -85,14 +96,43 @@ while True:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         startx -= velocity / FPS
-    if keys[pygame.K_RIGHT]:
+        playerx -= velocity / FPS * SQUARE_SIZE
+    elif keys[pygame.K_RIGHT]:
         startx += velocity / FPS
-    if keys[pygame.K_UP]:
+        playerx += velocity / FPS * SQUARE_SIZE
+    elif keys[pygame.K_UP]:
         starty -= velocity / FPS
-    if keys[pygame.K_DOWN]:
+        playery -= velocity / FPS * SQUARE_SIZE
+    elif keys[pygame.K_DOWN]:
         starty += velocity / FPS
+        playery += velocity / FPS * SQUARE_SIZE
+
+    # collision detection
+    # find walls surrounding player
+    # check if player is touching any of them
+    # if so, move player back to previous position
+    walls_to_check = set({
+        ((playerx // SQUARE_SIZE, playery // SQUARE_SIZE), (playerx // SQUARE_SIZE + 1, playery // SQUARE_SIZE)),
+        ((playerx // SQUARE_SIZE, playery // SQUARE_SIZE), (playerx // SQUARE_SIZE, playery // SQUARE_SIZE + 1)),
+        ((playerx // SQUARE_SIZE + 1, playery // SQUARE_SIZE), (playerx // SQUARE_SIZE + 1, playery // SQUARE_SIZE + 1)),
+        ((playerx // SQUARE_SIZE, playery // SQUARE_SIZE + 1), (playerx // SQUARE_SIZE + 1, playery // SQUARE_SIZE + 1))
+    })
 
     
+    walls_to_check = set()
+    for x in range(-1, 2):
+        for y in range(-1, 2):
+            walls_to_check |= set(w for w in walls if (playerx // SQUARE_SIZE + x, playery // SQUARE_SIZE + y) in w)
+
+
+
+    #print(playerx, playery)    
+    walls_to_check = walls_to_check.intersection(walls)
+    #print(walls_to_check)
+
+
+
+
 
     # update
     #window.fill((80, 121, 235))
@@ -108,15 +148,19 @@ while True:
         walls = last_walls
 
     
+    pygame.draw.circle(window, (255, 255, 0), (WIDTH // 2, HEIGHT // 2), 16)
     for wall in walls:
         pygame.draw.line(window, (255, 255, 255), 
                         ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)),
                         ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)), 5)
 
+    for wall in walls_to_check:
+        pygame.draw.line(window, (255, 0, 0), 
+                        ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)),
+                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)), 5)
 
     # draw player
     # yellow circle at center of screen
-    pygame.draw.circle(window, (255, 255, 0), (WIDTH // 2, HEIGHT // 2), 16)
 
 
     pygame.display.update()
