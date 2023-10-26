@@ -18,6 +18,8 @@ pygame.init()
 WIDTH = 800
 HEIGHT = 600
 
+WALL_WIDTH = 5
+
 SQUARE_SIZE = 50
 assert WIDTH % SQUARE_SIZE == 0
 assert HEIGHT % SQUARE_SIZE == 0
@@ -93,6 +95,12 @@ while True:
 
     velocity = 5 # squares per second
 
+    copysx = startx
+    copysy = starty
+    copypx = playerx
+    copypy = playery
+
+
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         startx -= velocity / FPS
@@ -120,18 +128,46 @@ while True:
 
     
     walls_to_check = set()
-    for x in range(-1, 2):
-        for y in range(-1, 2):
+    for x in range(0, 2):
+        for y in range(0, 2):
             walls_to_check |= set(w for w in walls if (playerx // SQUARE_SIZE + x, playery // SQUARE_SIZE + y) in w)
 
-
-
-    #print(playerx, playery)    
     walls_to_check = walls_to_check.intersection(walls)
     #print(walls_to_check)
 
 
+    # thank you eJames https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection
+    for wall in walls_to_check:
+        if wall[0][0] == wall[1][0]:
+            # top edge
+            topleft = (wall[0][0] * SQUARE_SIZE - WALL_WIDTH / 2, wall[0][1] * SQUARE_SIZE)
+            width = WALL_WIDTH
+            height = SQUARE_SIZE
+            rectx = (topleft[0] + width / 2, topleft[1] + height / 2)
+        else:
+            # left edge
+            topleft = (wall[0][0] * SQUARE_SIZE, wall[0][1] * SQUARE_SIZE - WALL_WIDTH / 2)
+            width = SQUARE_SIZE
+            height = WALL_WIDTH
+            rectx = (topleft[0] + width / 2, topleft[1] + height / 2)
+        cdx = abs(playerx - rectx[0])
+        cdy = abs(playery - rectx[1])
+        if (cdx > (width / 2 + 16)) or (cdy > (height / 2 + 16)):
+            continue
+        if (cdx <= (width / 2)) or (cdy <= (height / 2)):
+            playerx = copypx
+            playery = copypy
+            startx = copysx
+            starty = copysy
+            break
 
+        cornerdistance = (cdx - width / 2) ** 2 + (cdy - height / 2) ** 2
+        if cornerdistance < (16 ** 2):
+            playerx = copypx
+            playery = copypy
+            startx = copysx
+            starty = copysy
+            break 
 
 
     # update
@@ -152,12 +188,12 @@ while True:
     for wall in walls:
         pygame.draw.line(window, (255, 255, 255), 
                         ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)),
-                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)), 5)
+                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)), WALL_WIDTH)
 
     for wall in walls_to_check:
         pygame.draw.line(window, (255, 0, 0), 
                         ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)),
-                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)), 5)
+                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)), WALL_WIDTH)
 
     # draw player
     # yellow circle at center of screen
