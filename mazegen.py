@@ -24,7 +24,7 @@ SQUARE_SIZE = 50
 assert WIDTH % SQUARE_SIZE == 0
 assert HEIGHT % SQUARE_SIZE == 0
 
-FPS = 60
+FPS = 150
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Maze Generator")
@@ -39,6 +39,8 @@ starty = 0
 
 RADIUS = 16
 BORDER = 5
+import time
+
 
 def gen_walls(from_x, from_y):
     walls = set()
@@ -74,6 +76,8 @@ lasty = 0
 
 playerx = WIDTH // 2 + SQUARE_SIZE // 2
 playery = HEIGHT // 2 + SQUARE_SIZE // 2
+
+delay_to = time.time()
 
 while True:
     # events
@@ -120,7 +124,7 @@ while True:
     startx = (playerx - (WIDTH // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
     starty = (playery - (HEIGHT // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
     
-    print(playerx - (startx * SQUARE_SIZE))
+    # print(playerx - (startx * SQUARE_SIZE))
     
     # collision detection
     # find walls surrounding player
@@ -133,6 +137,19 @@ while True:
         ((playerx // SQUARE_SIZE, playery // SQUARE_SIZE + 1), (playerx // SQUARE_SIZE + 1, playery // SQUARE_SIZE + 1))
     })
 
+
+    startx = min(max(startx, -BORDER), BORDER)
+    starty = min(max(starty, -BORDER), BORDER)
+
+
+    if int(startx) != lastx or int(starty) != lasty:
+        walls = gen_walls(int(startx), int(starty))
+        lastx = int(startx)
+        lasty = int(starty)
+        last_walls = walls
+
+    else:
+        walls = last_walls
     
     walls_to_check = set()
     for x in range(0, 2):
@@ -181,33 +198,22 @@ while True:
     #window.fill((80, 121, 235))
     window.fill((0, 0, 0))
 
-    startx = min(max(startx, -BORDER), BORDER)
-    starty = min(max(starty, -BORDER), BORDER)
-
-
-    if startx // 1 != lastx or starty // 1 != lasty:
-        walls = gen_walls(startx // 1, starty // 1)
-        lastx = startx // 1
-        lasty = starty // 1
-        last_walls = walls
-
-    else:
-        walls = last_walls
+    
 
     
 
 
     
-    pygame.draw.circle(window, (255, 255, 0), (round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE / 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE / 2))), RADIUS)
+    pygame.draw.circle(window, (255, 255, 0), (round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
     for wall in walls:
         pygame.draw.line(window, (255, 255, 255), 
-                        ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)),
-                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)), WALL_WIDTH)
+                        ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
+                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
 
     for wall in walls_to_check:
         pygame.draw.line(window, (255, 0, 0), 
-                        ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)),
-                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE / 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE / 2)), WALL_WIDTH)
+                        ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
+                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
 
     pygame.draw.line(window, (255, 0, 0),
                      (0, HEIGHT // 2),
@@ -216,19 +222,13 @@ while True:
     pygame.draw.line(window, (255, 0, 0),
                      (WIDTH // 2, 0),
                      (WIDTH // 2, HEIGHT),
-                     3)
-    
-    pygame.draw.line(window, (0, 255, 0),
-        ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER*SQUARE_SIZE), 0),
-        ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER*SQUARE_SIZE), HEIGHT),
-        3
-    )
-    
+                     3)    
 
     # draw player
     # yellow circle at center of screen
 
-
     pygame.display.update()
     frame_count = (frame_count + 1) % FPS
     clock.tick(FPS)
+    if frame_count == 0:
+        print(round(clock.get_fps()))
