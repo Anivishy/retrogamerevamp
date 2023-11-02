@@ -10,23 +10,40 @@
 # setup pygame project
 import pygame
 import random
+import os
+#import pyautogui
+
+os.environ['SDL_VIDEO_CENTERED'] = '1' # You have to call this before pygame.init()
 
 pygame.init()
 
+#WIDTH, HEIGHT = pyautogui.size()
+
+FULLSCREEN = False
+
+WIDTH = 1920
+HEIGHT = 1200
+
 # screen
-
-WIDTH = 800
-HEIGHT = 600
-
 WALL_WIDTH = 5
 
-SQUARE_SIZE = 50
-assert WIDTH % SQUARE_SIZE == 0
-assert HEIGHT % SQUARE_SIZE == 0
+SQUARE_SIZE = 48
+while True:
+    try:
+        if WIDTH % SQUARE_SIZE != 0: raise ValueError(f"{WIDTH} % {SQUARE_SIZE} = {WIDTH % SQUARE_SIZE}, not 0")
+        if HEIGHT % SQUARE_SIZE != 0: raise ValueError(f"{HEIGHT} % {SQUARE_SIZE} = {HEIGHT % SQUARE_SIZE}, not 0")
+    except:
+        SQUARE_SIZE += 1
+    else:
+        break
 
-FPS = 150
+print(f"Initializing: {WIDTH}x{HEIGHT}, square size: {SQUARE_SIZE}")
 
-window = pygame.display.set_mode((WIDTH, HEIGHT))
+window = pygame.display.set_mode((WIDTH, HEIGHT), (pygame.FULLSCREEN if FULLSCREEN else 0))
+print(window.get_size())
+
+FPS = 60
+
 pygame.display.set_caption("Maze Generator")
 
 # clock
@@ -34,11 +51,22 @@ clock = pygame.time.Clock()
 
 walls = set()
 
-startx = 0
-starty = 0
 
-RADIUS = 16
-BORDER = 5
+MAP_RADIUS = 25
+RADIUS = int(SQUARE_SIZE ** 0.5) * 2
+FIXED_X = FIXED_Y = False
+
+BOUND = MAP_RADIUS * SQUARE_SIZE + SQUARE_SIZE // 2
+
+BORDER_X = (BOUND - WIDTH // 2) / SQUARE_SIZE
+if BORDER_X < 0:
+    FIXED_X = True
+BORDER_Y = (BOUND - HEIGHT // 2) / SQUARE_SIZE
+if BORDER_Y < 0:
+    FIXED_Y = True
+
+
+
 import time
 
 
@@ -71,11 +99,20 @@ walls = gen_walls(0, 0)
 frame_count = 0
 
 last_walls = walls
-lastx = 0
-lasty = 0
+
+
 
 playerx = WIDTH // 2 + SQUARE_SIZE // 2
 playery = HEIGHT // 2 + SQUARE_SIZE // 2
+
+startx = (playerx - (WIDTH // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
+starty = (playery - (HEIGHT // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
+
+cx = startx
+cy = starty
+
+lastx = startx
+lasty = starty
 
 delay_to = time.time()
 
@@ -124,6 +161,7 @@ while True:
     startx = (playerx - (WIDTH // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
     starty = (playery - (HEIGHT // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
     
+
     # print(playerx - (startx * SQUARE_SIZE))
     
     # collision detection
@@ -137,9 +175,15 @@ while True:
         ((playerx // SQUARE_SIZE, playery // SQUARE_SIZE + 1), (playerx // SQUARE_SIZE + 1, playery // SQUARE_SIZE + 1))
     })
 
-
-    startx = min(max(startx, -BORDER), BORDER)
-    starty = min(max(starty, -BORDER), BORDER)
+    if not FIXED_X:
+        startx = min(max(startx, -BORDER_X), BORDER_X)
+    else:
+        startx = cx
+       
+    if not FIXED_Y:
+        starty = min(max(starty, -BORDER_Y), BORDER_Y)
+    else:
+        starty = cy
 
 
     if int(startx) != lastx or int(starty) != lasty:
@@ -193,36 +237,73 @@ while True:
             starty = copysy
             break 
 
+    # if not (-SQUARE_SIZE * MAP_RADIUS <= playerx) or not (playerx <= SQUARE_SIZE * MAP_RADIUS):
+    #     print(playerx, -SQUARE_SIZE * MAP_RADIUS)
+    #     playerx = copypx
+    #     playery = copypy
+    #     startx = copysx
+    #     starty = copysy
+ 
 
     # update
     #window.fill((80, 121, 235))
     window.fill((0, 0, 0))
 
-    
-
-    
-
-
-    
     pygame.draw.circle(window, (255, 255, 0), (round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
     for wall in walls:
-        pygame.draw.line(window, (255, 255, 255), 
+        pygame.draw.line(window, (33, 33, 222), 
                         ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
                         ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
 
-    for wall in walls_to_check:
-        pygame.draw.line(window, (255, 0, 0), 
-                        ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
-                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
+    if not FIXED_X:
+        pygame.draw.line(window, (0, 255, 0),
+            ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER_X*SQUARE_SIZE), 0),
+            ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER_X*SQUARE_SIZE), HEIGHT),
+            3
+        )
+
+        pygame.draw.line(window, (0, 255, 0),
+            ((-startx * SQUARE_SIZE + WIDTH//2 + BORDER_X*SQUARE_SIZE), 0),
+            ((-startx * SQUARE_SIZE + WIDTH//2 + BORDER_X*SQUARE_SIZE), HEIGHT),
+            3
+        )
+
+    if not FIXED_Y:
+        pygame.draw.line(window, (255, 165, 0),
+                        (0, (-starty * SQUARE_SIZE + HEIGHT//2 - BORDER_Y*SQUARE_SIZE)),
+                        (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 - BORDER_Y*SQUARE_SIZE)),
+                        3
+                        )
+        pygame.draw.line(window, (255, 165, 0),
+                        (0, (-starty * SQUARE_SIZE + HEIGHT//2 + BORDER_Y*SQUARE_SIZE)),
+                        (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 + BORDER_Y*SQUARE_SIZE)),
+                        3
+                        )
 
     pygame.draw.line(window, (255, 0, 0),
-                     (0, HEIGHT // 2),
-                     (WIDTH, HEIGHT // 2),
-                     3)
+        ((-startx * SQUARE_SIZE + WIDTH//2 - BOUND), 0),
+        ((-startx * SQUARE_SIZE + WIDTH//2 - BOUND), HEIGHT),
+        8
+    )
+
     pygame.draw.line(window, (255, 0, 0),
-                     (WIDTH // 2, 0),
-                     (WIDTH // 2, HEIGHT),
-                     3)    
+        ((-startx * SQUARE_SIZE + WIDTH//2 + BOUND), 0),
+        ((-startx * SQUARE_SIZE + WIDTH//2 + BOUND), HEIGHT),
+        8
+    )
+
+    pygame.draw.line(window, (255, 0, 0),
+                     (0, (-starty * SQUARE_SIZE + HEIGHT//2 - BOUND)),
+                     (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 - BOUND)),
+                     8
+                     )
+    pygame.draw.line(window, (255, 0, 0),
+                     (0, (-starty * SQUARE_SIZE + HEIGHT//2 + BOUND)),
+                     (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 + BOUND)),
+                     8
+                     )
+
+    
 
     # draw player
     # yellow circle at center of screen
