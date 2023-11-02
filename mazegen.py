@@ -12,6 +12,7 @@ import pygame
 import random
 import os
 import pyautogui
+import math
 
 os.environ['SDL_VIDEO_CENTERED'] = '1' # You have to call this before pygame.init()
 
@@ -52,7 +53,7 @@ clock = pygame.time.Clock()
 walls = set()
 
 
-MAP_RADIUS = 10
+MAP_RADIUS = 15
 RADIUS = int(SQUARE_SIZE / 2) / 2
 FIXED_X = FIXED_Y = False
 
@@ -69,6 +70,34 @@ if BORDER_Y < 0:
 
 import time
 
+def circle_rect_collision(rleft, rtop, width, height,   # rectangle definition
+              center_x, center_y, radius):  # circle definition
+    """ Detect collision between a rectangle and circle. """
+
+    # complete boundbox of the rectangle
+    rright, rbottom = rleft + width/2, rtop + height/2
+
+    # bounding box of the circle
+    cleft, ctop     = center_x-radius, center_y-radius
+    cright, cbottom = center_x+radius, center_y+radius
+
+    # trivial reject if bounding boxes do not intersect
+    if rright < cleft or rleft > cright or rbottom < ctop or rtop > cbottom:
+        return False  # no collision possible
+
+    # check whether any point of rectangle is inside circle's radius
+    for x in (rleft, rleft+width):
+        for y in (rtop, rtop+height):
+            # compare distance between circle's center point and each point of
+            # the rectangle with the circle's radius
+            if math.hypot(x-center_x, y-center_y) <= radius:
+                return True  # collision detected
+
+    # check if center of circle is inside rectangle
+    if rleft <= center_x <= rright and rtop <= center_y <= rbottom:
+        return True  # overlaid
+
+    return False  # no collision detected
 
 def gen_walls(from_x, from_y):
     walls = set()
@@ -94,11 +123,6 @@ def gen_walls(from_x, from_y):
 
     return walls
 
-walls = gen_walls(0, 0)
-
-frame_count = 0
-
-last_walls = walls
 
 
 
@@ -115,6 +139,25 @@ lastx = startx
 lasty = starty
 
 delay_to = time.time()
+
+SAFE_RADIUS = 2
+
+walls_to_remove = set()
+x_off = int((WIDTH / SQUARE_SIZE) / 2)
+y_off = int((HEIGHT / SQUARE_SIZE) / 2)
+for x in range(-SAFE_RADIUS, SAFE_RADIUS+1):
+    for y in range(-SAFE_RADIUS, SAFE_RADIUS+1):
+        walls_to_remove.add(((x + x_off, y + y_off), (x + x_off, y + y_off + 1)))
+        walls_to_remove.add(((x + x_off, y + y_off), (x + x_off + 1, y + y_off)))
+
+        
+#walls_to_remove = set()
+walls = gen_walls(0, 0) - walls_to_remove
+
+frame_count = 0
+
+last_walls = walls
+intersected = set()
 
 while True:
     # events
@@ -187,7 +230,7 @@ while True:
 
 
     if int(startx) != lastx or int(starty) != lasty:
-        walls = gen_walls(int(startx), int(starty))
+        walls = gen_walls(int(startx), int(starty)) - walls_to_remove
         lastx = int(startx)
         lasty = int(starty)
         last_walls = walls
@@ -218,6 +261,8 @@ while True:
             width = SQUARE_SIZE
             height = WALL_WIDTH
             rectx = (topleft[0] + width / 2, topleft[1] + height / 2)
+        
+
         cdx = abs(playerx - rectx[0])
         cdy = abs(playery - rectx[1])
         if (cdx > (width / 2 + RADIUS)) or (cdy > (height / 2 + RADIUS)):
@@ -302,8 +347,29 @@ while True:
                      (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 + BOUND)),
                      WALL_WIDTH
                      )
-
     
+    #pygame.draw.rect(window, (255, 0, 0), pygame.Rect(-startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, RADIUS*2, RADIUS*2))
+
+
+    player_rect = pygame.Rect(-startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, RADIUS*2, RADIUS*2)
+    for x in range(-WIDTH // SQUARE_SIZE // 2 - 2, WIDTH // SQUARE_SIZE // 2 + 3):
+        for y in range(-HEIGHT // SQUARE_SIZE // 2 - 2, HEIGHT // SQUARE_SIZE // 2 + 3):
+            square_length = SQUARE_SIZE / 8
+            posx = int((playerx / SQUARE_SIZE) + x)
+            posy = int((playery / SQUARE_SIZE) + y)
+            # this took more trial and error than i would care to admit)
+            rect = pygame.Rect(
+                    (posx - startx) * SQUARE_SIZE - square_length // 2,
+                    (posy - starty) * SQUARE_SIZE - square_length // 2,
+                    square_length,
+                    square_length
+                )
+
+
+            if rect.colliderect(player_rect):
+                intersected.add((posx, posy))
+            if (posx, posy) not in intersected:            
+                pygame.draw.rect(window, (170, 170, 0), rect)
 
     # draw player
     # yellow circle at center of screen
