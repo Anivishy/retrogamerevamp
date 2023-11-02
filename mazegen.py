@@ -11,23 +11,23 @@
 import pygame
 import random
 import os
-#import pyautogui
+import pyautogui
 
 os.environ['SDL_VIDEO_CENTERED'] = '1' # You have to call this before pygame.init()
 
 pygame.init()
 
-#WIDTH, HEIGHT = pyautogui.size()
+WIDTH, HEIGHT = pyautogui.size()
 
-FULLSCREEN = False
+FULLSCREEN = True
 
-WIDTH = 1920
-HEIGHT = 1200
+# WIDTH = 1920
+# HEIGHT = 1200
 
 # screen
 WALL_WIDTH = 5
 
-SQUARE_SIZE = 48
+SQUARE_SIZE = 96
 while True:
     try:
         if WIDTH % SQUARE_SIZE != 0: raise ValueError(f"{WIDTH} % {SQUARE_SIZE} = {WIDTH % SQUARE_SIZE}, not 0")
@@ -52,8 +52,8 @@ clock = pygame.time.Clock()
 walls = set()
 
 
-MAP_RADIUS = 25
-RADIUS = int(SQUARE_SIZE ** 0.5) * 2
+MAP_RADIUS = 10
+RADIUS = int(SQUARE_SIZE / 2) / 2
 FIXED_X = FIXED_Y = False
 
 BOUND = MAP_RADIUS * SQUARE_SIZE + SQUARE_SIZE // 2
@@ -280,27 +280,27 @@ while True:
                         3
                         )
 
-    pygame.draw.line(window, (255, 0, 0),
+    pygame.draw.line(window, (33, 33, 222),
         ((-startx * SQUARE_SIZE + WIDTH//2 - BOUND), 0),
         ((-startx * SQUARE_SIZE + WIDTH//2 - BOUND), HEIGHT),
-        8
+        WALL_WIDTH
     )
 
-    pygame.draw.line(window, (255, 0, 0),
+    pygame.draw.line(window, (33, 33, 222),
         ((-startx * SQUARE_SIZE + WIDTH//2 + BOUND), 0),
         ((-startx * SQUARE_SIZE + WIDTH//2 + BOUND), HEIGHT),
-        8
+        WALL_WIDTH
     )
 
-    pygame.draw.line(window, (255, 0, 0),
+    pygame.draw.line(window, (33, 33, 222),
                      (0, (-starty * SQUARE_SIZE + HEIGHT//2 - BOUND)),
                      (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 - BOUND)),
-                     8
+                     WALL_WIDTH
                      )
-    pygame.draw.line(window, (255, 0, 0),
+    pygame.draw.line(window, (33, 33, 222),
                      (0, (-starty * SQUARE_SIZE + HEIGHT//2 + BOUND)),
                      (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 + BOUND)),
-                     8
+                     WALL_WIDTH
                      )
 
     
