@@ -21,13 +21,15 @@ class Renderer:
         self._pacman = None
         self._hungry_pacman = False
         self._hungry_event = pygame.USEREVENT + 1
+        self.paused = False
     
     def tick(self, fps):
         pygame.time.set_timer(self._open_mouth, 400)
 
         while not self._game_over:
             for object in self._objects:
-                object.tick()
+                if not self.paused:
+                    object.tick()
                 object.draw()
             
             pygame.display.update()
@@ -86,6 +88,10 @@ class Renderer:
                 self._game_over == True
                 pygame.quit()
             
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    self.paused = not self.paused
+        
             if event.type == self._open_mouth:
                 if self._pacman is None:
                     break
@@ -99,15 +105,16 @@ class Renderer:
                     ghost.afraid = False
         
         key_pressed = pygame.key.get_pressed()
-
-        if key_pressed[pygame.K_UP]:
-            self._pacman.change_direction(1)
-        elif key_pressed[pygame.K_DOWN]:
-            self._pacman.change_direction(2)
-        elif key_pressed[pygame.K_LEFT]:
-            self._pacman.change_direction(3)
-        elif key_pressed[pygame.K_RIGHT]:
-            self._pacman.change_direction(4)
+        
+        if not self.paused:
+            if key_pressed[pygame.K_UP]:
+                self._pacman.change_direction(1)
+            elif key_pressed[pygame.K_DOWN]:
+                self._pacman.change_direction(2)
+            elif key_pressed[pygame.K_LEFT]:
+                self._pacman.change_direction(3)
+            elif key_pressed[pygame.K_RIGHT]:
+                self._pacman.change_direction(4)
 
 
 class GameObject:
