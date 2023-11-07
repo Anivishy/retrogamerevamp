@@ -5,20 +5,26 @@
 # (such as finding the walls at a specific point).
 
 # working title: PAC-ROOMS
+# working title #2: Pac-Man Has a Gun
 
 
 # setup pygame project
 import pygame
 import random
 import os
-import pyautogui
+
 import math
 
 os.environ['SDL_VIDEO_CENTERED'] = '1' # You have to call this before pygame.init()
 
 pygame.init()
 
-WIDTH, HEIGHT = pyautogui.size()
+try:
+    import pyautogui
+    WIDTH, HEIGHT = pyautogui.size()
+except:
+    WIDTH = 800
+    HEIGHT = 600
 
 FULLSCREEN = True
 
@@ -26,9 +32,7 @@ FULLSCREEN = True
 # HEIGHT = 1200
 
 # screen
-WALL_WIDTH = 5
-
-SQUARE_SIZE = 96
+SQUARE_SIZE = 120
 while True:
     try:
         if WIDTH % SQUARE_SIZE != 0: raise ValueError(f"{WIDTH} % {SQUARE_SIZE} = {WIDTH % SQUARE_SIZE}, not 0")
@@ -38,10 +42,12 @@ while True:
     else:
         break
 
+WALL_WIDTH = SQUARE_SIZE // 12
+
+
 print(f"Initializing: {WIDTH}x{HEIGHT}, square size: {SQUARE_SIZE}")
 
 window = pygame.display.set_mode((WIDTH, HEIGHT), (pygame.FULLSCREEN if FULLSCREEN else 0))
-print(window.get_size())
 
 FPS = 60
 
@@ -53,55 +59,51 @@ clock = pygame.time.Clock()
 walls = set()
 
 
-MAP_RADIUS = 15
-RADIUS = int(SQUARE_SIZE / 2) / 2
+MAP_RADIUS = 25
+RADIUS = int(SQUARE_SIZE / 2) // 2
 FIXED_X = FIXED_Y = False
 
 BOUND = MAP_RADIUS * SQUARE_SIZE + SQUARE_SIZE // 2
 
-BORDER_X = (BOUND - WIDTH // 2) / SQUARE_SIZE
+BORDER_X = (BOUND - WIDTH / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
 if BORDER_X < 0:
     FIXED_X = True
-BORDER_Y = (BOUND - HEIGHT // 2) / SQUARE_SIZE
+BORDER_Y = (BOUND - HEIGHT / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
 if BORDER_Y < 0:
     FIXED_Y = True
 
 
-
 import time
-
-def circle_rect_collision(rleft, rtop, width, height,   # rectangle definition
-              center_x, center_y, radius):  # circle definition
-    """ Detect collision between a rectangle and circle. """
-
-    # complete boundbox of the rectangle
-    rright, rbottom = rleft + width/2, rtop + height/2
-
-    # bounding box of the circle
-    cleft, ctop     = center_x-radius, center_y-radius
-    cright, cbottom = center_x+radius, center_y+radius
-
-    # trivial reject if bounding boxes do not intersect
-    if rright < cleft or rleft > cright or rbottom < ctop or rtop > cbottom:
-        return False  # no collision possible
-
-    # check whether any point of rectangle is inside circle's radius
-    for x in (rleft, rleft+width):
-        for y in (rtop, rtop+height):
-            # compare distance between circle's center point and each point of
-            # the rectangle with the circle's radius
-            if math.hypot(x-center_x, y-center_y) <= radius:
-                return True  # collision detected
-
-    # check if center of circle is inside rectangle
-    if rleft <= center_x <= rright and rtop <= center_y <= rbottom:
-        return True  # overlaid
-
-    return False  # no collision detected
 
 def gen_walls(from_x, from_y):
     walls = set()
-    for x in range(-2, WIDTH // SQUARE_SIZE + 3):
+    
+    protected = set()
+    if abs(from_x) >= int(BORDER_X) - 1:
+        if from_x < 0:
+            for y in range(from_y - 1, from_y + (HEIGHT // SQUARE_SIZE) + 2):
+                protected.add(
+                    ((int(-BORDER_X), y), (int(-BORDER_X), y + 1))
+                )
+        else:
+            for y in range(from_y - 1, from_y + (HEIGHT // SQUARE_SIZE) + 2):
+                protected.add(
+                    ((int(BORDER_X) + WIDTH // SQUARE_SIZE + 1, y), (int(BORDER_X) + WIDTH // SQUARE_SIZE + 1, y + 1))
+                )
+
+    if abs(from_y) >= int(BORDER_Y) - 1:
+        if from_y < 0:
+            for x in range(from_x - 1, from_x + (WIDTH // SQUARE_SIZE) + 2):
+                protected.add(
+                    ((x, int(-BORDER_Y)), (x + 1, int(-BORDER_Y)))
+                )
+        else:
+            for x in range(from_x - 1, from_x + (WIDTH // SQUARE_SIZE) + 2):
+                protected.add(
+                    ((x, int(BORDER_Y) + HEIGHT // SQUARE_SIZE + 1), (x + 1, int(BORDER_Y) + HEIGHT // SQUARE_SIZE + 1))
+                )
+
+    for x in range(-3, WIDTH // SQUARE_SIZE + 3):
         for y in range(-2, HEIGHT // SQUARE_SIZE + 3):
             point = ((from_x + x), (from_y + y))
             rgen = random.Random((from_x + x) * SQUARE_SIZE + (from_y + y))
@@ -115,12 +117,38 @@ def gen_walls(from_x, from_y):
             if rgen.random() < threshold:
                 walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
 
-    for x in range(-2, WIDTH // SQUARE_SIZE + 3):
-        for y in range(-2, HEIGHT // SQUARE_SIZE + 3):
+    walls |= protected
+    for x in range(-3, WIDTH // SQUARE_SIZE + 3):
+        for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
             point = ((from_x + x), (from_y + y))
             rgen = random.Random((from_x + x) * SQUARE_SIZE + (from_y + y))
+            # boilerplate extravaganza - you have been warned!
+            x1 = point[0]
+            y1 = point[1]
+            x2 = point[0] + 1
+            y2 = point[1] + 1
+
+            top = ((x1, y1), (x2, y1)) # top
+            left = ((x1, y1), (x1, y2)) # left
+            right = ((x2, y1), (x2, y2)) # right
+            bottom = ((x1, y2), (x2, y2)) # bottom
 
 
+            go = True
+            while go:
+                go = False
+                for possibility in [
+                    {top, left, right},
+                    {left, top, bottom},
+                    {right, top, bottom},
+                    {bottom, left, right}
+                    ]:
+                    if all(p in walls for p in possibility):
+                            w = rgen.choice((list(possibility)))
+                            if w not in protected:
+                                walls.discard(w)
+                                go = True
+                                break
     return walls
 
 
@@ -199,6 +227,8 @@ while True:
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
         exit()
+    if keys[pygame.K_SPACE]:
+        breakpoint()
 
 
     startx = (playerx - (WIDTH // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
@@ -299,7 +329,7 @@ while True:
         pygame.draw.line(window, (33, 33, 222), 
                         ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
                         ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
-
+    
     if not FIXED_X:
         pygame.draw.line(window, (0, 255, 0),
             ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER_X*SQUARE_SIZE), 0),
@@ -312,6 +342,7 @@ while True:
             ((-startx * SQUARE_SIZE + WIDTH//2 + BORDER_X*SQUARE_SIZE), HEIGHT),
             3
         )
+    
 
     if not FIXED_Y:
         pygame.draw.line(window, (255, 165, 0),
@@ -325,51 +356,59 @@ while True:
                         3
                         )
 
-    pygame.draw.line(window, (33, 33, 222),
-        ((-startx * SQUARE_SIZE + WIDTH//2 - BOUND), 0),
-        ((-startx * SQUARE_SIZE + WIDTH//2 - BOUND), HEIGHT),
-        WALL_WIDTH
-    )
+    # pygame.draw.line(window, (33, 33, 222),
+    #     ((-startx * SQUARE_SIZE + WIDTH//2 - BOUND), 0),
+    #     ((-startx * SQUARE_SIZE + WIDTH//2 - BOUND), HEIGHT),
+    #     WALL_WIDTH
+    # )
 
-    pygame.draw.line(window, (33, 33, 222),
-        ((-startx * SQUARE_SIZE + WIDTH//2 + BOUND), 0),
-        ((-startx * SQUARE_SIZE + WIDTH//2 + BOUND), HEIGHT),
-        WALL_WIDTH
-    )
+    # pygame.draw.line(window, (33, 33, 222),
+    #     ((-startx * SQUARE_SIZE + WIDTH//2 + BOUND), 0),
+    #     ((-startx * SQUARE_SIZE + WIDTH//2 + BOUND), HEIGHT),
+    #     WALL_WIDTH
+    # )
 
-    pygame.draw.line(window, (33, 33, 222),
-                     (0, (-starty * SQUARE_SIZE + HEIGHT//2 - BOUND)),
-                     (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 - BOUND)),
-                     WALL_WIDTH
-                     )
-    pygame.draw.line(window, (33, 33, 222),
-                     (0, (-starty * SQUARE_SIZE + HEIGHT//2 + BOUND)),
-                     (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 + BOUND)),
-                     WALL_WIDTH
-                     )
+    # pygame.draw.line(window, (33, 33, 222),
+    #                  (0, (-starty * SQUARE_SIZE + HEIGHT//2 - BOUND)),
+    #                  (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 - BOUND)),
+    #                  WALL_WIDTH
+    #                  )
+    # pygame.draw.line(window, (33, 33, 222),
+    #                  (0, (-starty * SQUARE_SIZE + HEIGHT//2 + BOUND)),
+    #                  (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 + BOUND)),
+    #                  WALL_WIDTH
+    #                  )
     
     #pygame.draw.rect(window, (255, 0, 0), pygame.Rect(-startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, RADIUS*2, RADIUS*2))
 
 
-    player_rect = pygame.Rect(-startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, RADIUS*2, RADIUS*2)
+    player_rect = pygame.Rect(
+        -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
+        -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, 
+        RADIUS*2, RADIUS*2)
+    
+    conx = min(max(playerx, -BORDER_X * SQUARE_SIZE + WIDTH // 2), BORDER_X * SQUARE_SIZE + WIDTH // 2) // SQUARE_SIZE
+    cony = min(max(playery, -BORDER_Y * SQUARE_SIZE + HEIGHT // 2), BORDER_Y * SQUARE_SIZE + HEIGHT // 2) // SQUARE_SIZE
+    
     for x in range(-WIDTH // SQUARE_SIZE // 2 - 2, WIDTH // SQUARE_SIZE // 2 + 3):
-        for y in range(-HEIGHT // SQUARE_SIZE // 2 - 2, HEIGHT // SQUARE_SIZE // 2 + 3):
+        for y in range(-HEIGHT // SQUARE_SIZE // 2 - 3, HEIGHT // SQUARE_SIZE // 2 + 3):
             square_length = SQUARE_SIZE / 8
-            posx = int((playerx / SQUARE_SIZE) + x)
-            posy = int((playery / SQUARE_SIZE) + y)
-            # this took more trial and error than i would care to admit)
-            rect = pygame.Rect(
-                    (posx - startx) * SQUARE_SIZE - square_length // 2,
-                    (posy - starty) * SQUARE_SIZE - square_length // 2,
-                    square_length,
-                    square_length
-                )
+            rgen = random.Random((conx + x) * SQUARE_SIZE + (cony + y))
+            if rgen.random() < 0.5:
+                rect = pygame.Rect(
+                        (conx + x) * SQUARE_SIZE - (square_length // 2) - startx * SQUARE_SIZE,
+                        (cony + y) * SQUARE_SIZE - (square_length // 2) - starty * SQUARE_SIZE,
+                        square_length,
+                        square_length
+                    )
 
-
-            if rect.colliderect(player_rect):
-                intersected.add((posx, posy))
-            if (posx, posy) not in intersected:            
-                pygame.draw.rect(window, (170, 170, 0), rect)
+                indicator = (conx + x, cony + y)
+                if rect.colliderect(player_rect):
+                    # at this point,
+                    # the game detects the player picked up a pellet
+                    intersected.add(indicator)
+                if indicator not in intersected:            
+                    pygame.draw.rect(window, (170, 170, 0), rect)
 
     # draw player
     # yellow circle at center of screen
