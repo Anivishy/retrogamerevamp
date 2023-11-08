@@ -45,3 +45,12 @@ class healthbar:
         healthRect = health.get_rect()
         healthRect.center = (self.WIDTH - 330, 90)
         window.blit(health, healthRect)
+
+    def take_damage(self, dmg):
+        self.player_health -= dmg
+
+    def heal(self, recover):
+        if self.player_health + recover > 100:
+            self.player_health = 100
+        else:
+            self.player_health = self.player_health + recover
