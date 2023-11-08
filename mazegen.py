@@ -12,10 +12,12 @@ import pygame
 import random
 import os
 import pyautogui
+import health
 
 os.environ['SDL_VIDEO_CENTERED'] = '1' # You have to call this before pygame.init()
 
 pygame.init()
+player_health = health.healthbar()
 
 WIDTH, HEIGHT = pyautogui.size()
 
@@ -115,6 +117,8 @@ lastx = startx
 lasty = starty
 
 delay_to = time.time()
+
+i = 0
 
 while True:
     # events
@@ -301,9 +305,8 @@ while True:
                      (0, (-starty * SQUARE_SIZE + HEIGHT//2 + BOUND)),
                      (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 + BOUND)),
                      WALL_WIDTH
-                     )
-
-    
+                     )  
+      
 
     # draw player
     # yellow circle at center of screen
