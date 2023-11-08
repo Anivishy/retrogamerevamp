@@ -415,6 +415,9 @@ while True:
     # draw player
     # yellow circle at center of screen
 
+    #health bar init
+    player_health.gen_healthbar(window)
+
     pygame.display.update()
     frame_count = (frame_count + 1) % FPS
     clock.tick(FPS)
