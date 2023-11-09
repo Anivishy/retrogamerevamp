@@ -28,10 +28,9 @@ except:
     WIDTH = 800
     HEIGHT = 600
 
-# WIDTH = 800
-# HEIGHT = 600
-# HEIGHT = 1080
-FULLSCREEN = True
+WIDTH = 800
+HEIGHT = 600
+FULLSCREEN = False
 
 
 
@@ -71,14 +70,21 @@ FIXED_X = FIXED_Y = False
 BOUND = MAP_RADIUS * SQUARE_SIZE
 
 BORDER_X = (BOUND - WIDTH / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
-BORDER_X += 0.5
+if int((BOUND - WIDTH / 2) / SQUARE_SIZE) != (BOUND - WIDTH / 2) / SQUARE_SIZE:
+    BORDER_X += 0.5
 if BORDER_X < 0:
     FIXED_X = True
+
 BORDER_Y = (BOUND - HEIGHT / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
+if int((BOUND - HEIGHT / 2) / SQUARE_SIZE) != (BOUND - HEIGHT / 2) / SQUARE_SIZE:
+    BORDER_Y += 0.5
+
+
 BORDER_Y += 0.5
 if BORDER_Y < 0:
     FIXED_Y = True
 
+UNCAPPED_FPS = True # set at your own risk!
 
 import time
 
@@ -87,7 +93,6 @@ def gen_walls(from_x, from_y):
     
     protected = set()
     if abs(from_x) >= int(BORDER_X) - 1:
-        print("v")
         if from_x < 0:
             for y in range(from_y - 1, from_y + (HEIGHT // SQUARE_SIZE) + 2):
                 protected.add(
@@ -100,7 +105,6 @@ def gen_walls(from_x, from_y):
                 )
 
     if abs(from_y) >= int(BORDER_Y) - 2:
-        print("t")
         if from_y < 0:
             for x in range(from_x - 1, from_x + (WIDTH // SQUARE_SIZE) + 2):
                 protected.add(
@@ -176,6 +180,7 @@ lastx = startx
 lasty = starty
 
 delay_to = time.time()
+last = delay_to - (1/60)
 
 SAFE_RADIUS = 2
 
@@ -216,7 +221,6 @@ while True:
                 direction = 4
 
     velocity = 5 # squares per second
-
     copysx = startx
     copysy = starty
     copypx = playerx
@@ -225,13 +229,25 @@ while True:
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]: 
-        playerx -= velocity / FPS * SQUARE_SIZE
+        if not UNCAPPED_FPS:
+            playerx -= velocity / FPS * SQUARE_SIZE
+        else:
+            playerx -= 5 * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_RIGHT]:
-        playerx += velocity / FPS * SQUARE_SIZE
+        if not UNCAPPED_FPS:
+            playerx += velocity / FPS * SQUARE_SIZE
+        else:
+            playerx += 5 * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_UP]:
-        playery -= velocity / FPS * SQUARE_SIZE
+        if not UNCAPPED_FPS:
+            playery -= velocity / FPS * SQUARE_SIZE
+        else:
+            playery -= 5 * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_DOWN]:
-        playery += velocity / FPS * SQUARE_SIZE
+        if not UNCAPPED_FPS:
+            playery += velocity / FPS * SQUARE_SIZE
+        else:
+            playery += 5 * (delay_to - last) * SQUARE_SIZE
 
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
@@ -257,13 +273,15 @@ while True:
         ((playerx // SQUARE_SIZE, playery // SQUARE_SIZE + 1), (playerx // SQUARE_SIZE + 1, playery // SQUARE_SIZE + 1))
     })
 
+    # for some reason, there is 1 pixel of extra space at the top and the left
+    # so the camera will try to go towards that, but this shifts the camera bound over by 1 pixel
     if not FIXED_X:
-        startx = min(max(startx, -BORDER_X), BORDER_X)
+        startx = min(max(startx, -BORDER_X + (1/SQUARE_SIZE)), BORDER_X)
     else:
         startx = cx
        
     if not FIXED_Y:
-        starty = min(max(starty, -BORDER_Y), BORDER_Y)
+        starty = min(max(starty, -BORDER_Y + (1/SQUARE_SIZE)), BORDER_Y)
     else:
         starty = cy
 
@@ -388,7 +406,16 @@ while True:
     player_health.gen_healthbar(window)
 
     pygame.display.update()
-    frame_count = (frame_count + 1) % FPS
-    clock.tick(FPS)
-    if frame_count == 0:
-        print(round(clock.get_fps()))
+    
+    if UNCAPPED_FPS:
+        frame_count += 1
+        if frame_count % 1000 == 0:
+            print(round(1/(time.time() - delay_to)))
+        last = delay_to
+        delay_to = time.time()
+            
+    else:
+        frame_count = (frame_count + 1) % FPS
+        clock.tick(FPS)
+        if frame_count == 0:
+            print(round(clock.get_fps()))
