@@ -3,17 +3,13 @@ import pygame
 
 pygame.init()
 
-try:
-    import pyautogui
-    WIDTH, HEIGHT = pyautogui.size()
-except:
-    WIDTH = 800
-    HEIGHT = 600
+WIDTH = 1536
+HEIGHT = 1024
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 screen.fill((0, 0, 0))
 pygame.display.set_caption("Homescreen")
-openingFont = pygame.font.SysFont("monospace", 60)
+openingFont = pygame.font.SysFont("monospace", 50)
 start = True
 
 def openingText(text, x, y):
@@ -28,7 +24,7 @@ def openingText(text, x, y):
         pygame.display.flip()
 
         if start:
-            pygame.time.wait(125)
+            pygame.time.wait(115)
 
 def instructionsPage():
     x=x
@@ -37,10 +33,12 @@ def CenterText(text):
     textWidth, textHeight = openingFont.size(text)
     return ((WIDTH - textWidth) / 2)
 
-openingText("Welcome!", CenterText("Welcome!"), 150)
+openingText("Welcome!", CenterText("Welcome!"), (.15*HEIGHT))
 pygame.time.wait(500)
 instructions = "Click 'begin' to get started!"
-openingText(instructions, CenterText(instructions), 250)
+openingText(instructions, CenterText(instructions), (.25*HEIGHT))
+
+openingFont = pygame.font.SysFont("monospace", 40)
 
 # begin button
 pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(300, 450, 400, 150), 10)
@@ -84,5 +82,9 @@ while True:
 
     pygame.display.flip()
 
-    # todo:  buttons (start game, instructions, settings, quit), use WIDTH/HEIGHT instead of values, center button text, create instrictions popup
+    # todo:  buttons (start game, instructions, settings, quit), use WIDTH/HEIGHT instead of values, center button text, create instructions popup
     # later: splashscreen? better background
+    # Add comments
+#     # begin button
+# pygame.draw.rect(screen, (255, 0, 0), pygame.Rect((WIDTH*.195), (.29*WIDTH), (.26*WIDTH), (.01*WIDTH)), 10)
+# pygame.draw.rect(screen, (0, 0, 0), pygame.Rect((WIDTH*.2), (.3*WIDTH), (WIDTH*.25), (WIDTH*.09)), 10)
