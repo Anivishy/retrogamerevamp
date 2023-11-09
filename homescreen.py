@@ -22,19 +22,21 @@ def openingText(text, x, y):
         screen.blit(char, (x, y))
 
         x += char.get_width()
-
-        screen.blit(openingFont.render("|", True, (255, 255, 255)), (x, y))
+        if i != len(text)-1:
+            screen.blit(openingFont.render("|", True, (255, 255, 255)), (x, y))
 
         pygame.display.flip()
 
         if start:
-            pygame.time.wait(100)
+            pygame.time.wait(150)
 
 def CenterText(text):
     textWidth, textHeight = openingFont.size(text)
     return ((WIDTH - textWidth) / 2)
 
-openingText("Welcome!", CenterText("Welcome!"), 50)
+openingText("Welcome!", CenterText("Welcome!"), 150)
+instructions = "Click 'begin' to get started!"
+openingText(instructions, CenterText(instructions), 250)
 start = False
 
 while True:
