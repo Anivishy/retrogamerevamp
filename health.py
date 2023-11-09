@@ -5,7 +5,7 @@ import pyautogui
 
 class healthbar:
 
-    pygame.init()
+    #pygame.init()
 
     def __init__ (self):
         self.player_health = 80
@@ -38,8 +38,7 @@ class healthbar:
             self.COLOR = self.RED
             pygame.draw.rect(window, self.RED, [self.WIDTH - 350, 10, 300 * (self.player_health/100), 50])
         pygame.draw.rect(window, self.COLOR, [self.WIDTH - 350, 10, 302, 52], 2)
-        self.gen_health_percent(window)   
-
+        self.gen_health_percent(window)
 
     def gen_health_percent(self, window):
         health = self.font.render(str(self.player_health) + "%", True, self.COLOR) 

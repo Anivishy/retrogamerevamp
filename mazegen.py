@@ -30,8 +30,8 @@ except:
     WIDTH = 800
     HEIGHT = 600
 
-WIDTH = 800
-HEIGHT = 600
+WIDTH = 1600
+HEIGHT = 1200
 FULLSCREEN = False
 
 
@@ -58,6 +58,7 @@ window = pygame.display.set_mode((WIDTH, HEIGHT), (pygame.FULLSCREEN if FULLSCRE
 FPS = 60
 
 pygame.display.set_caption("Maze Generator")
+
 
 # clock
 clock = pygame.time.Clock()
@@ -204,7 +205,9 @@ last_walls = walls
 intersected = set()
 
 while True:
-    #score init
+    #health bar init
+    player_health.gen_healthbar(window)
+    player_score.display_score(window)
 
     # events
     direction = 0
@@ -399,7 +402,8 @@ while True:
                 if rect.colliderect(player_rect):
                     # at this point,
                     # the game detects the player picked up a pellet
-                    player_score.update_score(window)
+                    if indicator not in intersected:
+                        player_score.update_score(window)
                     intersected.add(indicator)
                 if indicator not in intersected:            
                     pygame.draw.rect(window, (170, 170, 0), rect)
@@ -407,12 +411,7 @@ while True:
     # draw player
     # yellow circle at center of screen
 
-    #health bar init
-    player_health.gen_healthbar(window)
-    player_score.display_score(window)
-
-
-
+    
     pygame.display.update()
     
     if UNCAPPED_FPS:

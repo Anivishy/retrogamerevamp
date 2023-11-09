@@ -30,6 +30,8 @@ class pellets:
         score_rect = score_disp.get_rect()
         score_rect.center = (self.WIDTH - 270, 130)
         window.blit(score_disp, score_rect)
+        print(self.score)
+
     def update_score(self, window):
         self.score += 1
         #self.display_score(window)
