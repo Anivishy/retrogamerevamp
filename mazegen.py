@@ -14,10 +14,12 @@ import random
 import os
 
 import math
+import health
 
 #os.environ['SDL_VIDEO_CENTERED'] = '1' # You have to call this before pygame.init()
 
 pygame.init()
+player_health = health.healthbar()
 
 try:
     import pyautogui
@@ -381,6 +383,9 @@ while True:
 
     # draw player
     # yellow circle at center of screen
+
+    #health bar init
+    player_health.gen_healthbar(window)
 
     pygame.display.update()
     frame_count = (frame_count + 1) % FPS
