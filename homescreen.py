@@ -1,6 +1,5 @@
 
 import pygame
-import random
 
 pygame.init()
 
@@ -44,4 +43,4 @@ while True:
     pygame.display.flip()
 
     # todo: cursor, buttons (start game, instructions, settings, quit)
-    # later: splashscreen? better background
+    # later: splashscreen? background
