@@ -17,7 +17,7 @@ import math
 import health
 import pelletsandammo
 
-os.environ['SDL_VIDEO_CENTERED'] = '1' # You have to call this before pygame.init()
+#os.environ['SDL_VIDEO_CENTERED'] = '1' # You have to call this before pygame.init()
 
 pygame.init()
 player_health = health.healthbar()
@@ -30,10 +30,12 @@ except:
     WIDTH = 800
     HEIGHT = 600
 
-FULLSCREEN = True
+WIDTH = 800
+HEIGHT = 600
+FULLSCREEN = False
 
-# WIDTH = 1920
-# HEIGHT = 1200
+
+
 
 # screen
 SQUARE_SIZE = 120
@@ -67,15 +69,24 @@ MAP_RADIUS = 25
 RADIUS = int(SQUARE_SIZE / 2) // 2
 FIXED_X = FIXED_Y = False
 
-BOUND = MAP_RADIUS * SQUARE_SIZE + SQUARE_SIZE // 2
+BOUND = MAP_RADIUS * SQUARE_SIZE
 
 BORDER_X = (BOUND - WIDTH / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
+if int((BOUND - WIDTH / 2) / SQUARE_SIZE) != (BOUND - WIDTH / 2) / SQUARE_SIZE:
+    BORDER_X += 0.5
 if BORDER_X < 0:
     FIXED_X = True
+
 BORDER_Y = (BOUND - HEIGHT / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
+if int((BOUND - HEIGHT / 2) / SQUARE_SIZE) != (BOUND - HEIGHT / 2) / SQUARE_SIZE:
+    BORDER_Y += 0.5
+
+
+BORDER_Y += 0.5
 if BORDER_Y < 0:
     FIXED_Y = True
 
+UNCAPPED_FPS = True # set at your own risk!
 
 import time
 
@@ -95,7 +106,7 @@ def gen_walls(from_x, from_y):
                     ((int(BORDER_X) + WIDTH // SQUARE_SIZE + 1, y), (int(BORDER_X) + WIDTH // SQUARE_SIZE + 1, y + 1))
                 )
 
-    if abs(from_y) >= int(BORDER_Y) - 1:
+    if abs(from_y) >= int(BORDER_Y) - 2:
         if from_y < 0:
             for x in range(from_x - 1, from_x + (WIDTH // SQUARE_SIZE) + 2):
                 protected.add(
@@ -108,7 +119,7 @@ def gen_walls(from_x, from_y):
                 )
 
     for x in range(-3, WIDTH // SQUARE_SIZE + 3):
-        for y in range(-2, HEIGHT // SQUARE_SIZE + 3):
+        for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
             point = ((from_x + x), (from_y + y))
             rgen = random.Random((from_x + x) * SQUARE_SIZE + (from_y + y))
             threshold = rgen.randint(15, 35) / 100
@@ -171,6 +182,7 @@ lastx = startx
 lasty = starty
 
 delay_to = time.time()
+last = delay_to - (1/60)
 
 SAFE_RADIUS = 2
 
@@ -213,7 +225,6 @@ while True:
                 direction = 4
 
     velocity = 5 # squares per second
-
     copysx = startx
     copysy = starty
     copypx = playerx
@@ -222,13 +233,25 @@ while True:
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]: 
-        playerx -= velocity / FPS * SQUARE_SIZE
+        if not UNCAPPED_FPS:
+            playerx -= velocity / FPS * SQUARE_SIZE
+        else:
+            playerx -= 5 * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_RIGHT]:
-        playerx += velocity / FPS * SQUARE_SIZE
+        if not UNCAPPED_FPS:
+            playerx += velocity / FPS * SQUARE_SIZE
+        else:
+            playerx += 5 * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_UP]:
-        playery -= velocity / FPS * SQUARE_SIZE
+        if not UNCAPPED_FPS:
+            playery -= velocity / FPS * SQUARE_SIZE
+        else:
+            playery -= 5 * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_DOWN]:
-        playery += velocity / FPS * SQUARE_SIZE
+        if not UNCAPPED_FPS:
+            playery += velocity / FPS * SQUARE_SIZE
+        else:
+            playery += 5 * (delay_to - last) * SQUARE_SIZE
 
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
@@ -254,13 +277,15 @@ while True:
         ((playerx // SQUARE_SIZE, playery // SQUARE_SIZE + 1), (playerx // SQUARE_SIZE + 1, playery // SQUARE_SIZE + 1))
     })
 
+    # for some reason, there is 1 pixel of extra space at the top and the left
+    # so the camera will try to go towards that, but this shifts the camera bound over by 1 pixel
     if not FIXED_X:
-        startx = min(max(startx, -BORDER_X), BORDER_X)
+        startx = min(max(startx, -BORDER_X + (1/SQUARE_SIZE)), BORDER_X)
     else:
         startx = cx
        
     if not FIXED_Y:
-        starty = min(max(starty, -BORDER_Y), BORDER_Y)
+        starty = min(max(starty, -BORDER_Y + (1/SQUARE_SIZE)), BORDER_Y)
     else:
         starty = cy
 
@@ -280,8 +305,6 @@ while True:
             walls_to_check |= set(w for w in walls if (playerx // SQUARE_SIZE + x, playery // SQUARE_SIZE + y) in w)
 
     walls_to_check = walls_to_check.intersection(walls)
-    #print(walls_to_check)
-
 
     # thank you eJames https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection
     for wall in walls_to_check:
@@ -318,16 +341,6 @@ while True:
             starty = copysy
             break 
 
-    # if not (-SQUARE_SIZE * MAP_RADIUS <= playerx) or not (playerx <= SQUARE_SIZE * MAP_RADIUS):
-    #     print(playerx, -SQUARE_SIZE * MAP_RADIUS)
-    #     playerx = copypx
-    #     playery = copypy
-    #     startx = copysx
-    #     starty = copysy
- 
-
-    # update
-    #window.fill((80, 121, 235))
     window.fill((0, 0, 0))
 
     pygame.draw.circle(window, (255, 255, 0), (round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
@@ -336,57 +349,31 @@ while True:
                         ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
                         ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
     
-    if not FIXED_X:
-        pygame.draw.line(window, (0, 255, 0),
-            ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER_X*SQUARE_SIZE), 0),
-            ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER_X*SQUARE_SIZE), HEIGHT),
-            3
-        )
+    # if not FIXED_X:
+    #     pygame.draw.line(window, (0, 255, 0),
+    #         ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER_X*SQUARE_SIZE), 0),
+    #         ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER_X*SQUARE_SIZE), HEIGHT),
+    #         3
+    #     )
 
-        pygame.draw.line(window, (0, 255, 0),
-            ((-startx * SQUARE_SIZE + WIDTH//2 + BORDER_X*SQUARE_SIZE), 0),
-            ((-startx * SQUARE_SIZE + WIDTH//2 + BORDER_X*SQUARE_SIZE), HEIGHT),
-            3
-        )
+    #     pygame.draw.line(window, (0, 255, 0),
+    #         ((-startx * SQUARE_SIZE + WIDTH//2 + BORDER_X*SQUARE_SIZE), 0),
+    #         ((-startx * SQUARE_SIZE + WIDTH//2 + BORDER_X*SQUARE_SIZE), HEIGHT),
+    #         3
+    #     )
     
 
-    if not FIXED_Y:
-        pygame.draw.line(window, (255, 165, 0),
-                        (0, (-starty * SQUARE_SIZE + HEIGHT//2 - BORDER_Y*SQUARE_SIZE)),
-                        (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 - BORDER_Y*SQUARE_SIZE)),
-                        3
-                        )
-        pygame.draw.line(window, (255, 165, 0),
-                        (0, (-starty * SQUARE_SIZE + HEIGHT//2 + BORDER_Y*SQUARE_SIZE)),
-                        (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 + BORDER_Y*SQUARE_SIZE)),
-                        3
-                        )
-
-    # pygame.draw.line(window, (33, 33, 222),
-    #     ((-startx * SQUARE_SIZE + WIDTH//2 - BOUND), 0),
-    #     ((-startx * SQUARE_SIZE + WIDTH//2 - BOUND), HEIGHT),
-    #     WALL_WIDTH
-    # )
-
-    # pygame.draw.line(window, (33, 33, 222),
-    #     ((-startx * SQUARE_SIZE + WIDTH//2 + BOUND), 0),
-    #     ((-startx * SQUARE_SIZE + WIDTH//2 + BOUND), HEIGHT),
-    #     WALL_WIDTH
-    # )
-
-    # pygame.draw.line(window, (33, 33, 222),
-    #                  (0, (-starty * SQUARE_SIZE + HEIGHT//2 - BOUND)),
-    #                  (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 - BOUND)),
-    #                  WALL_WIDTH
-    #                  )
-    # pygame.draw.line(window, (33, 33, 222),
-    #                  (0, (-starty * SQUARE_SIZE + HEIGHT//2 + BOUND)),
-    #                  (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 + BOUND)),
-    #                  WALL_WIDTH
-    #                  )
-    
-    #pygame.draw.rect(window, (255, 0, 0), pygame.Rect(-startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, RADIUS*2, RADIUS*2))
-
+    # if not FIXED_Y:
+    #     pygame.draw.line(window, (255, 165, 0),
+    #                     (0, (-starty * SQUARE_SIZE + HEIGHT//2 - BORDER_Y*SQUARE_SIZE)),
+    #                     (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 - BORDER_Y*SQUARE_SIZE)),
+    #                     3
+    #                     )
+    #     pygame.draw.line(window, (255, 165, 0),
+    #                     (0, (-starty * SQUARE_SIZE + HEIGHT//2 + BORDER_Y*SQUARE_SIZE)),
+    #                     (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 + BORDER_Y*SQUARE_SIZE)),
+    #                     3
+    #                     )
 
     player_rect = pygame.Rect(
         -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
@@ -427,7 +414,16 @@ while True:
 
 
     pygame.display.update()
-    frame_count = (frame_count + 1) % FPS
-    clock.tick(FPS)
-    if frame_count == 0:
-        print(round(clock.get_fps()))
+    
+    if UNCAPPED_FPS:
+        frame_count += 1
+        if frame_count % 1000 == 0:
+            print(round(1/(time.time() - delay_to)))
+        last = delay_to
+        delay_to = time.time()
+            
+    else:
+        frame_count = (frame_count + 1) % FPS
+        clock.tick(FPS)
+        if frame_count == 0:
+            print(round(clock.get_fps()))
