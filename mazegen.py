@@ -35,7 +35,7 @@ HEIGHT = 1200
 FULLSCREEN = False
 
 
-player_health = health.healthbar(WIDTH=WIDTH, HEIGHT=HEIGHT)
+player_health = health.healthbar()
 
 
 # screen
@@ -562,7 +562,8 @@ while True:
     if UNCAPPED_FPS:
         frame_count += 1
         if frame_count % 1000 == 0:
-            print(round(1/(time.time() - delay_to)))
+            #print(round(1/(time.time() - delay_to)))
+            ...
         last = delay_to
         delay_to = time.time()
             
@@ -570,4 +571,5 @@ while True:
         frame_count = (frame_count + 1) % FPS
         clock.tick(FPS)
         if frame_count == 0:
-            print(round(clock.get_fps()))
+            #print(round(clock.get_fps()))
+            ...

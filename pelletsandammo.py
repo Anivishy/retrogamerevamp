@@ -30,7 +30,7 @@ class pellets:
         score_rect = score_disp.get_rect()
         score_rect.center = (WIDTH - 270, 130)
         window.blit(score_disp, score_rect)
-        print(self.score)
+        #print(self.score)
 
     def update_score(self):
         self.score += 1
@@ -40,7 +40,7 @@ class pellets:
         ammo_rect = ammo_disp.get_rect()
         ammo_rect.center = (WIDTH - 270, 130)
         window.blit(ammo_disp, ammo_rect)
-        print(self.score)
+        #print(self.score)
 
     def update_ammo(self):
         self.score += 1
