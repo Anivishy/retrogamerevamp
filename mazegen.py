@@ -15,10 +15,13 @@ import os
 
 import math
 import health
+import pelletsandammo
 
 #os.environ['SDL_VIDEO_CENTERED'] = '1' # You have to call this before pygame.init()
 
 pygame.init()
+player_health = health.healthbar()
+player_score = pelletsandammo.pellets()
 
 try:
     import pyautogui
@@ -27,8 +30,8 @@ except:
     WIDTH = 800
     HEIGHT = 600
 
-WIDTH = 1280
-HEIGHT = 720
+WIDTH = 1600
+HEIGHT = 1200
 FULLSCREEN = False
 
 
@@ -57,6 +60,7 @@ FPS = 60
 
 pygame.display.set_caption("Maze Generator")
 pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
+
 
 # clock
 clock = pygame.time.Clock()
@@ -341,6 +345,8 @@ last_walls = walls
 intersected = set()
 
 while True:
+    
+
     # events
     direction = 0
     for event in pygame.event.get():
@@ -538,6 +544,8 @@ while True:
                 if rect.colliderect(player_rect):
                     # at this point,
                     # the game detects the player picked up a pellet
+                    if indicator not in intersected:
+                        player_score.update_score()
                     intersected.add(indicator)
                 if indicator not in intersected:            
                     pygame.draw.rect(window, (170, 170, 0), rect)
@@ -545,9 +553,10 @@ while True:
     # draw player
     # yellow circle at center of screen
 
-    #health bar init
-    player_health.gen_healthbar(window)
-
+    #health bar init and score init
+    player_health.gen_healthbar(window, WIDTH)
+    player_score.display_score(window, WIDTH)
+    
     pygame.display.update()
     
     if UNCAPPED_FPS:
