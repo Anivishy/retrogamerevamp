@@ -19,7 +19,6 @@ import health
 #os.environ['SDL_VIDEO_CENTERED'] = '1' # You have to call this before pygame.init()
 
 pygame.init()
-player_health = health.healthbar()
 
 try:
     import pyautogui
@@ -28,15 +27,16 @@ except:
     WIDTH = 800
     HEIGHT = 600
 
-WIDTH = 800
-HEIGHT = 600
+WIDTH = 1280
+HEIGHT = 720
 FULLSCREEN = False
 
 
+player_health = health.healthbar(WIDTH=WIDTH, HEIGHT=HEIGHT)
 
 
 # screen
-SQUARE_SIZE = 120
+SQUARE_SIZE = 60
 while True:
     try:
         if WIDTH % SQUARE_SIZE != 0: raise ValueError(f"{WIDTH} % {SQUARE_SIZE} = {WIDTH % SQUARE_SIZE}, not 0")
@@ -51,11 +51,12 @@ WALL_WIDTH = SQUARE_SIZE // 12
 
 print(f"Initializing: {WIDTH}x{HEIGHT}, square size: {SQUARE_SIZE}")
 
-window = pygame.display.set_mode((WIDTH, HEIGHT), (pygame.FULLSCREEN if FULLSCREEN else 0))
+window = pygame.display.set_mode((WIDTH, HEIGHT), (pygame.FULLSCREEN if FULLSCREEN else 0) | pygame.GL_DOUBLEBUFFER)
 
 FPS = 60
 
 pygame.display.set_caption("Maze Generator")
+pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
 
 # clock
 clock = pygame.time.Clock()
@@ -63,34 +64,29 @@ clock = pygame.time.Clock()
 walls = set()
 
 
-MAP_RADIUS = 25
+MAP_RADIUS = 24
 RADIUS = int(SQUARE_SIZE / 2) // 2
 FIXED_X = FIXED_Y = False
 
 BOUND = MAP_RADIUS * SQUARE_SIZE
 
 BORDER_X = (BOUND - WIDTH / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
-if int((BOUND - WIDTH / 2) / SQUARE_SIZE) != (BOUND - WIDTH / 2) / SQUARE_SIZE:
+if int((BOUND - WIDTH / 2) / SQUARE_SIZE) == (BOUND - WIDTH / 2) / SQUARE_SIZE:
     BORDER_X += 0.5
 if BORDER_X < 0:
     FIXED_X = True
 
 BORDER_Y = (BOUND - HEIGHT / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
-if int((BOUND - HEIGHT / 2) / SQUARE_SIZE) != (BOUND - HEIGHT / 2) / SQUARE_SIZE:
+if int((BOUND - HEIGHT / 2) / SQUARE_SIZE) == (BOUND - HEIGHT / 2) / SQUARE_SIZE:
     BORDER_Y += 0.5
-
-
-BORDER_Y += 0.5
 if BORDER_Y < 0:
     FIXED_Y = True
 
-UNCAPPED_FPS = True # set at your own risk!
+UNCAPPED_FPS = False # set at your own risk!
 
 import time
 
-def gen_walls(from_x, from_y):
-    walls = set()
-    
+def create_protected(from_x, from_y):
     protected = set()
     if abs(from_x) >= int(BORDER_X) - 1:
         if from_x < 0:
@@ -115,6 +111,11 @@ def gen_walls(from_x, from_y):
                 protected.add(
                     ((x, int(BORDER_Y) + HEIGHT // SQUARE_SIZE + 1), (x + 1, int(BORDER_Y) + HEIGHT // SQUARE_SIZE + 1))
                 )
+    return protected
+
+def gen_walls(from_x, from_y):
+    walls = set()
+    protected = create_protected(from_x, from_y)
 
     for x in range(-3, WIDTH // SQUARE_SIZE + 3):
         for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
@@ -164,11 +165,149 @@ def gen_walls(from_x, from_y):
                                 break
     return walls
 
+def preload_walls(fromx, fromy, tox, toy, walls):
+    direction = 0
+    if fromx > tox:    
+        direction = 1 # left
+    elif fromx < tox:
+        direction = 2 # right
+    elif fromy > toy:
+        direction = 3 # up
+    elif fromy < toy:
+        direction = 4 # down
+
+    protected = create_protected(tox, toy)
+
+    if fromx == tox:
+        bxl = fromx - 3
+        bxr = fromx + (WIDTH // SQUARE_SIZE) + 3
+    if fromy == toy:
+        byt = fromy - 3
+        byb = fromy + (HEIGHT // SQUARE_SIZE) + 3
+    
+    if direction == 1:
+        bxl = tox - 3
+        bxr = tox + 1
+    elif direction == 2:
+        bxl = tox + WIDTH // SQUARE_SIZE - 1
+        bxr = tox + WIDTH // SQUARE_SIZE + 3
+    elif direction == 3:
+        byt = toy - 3
+        byb = toy + 1
+    elif direction == 4:
+        byt = toy + HEIGHT // SQUARE_SIZE - 1
+        byb = toy + HEIGHT // SQUARE_SIZE + 3
+
+
+    new_walls = set()
+    if direction == 1:
+        for wall in walls:
+            if wall[0][0] != fromx + 3 + (WIDTH // SQUARE_SIZE) and wall[1][0] != fromx + 3 + (WIDTH // SQUARE_SIZE):
+                new_walls.add(wall)
+        for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
+            point = ((tox - 2), (toy + y))
+            rgen = random.Random((tox - 2) * SQUARE_SIZE + (toy + y))
+            threshold = rgen.randint(15, 35) / 100
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0], point[1] + 1)])))
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0] - 1, point[1])])))
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
+    elif direction == 2:
+        for wall in walls:
+            if wall[0][0] != fromx - 3 and wall[1][0] != fromx - 3:
+                new_walls.add(wall)
+        for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
+            point = ((tox + WIDTH / SQUARE_SIZE + 2), (toy + y))
+            rgen = random.Random((tox + WIDTH / SQUARE_SIZE + 2) * SQUARE_SIZE + (toy + y))
+            threshold = rgen.randint(15, 35) / 100
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0], point[1] + 1)])))
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0] - 1, point[1])])))
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
+    elif direction == 3:
+        for wall in walls:
+            if wall[0][1] != fromy + 3 + (HEIGHT // SQUARE_SIZE) and wall[1][1] != fromy + 3 + (HEIGHT // SQUARE_SIZE):
+                new_walls.add(wall)
+        for x in range(-3, WIDTH // SQUARE_SIZE + 3):
+            point = ((tox + x), (toy - 2))
+            rgen = random.Random((tox + x) * SQUARE_SIZE + (toy - 2))
+            threshold = rgen.randint(15, 35) / 100
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0], point[1] + 1)])))
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0] - 1, point[1])])))
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
+    elif direction == 4:
+        for wall in walls:
+            if wall[0][1] != fromy - 3 and wall[1][1] != fromy - 3:
+                new_walls.add(wall)
+        for x in range(-3, WIDTH // SQUARE_SIZE + 3):
+            point = ((tox + x), (toy + HEIGHT / SQUARE_SIZE + 2))
+            rgen = random.Random((tox + x) * SQUARE_SIZE + (toy + HEIGHT / 2 + 2))
+            threshold = rgen.randint(15, 35) / 100
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0], point[1] + 1)])))
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0] - 1, point[1])])))
+            if rgen.random() < threshold:
+                new_walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
+
+    new_walls |= protected
+    
+    for x in range(int(bxl), int(bxr)):
+        for y in range(int(byt), int(byb)):
+            point = ((x), (y))
+            rgen = random.Random((x) * SQUARE_SIZE + (y))
+            # boilerplate extravaganza - you have been warned!
+            x1 = point[0]
+            y1 = point[1]
+            x2 = point[0] + 1
+            y2 = point[1] + 1
+
+            top = ((x1, y1), (x2, y1)) # top
+            left = ((x1, y1), (x1, y2)) # left
+            right = ((x2, y1), (x2, y2)) # right
+            bottom = ((x1, y2), (x2, y2)) # bottom
+
+
+            go = True
+            while go:
+                go = False
+                for possibility in [
+                    {top, left, right},
+                    {left, top, bottom},
+                    {right, top, bottom},
+                    {bottom, left, right}
+                    ]:
+                    if all(p in new_walls for p in possibility):
+                            w = rgen.choice((list(possibility)))
+                            if w not in protected:
+                                new_walls.discard(w)
+                                go = True
+                                break
+
+    return new_walls
 
 
 
 playerx = WIDTH // 2 + SQUARE_SIZE // 2
 playery = HEIGHT // 2 + SQUARE_SIZE // 2
+
+lpx = playerx
+lpy = playery
 
 startx = (playerx - (WIDTH // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
 starty = (playery - (HEIGHT // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
@@ -287,14 +426,18 @@ while True:
 
 
     if int(startx) != lastx or int(starty) != lasty:
-        walls = gen_walls(int(startx), int(starty)) - walls_to_remove
+        #walls = gen_walls(int(startx), int(starty)) - walls_to_remove
+        walls = preload_walls(lastx, lasty, int(startx), int(starty), walls)
         lastx = int(startx)
         lasty = int(starty)
+
         last_walls = walls
 
     else:
         walls = last_walls
     
+    walls -= walls_to_remove
+
     walls_to_check = set()
     for x in range(0, 2):
         for y in range(0, 2):
