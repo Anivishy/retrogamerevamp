@@ -21,11 +21,13 @@ class Renderer:
         self._pacman = None
         self._hungry_pacman = False
         self._hungry_event = pygame.USEREVENT + 1
+        self._ghost_slide = pygame.USEREVENT + 2
         self.paused = False
     
     def tick(self, fps):
         # Alternates between open and closed mouth for Pacman
         pygame.time.set_timer(self._open_mouth, 400)
+        pygame.time.set_timer(self._ghost_slide, 200)
 
         while True:
             for object in self._objects:
@@ -108,6 +110,12 @@ class Renderer:
                 else:
                     self._pacman.open = not self._pacman.open
             
+            if event.type == self._ghost_slide:
+                for ghost in self._ghosts:
+                    if ghost.slide == 0:
+                        ghost.slide = 1
+                    else:
+                        ghost.slide = 0
             # Once Pacman hungry event expires, ghosts should no longer be afraid
             if event.type == self._hungry_event:
                 self._hungry_pacman = False
@@ -270,6 +278,7 @@ class Pacman(MovingObject):
             for ghost in self._renderer._ghosts:
                 ghost.end_game()
 
+        # Start Hungry Pacman procedure if powerup picked up
         for powerup in self._renderer._powerups:
             collision = collision_rect.colliderect(powerup.get_shape())
             if collision and powerup in objects:
@@ -284,6 +293,7 @@ class Pacman(MovingObject):
         for ghost in ghosts:
             collision = collision_rect.colliderect(ghost.get_shape())
             if collision and ghost in objects and not ghost.fleeing:
+                # Provided ghost is not already fleeing due to being eaten, decide next course of action depending on Pacmans current state
                 if self._renderer._hungry_pacman:
                     ghost.fleeing = True
                     ghost.back_to_spawn(ghost)
@@ -303,18 +313,26 @@ class Ghost(MovingObject):
                                      pygame.image.load(f"Images/eyesRight.png").convert(),
                                      pygame.image.load(f"Images/scaredGhost.png").convert()]
 
-        self.regular_image_states = [pygame.image.load(f"Images/{color}Up.png").convert(),
+        self.regular_image_states = [[pygame.image.load(f"Images/{color}Up.png").convert(),
                              pygame.image.load(f"Images/{color}Down.png").convert(),
                              pygame.image.load(f"Images/{color}Left.png").convert(),
                              pygame.image.load(f"Images/{color}Right.png").convert(),
-                             pygame.image.load(f"Images/scaredGhost.png").convert()]
+                             pygame.image.load(f"Images/scaredGhost.png").convert()], 
+                             [pygame.image.load(f"Images/{color}UpAlternate.png").convert(),
+                             pygame.image.load(f"Images/{color}DownAlternate.png").convert(),
+                             pygame.image.load(f"Images/{color}LeftAlternate.png").convert(),
+                             pygame.image.load(f"Images/{color}RightAlternate.png").convert(),
+                             pygame.image.load(f"Images/scaredGhostAlternate.png").convert()]]
         self.target = None
         self.afraid = False
         self.fleeing = False
         self.fleeing_first = True
         self.spawn_point = spawn_point
+        self.slide = 0
 
     
+    # If ghost reaches current target select next target and then choose corresponding direction, change path following if distance to Pacman
+    # is within certain distance
     def target_reached(self):
         if (self.x, self.y) == self.target:
             if self.fleeing and not self.fleeing_first:
@@ -322,9 +340,7 @@ class Ghost(MovingObject):
 
             if self.distance_to_pacman() < 6 and not self.fleeing and not self.afraid and not self._renderer._game_over:
                 self.get_path_to_pacman(self)
-            #else:
-                #if self.afraid and not self.fleeing:
-                    #self.get_random_path(self)
+
             self.target = self.next_location()
         self.direction = self.get_next_direction()
     
@@ -339,6 +355,7 @@ class Ghost(MovingObject):
             self.location.append(direction)
         self.target = self.next_location()
     
+    # Sets a new path, difference from new_path, is that this function allows for ghost to finsih current course of action before beginning new path
     def new_fleeing_path(self, new_path):
         current_target = self.target if self.target else None
         self.location = []
@@ -352,6 +369,7 @@ class Ghost(MovingObject):
         self.target = self.next_location()
     
     def get_next_direction(self):
+        # If there is no new target, new course is determined depending on state of game and state of ghost
         if self.target is None and not self.fleeing and not self._renderer._game_over:
             if self.distance_to_pacman() <= 6:
                 self.get_path_to_pacman(self)
@@ -368,7 +386,9 @@ class Ghost(MovingObject):
 
         dx = self.target[0] - self.x
         dy = self.target[1] - self.y
-        #print(f"{dy} {dx} {self.target} ({self.x}, {self.y})")
+        
+        # Determine what direction ghost must travel next, since ghost cannot move diagnally, either the side-to-side or up-and-down movement must be 0
+        # this is used to determine what direction to travel
 
         if dx == 0:
             if dy < 0:
@@ -397,12 +417,14 @@ class Ghost(MovingObject):
         translated_path = [self._renderer.maze_to_screen_coordinates(point) for point in path]
         ghost.new_path(translated_path)
     
+    # At end of game ghosts flee the arena, to set up the story of the game
     def end_game(self):
         if self.color in ['pink', 'red']:
             self.back_to_spawn(self, (9, 18))
         else:
             self.back_to_spawn(self, (9, 0))
 
+    # Moves ghosts, depending on the direction and speed they are travelling at
     def auto_move(self, direction, speed):
         if direction == 1:
             self.set_position(self.x, self.y - speed)
@@ -420,6 +442,7 @@ class Ghost(MovingObject):
         if self.afraid and not self.fleeing:
             self.state = 4
 
+    # Sends ghost back to spawn, or out of the arena, depending on the state of the game
     def back_to_spawn(self, ghost, coordinates = (9, 9)):
         ghost_position = self._renderer.screen_to_maze_coordinates(ghost.target if ghost.target else (ghost.x, ghost.y))
         path = self.controller.find_path((ghost_position[1], ghost_position[0]), coordinates)
@@ -432,10 +455,12 @@ class Ghost(MovingObject):
         #print(self.location[-1] if self.location else None)
         self.target_reached()
 
+        # Ghost needs to travel at slower speed until it reaches the target it was attempting to reach before pacman collided into it
         if not self.fleeing_first:
             if int(self.x) == self.x and int(self.y) == self.y:
                 self.fleeing_first = True
 
+        # Ghost travels twice as fast when fleeing after it reaches the target it was attempting to reach before pacman collided into it
         if self.fleeing and self.fleeing_first:
             speed = 1
         else:
@@ -446,7 +471,7 @@ class Ghost(MovingObject):
         if self.fleeing:
             image = self.fleeing_image_states[self.state]
         else:
-            image = self.regular_image_states[self.state]
+            image = self.regular_image_states[self.slide][self.state]
 
         rect = image.get_rect()
         rect.center = (self.x + 16, self.y + 16)
@@ -473,7 +498,7 @@ class Controller:
         self.valid_spaces = []
         self.ghost_locations = []
 
-# Fix walls with 1 side
+        # Each letter represents the type of wall that should be in the corresponding spot
         self.ascii_maze = [
             "hbbbbbbbbmbbbbbbbbi",
             "aG       a       Ga",
@@ -501,10 +526,12 @@ class Controller:
         self.size = (0, 0)
         self.convert_maze()
     
+    # Selects random valid space and finds a path there
     def random_path(self, start):
         end = random.choice(self.valid_spaces)
         return self.find_path(start, (end[1], end[0]))
 
+    # Utilizing A* to find an optimal path from one location to another
     def find_path(self, start, end):
 
         def heuristic(a, b):
@@ -552,7 +579,7 @@ class Controller:
 
         
 
-
+    # Converts maze into a format that can be translated onto the screen with given images
     def convert_maze(self):
         for x, row in enumerate(self.ascii_maze):
             self.size = (len(row), x + 1)
@@ -602,12 +629,13 @@ class Game:
 
         for x, row in enumerate(new_game.maze):
             for y, column in enumerate(row):
+                # If code does not indicate an empty space, or a ghost location, a wall is generated
                 if column != 1 and column != 'G' and column != 'O':
-                    print(column)
                     new_renderer.new_wall(Wall(new_renderer, y, x, SIZE, wall_images[ord(column) - 97]))
 
         ghost_colors = ['pink', 'orange', 'blue', 'red']
-    
+
+        # Points are added to every valid space, besides ghost spawn points
         for location in new_game.point_spaces:
             coordinates = new_renderer.maze_to_screen_coordinates(location)
             point = Point(new_renderer, coordinates[0] + SIZE // 2, coordinates[1] + SIZE // 2)
@@ -623,12 +651,10 @@ class Game:
             ghost = Ghost(new_renderer, coordinates[0], coordinates[1], SIZE, new_game, ghost_colors[x], coordinates)
             new_renderer.new_ghost(ghost)
 
+        # Create pacman, and initilize game
         pacman = Pacman(new_renderer, 288, 480, SIZE - 2)
         new_renderer.new_pacman(pacman)
         new_renderer.tick(60)
 
 new_game = Game()
 new_game.start_game()
-            
-        
-    

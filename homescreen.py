@@ -1,5 +1,6 @@
 
 import pygame
+import random
 
 pygame.init()
 
@@ -12,6 +13,26 @@ pygame.display.set_caption("Homescreen")
 openingFont = pygame.font.SysFont("monospace", 50)
 start = True
 
+size = 115
+cols = (WIDTH // size) + 2
+rows = (HEIGHT // size) + 2
+table = [[0 for x in range(cols)] for y in range(rows)]
+
+def grid(x, y):
+    move = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    random.shuffle(move)
+
+    for xShift, yShift in move:
+        x2 = x + xShift
+        y2 = y + yShift
+        if -1 < x2 < cols and -1 < y2 < rows and not table [y2][x2]:
+            table [y2][x2] = True
+
+            pygame.draw.line(screen, (0, 0, 255), (x * size, y * size), (x2 * size, y2 * size), 3)
+            pygame.display.flip()
+            pygame.time.wait(30)
+            grid(x2, y2)
+        
 def openingText(text, x, y):
     for i in range(len(text)):
         char = openingFont.render(text[i], True, (255, 255, 255), (0, 0, 0))
@@ -26,12 +47,17 @@ def openingText(text, x, y):
         if start:
             pygame.time.wait(115)
 
-def instructionsPage():
-    x=x
-
 def CenterText(text):
     textWidth, textHeight = openingFont.size(text)
     return ((WIDTH - textWidth) / 2)
+
+def CenterButtons(text, buttonX, buttonY, buttonWidth, buttonHeight):
+    textWidth, textHeight = openingFont.size(text)
+    startX = buttonX + (buttonWidth - textWidth) / 2
+    startY = buttonY + (buttonHeight - textHeight) / 2
+    return (startX, startY)
+
+grid(0, 0)
 
 openingText("Welcome!", CenterText("Welcome!"), (.15*HEIGHT))
 pygame.time.wait(500)
@@ -41,24 +67,36 @@ openingText(instructions, CenterText(instructions), (.25*HEIGHT))
 openingFont = pygame.font.SysFont("monospace", 40)
 
 # begin button
-pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(300, 450, 400, 150), 10)
-pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(305, 455, 390, 140), 10)
-openingText("Begin", 350, 500)
+beginButtonOutline = (300, 450, 400, 150)
+beginButton = (310, 460, 380, 130)
+pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(beginButtonOutline), 10)
+pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(beginButton))
+x, y = CenterButtons("Begin", 310, 460, 380, 130)
+openingText("Begin", x, y)
 
 # instructions button
-pygame.draw.rect(screen, (30, 144, 255), pygame.Rect(800, 450, 400, 150), 10)
-pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(805, 455, 390, 140), 10)
-openingText("Instructions", 850, 500)
+instructionButtonOutline = (800, 450, 400, 150)
+instructionButton = (810, 460, 380, 130)
+pygame.draw.rect(screen, (30, 144, 255), pygame.Rect(instructionButtonOutline), 10)
+pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(instructionButton))
+x, y = CenterButtons("Instructions", 810, 460, 380, 130)
+openingText("Instructions", x, y)
 
 # settings button
-pygame.draw.rect(screen, (255, 255, 0), pygame.Rect(300, 700, 400, 150), 10)
-pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(305, 705, 390, 140), 10)
-openingText("Settings", 350, 750)
+settingButtonOutline = (300, 700, 400, 150)
+settingButton = (310, 710, 380, 130)
+pygame.draw.rect(screen, (255, 255, 0), pygame.Rect(settingButtonOutline), 10)
+pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(settingButton))
+x, y = CenterButtons("Settings", 310, 710, 380, 130)
+openingText("Settings", x, y)
 
 # quit button
-pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(800, 700, 400, 150), 10)
-pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(805, 705, 390, 140), 10)
-openingText("Quit", 850, 750)
+quitButtonOutline = (800, 700, 400, 150)
+quitButton = (810, 710, 380, 130)
+pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(quitButtonOutline), 10)
+pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(quitButton))
+x, y = CenterButtons("Quit", 810, 710, 380, 130)
+openingText("Quit", x, y)
 
 start = False
 
@@ -72,19 +110,24 @@ while True:
                 pygame.quit()
                 quit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if pygame.Rect(800, 700, 400, 150):
+            if pygame.Rect(quitButtonOutline):
                 pygame.quit()
                 quit()
     
-    if event.type == pygame.MOUSEBUTTONDOWN:
-            if pygame.Rect(800, 450, 400, 150):
-                instructionsPage()
+    # instructions button clicked
+    # if event.type == pygame.MOUSEBUTTONDOWN:
+    #         if pygame.Rect(instructionButtonOutline):
+                # subprocess.run(instructions)
+
+    # begin button clicked
+    # if event.type == pygame.MOUSEBUTTONDOWN:
+    #         if pygame.Rect(beginButtonOutline):
+    #             subprocess.run(mazegen)
+                
 
     pygame.display.flip()
 
-    # todo:  buttons (start game, instructions, settings, quit), use WIDTH/HEIGHT instead of values, center button text, create instructions popup
+    # todo:  buttons (start game, instructions, settings, quit), create instructions
     # later: splashscreen? better background
     # Add comments
-#     # begin button
-# pygame.draw.rect(screen, (255, 0, 0), pygame.Rect((WIDTH*.195), (.29*WIDTH), (.26*WIDTH), (.01*WIDTH)), 10)
-# pygame.draw.rect(screen, (0, 0, 0), pygame.Rect((WIDTH*.2), (.3*WIDTH), (WIDTH*.25), (WIDTH*.09)), 10)
+    
