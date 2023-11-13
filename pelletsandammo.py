@@ -35,3 +35,14 @@ class pellets:
     def update_score(self, window):
         self.score += 1
         #self.display_score(window)
+
+    def display_ammo(self, window):
+        ammo_disp = self.font.render("Score: " + str(self.score), True, self.WHITE) 
+        ammo_rect = ammo_disp.get_rect()
+        ammo_rect.center = (self.WIDTH - 270, 130)
+        window.blit(ammo_disp, ammo_rect)
+        print(self.score)
+
+    def update_ammo(self, window):
+        self.score += 1
+        #self.display_score(window)
