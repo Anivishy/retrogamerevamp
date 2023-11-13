@@ -205,9 +205,7 @@ last_walls = walls
 intersected = set()
 
 while True:
-    #health bar init
-    player_health.gen_healthbar(window)
-    player_score.display_score(window)
+    
 
     # events
     direction = 0
@@ -403,7 +401,7 @@ while True:
                     # at this point,
                     # the game detects the player picked up a pellet
                     if indicator not in intersected:
-                        player_score.update_score(window)
+                        player_score.update_score()
                     intersected.add(indicator)
                 if indicator not in intersected:            
                     pygame.draw.rect(window, (170, 170, 0), rect)
@@ -411,6 +409,9 @@ while True:
     # draw player
     # yellow circle at center of screen
 
+    #health bar init and score init
+    player_health.gen_healthbar(window, WIDTH)
+    player_score.display_score(window, WIDTH)
     
     pygame.display.update()
     

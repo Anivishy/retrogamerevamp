@@ -5,7 +5,7 @@ import pyautogui
 
 class healthbar:
 
-    #pygame.init()
+    pygame.init()
 
     def __init__ (self):
         self.player_health = 80
@@ -14,7 +14,7 @@ class healthbar:
         self.font = pygame.font.Font('freesansbold.ttf', 32)
 
         #Window Constants
-        self.WIDTH, self.HEIGHT = pyautogui.size()
+        #self.WIDTH, self.HEIGHT = pyautogui.size()
 
         #Health Constants
         #self.player_health = 100 #Health of the player, as a percent
@@ -27,23 +27,23 @@ class healthbar:
         self.COLOR = ()
 
 
-    def gen_healthbar(self, window):
+    def gen_healthbar(self, window, WIDTH):
         if self.player_health <= 100 and self.player_health > 50:
             self.COLOR = self.GREEN
-            pygame.draw.rect(window, self.GREEN, [self.WIDTH - 350, 10, 300 * (self.player_health/100), 50])
+            pygame.draw.rect(window, self.GREEN, [WIDTH - 350, 10, 300 * (self.player_health/100), 50])
         elif self.player_health <= 50 and self.player_health > 25:
             self.COLOR = self.YELLOW
-            pygame.draw.rect(window, self.YELLOW, [self.WIDTH - 350, 10, 300 * (self.player_health/100), 50])
+            pygame.draw.rect(window, self.YELLOW, [WIDTH - 350, 10, 300 * (self.player_health/100), 50])
         elif self.player_health <= 25 and self.player_health > 0:
             self.COLOR = self.RED
-            pygame.draw.rect(window, self.RED, [self.WIDTH - 350, 10, 300 * (self.player_health/100), 50])
-        pygame.draw.rect(window, self.COLOR, [self.WIDTH - 350, 10, 302, 52], 2)
-        self.gen_health_percent(window)
+            pygame.draw.rect(window, self.RED, [WIDTH - 350, 10, 300 * (self.player_health/100), 50])
+        pygame.draw.rect(window, self.COLOR, [WIDTH - 350, 10, 302, 52], 2)
+        self.gen_health_percent(window, WIDTH)
 
-    def gen_health_percent(self, window):
+    def gen_health_percent(self, window, WIDTH):
         health = self.font.render(str(self.player_health) + "%", True, self.COLOR) 
         healthRect = health.get_rect()
-        healthRect.center = (self.WIDTH - 320, 90)
+        healthRect.center = (WIDTH - 320, 90)
         window.blit(health, healthRect)
 
     def take_damage(self, dmg):

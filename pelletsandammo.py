@@ -15,7 +15,7 @@ class pellets:
         self.font = pygame.font.Font('freesansbold.ttf', 32)
 
         #Window Constants
-        self.WIDTH, self.HEIGHT = pyautogui.size()
+        #self.WIDTH, self.HEIGHT = pyautogui.size()
 
         #Colors
         self.GREEN = (0, 255, 0)
@@ -25,24 +25,22 @@ class pellets:
         self.WHITE = (255, 255, 255)
         self.COLOR = ()
 
-    def display_score(self, window):
+    def display_score(self, window, WIDTH):
         score_disp = self.font.render("Score: " + str(self.score), True, self.WHITE) 
         score_rect = score_disp.get_rect()
-        score_rect.center = (self.WIDTH - 270, 130)
+        score_rect.center = (WIDTH - 270, 130)
         window.blit(score_disp, score_rect)
         print(self.score)
 
-    def update_score(self, window):
+    def update_score(self):
         self.score += 1
-        #self.display_score(window)
 
-    def display_ammo(self, window):
+    def display_ammo(self, window, WIDTH):
         ammo_disp = self.font.render("Score: " + str(self.score), True, self.WHITE) 
         ammo_rect = ammo_disp.get_rect()
-        ammo_rect.center = (self.WIDTH - 270, 130)
+        ammo_rect.center = (WIDTH - 270, 130)
         window.blit(ammo_disp, ammo_rect)
         print(self.score)
 
-    def update_ammo(self, window):
+    def update_ammo(self):
         self.score += 1
-        #self.display_score(window)
