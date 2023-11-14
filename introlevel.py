@@ -27,7 +27,7 @@ class Renderer:
     def tick(self, fps):
         # Alternates between open and closed mouth for Pacman
         pygame.time.set_timer(self._open_mouth, 400)
-        pygame.time.set_timer(self._ghost_slide, 200)
+        pygame.time.set_timer(self._ghost_slide, 150)
 
         while True:
             for object in self._objects:
@@ -217,13 +217,13 @@ class MovingObject(GameObject):
         if direction == 0:
             return False, end_point
         elif direction == 1:
-            end_point = (self.x, self.y - 1)
+            end_point = (self.x, self.y - 2)
         elif direction == 2:
-            end_point = (self.x, self.y + 1)
+            end_point = (self.x, self.y + 2)
         elif direction == 3:
-            end_point = (self.x - 1, self.y)
+            end_point = (self.x - 2, self.y)
         elif direction == 4:
-            end_point = (self.x + 1, self.y)
+            end_point = (self.x + 2, self.y)
         
         return self.can_move(end_point), end_point
 
@@ -452,19 +452,20 @@ class Ghost(MovingObject):
 
     
     def tick(self):
+        print(f"{self.x} , {self.y}  {self.target}")
         #print(self.location[-1] if self.location else None)
         self.target_reached()
 
         # Ghost needs to travel at slower speed until it reaches the target it was attempting to reach before pacman collided into it
         if not self.fleeing_first:
-            if int(self.x) == self.x and int(self.y) == self.y:
+            if self.x // 2 * 2 == self.x and self.y // 2 * 2 == self.y:
                 self.fleeing_first = True
 
         # Ghost travels twice as fast when fleeing after it reaches the target it was attempting to reach before pacman collided into it
         if self.fleeing and self.fleeing_first:
-            speed = 1
+            speed = 2
         else:
-            speed = 0.5
+            speed = 1
         self.auto_move(self.direction, speed)
 
     def draw(self):
@@ -634,6 +635,14 @@ class Game:
                     new_renderer.new_wall(Wall(new_renderer, y, x, SIZE, wall_images[ord(column) - 97]))
 
         ghost_colors = ['pink', 'orange', 'blue', 'red']
+
+        # Brute force way to fix location of point spawns
+        new_game.point_spaces.append((1,1))
+        new_game.point_spaces.append((17,1))
+        new_game.point_spaces.append((9,7))
+        new_game.point_spaces.remove((9, 8))
+        new_game.point_spaces.remove((9, 9))
+        new_game.point_spaces.remove((10, 9))
 
         # Points are added to every valid space, besides ghost spawn points
         for location in new_game.point_spaces:

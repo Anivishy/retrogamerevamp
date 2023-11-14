@@ -8,7 +8,7 @@ class healthbar:
     pygame.init()
 
     def __init__ (self):
-        self.player_health = 80
+        self.player_health = 100
         
         #Fonts
         self.font = pygame.font.Font('freesansbold.ttf', 32)
@@ -43,7 +43,10 @@ class healthbar:
     def gen_health_percent(self, window, WIDTH):
         health = self.font.render(str(self.player_health) + "%", True, self.COLOR) 
         healthRect = health.get_rect()
-        healthRect.center = (WIDTH - 320, 90)
+        if self.player_health == 100:
+            healthRect.center = (WIDTH - 90, 90)
+        else:
+            healthRect.center = (WIDTH - 80, 90)
         window.blit(health, healthRect)
 
     def take_damage(self, dmg):

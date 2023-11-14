@@ -28,7 +28,7 @@ class pellets:
     def display_score(self, window, WIDTH):
         score_disp = self.font.render("Score: " + str(self.score), True, self.WHITE) 
         score_rect = score_disp.get_rect()
-        score_rect.center = (WIDTH - 270, 130)
+        score_rect.center = (WIDTH - 120, 130)
         window.blit(score_disp, score_rect)
         #print(self.score)
 
