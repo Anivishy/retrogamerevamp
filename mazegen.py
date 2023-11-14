@@ -31,7 +31,7 @@ except:
     HEIGHT = 600
 
 WIDTH = 1600
-HEIGHT = 1200
+HEIGHT = 900
 FULLSCREEN = False
 
 
@@ -56,7 +56,7 @@ print(f"Initializing: {WIDTH}x{HEIGHT}, square size: {SQUARE_SIZE}")
 
 window = pygame.display.set_mode((WIDTH, HEIGHT), (pygame.FULLSCREEN if FULLSCREEN else 0) | pygame.GL_DOUBLEBUFFER)
 
-FPS = 60
+
 
 pygame.display.set_caption("Maze Generator")
 pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
@@ -68,10 +68,11 @@ clock = pygame.time.Clock()
 walls = set()
 
 
-MAP_RADIUS = 24
+MAP_RADIUS = 25 # map consists of 4 adjacent MR*MR squares, blending adjacent edges together
+BOSS_AREA = 5 # BA*BA square in the corners for bosses 
+
 RADIUS = int(SQUARE_SIZE / 2) // 2
 FIXED_X = FIXED_Y = False
-
 BOUND = MAP_RADIUS * SQUARE_SIZE
 
 BORDER_X = (BOUND - WIDTH / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
@@ -86,9 +87,42 @@ if int((BOUND - HEIGHT / 2) / SQUARE_SIZE) == (BOUND - HEIGHT / 2) / SQUARE_SIZE
 if BORDER_Y < 0:
     FIXED_Y = True
 
-UNCAPPED_FPS = False # set at your own risk!
+FPS = 60 # set to None for uncapped FPS - use at your own risk!
+UNCAPPED_FPS = (FPS is None)
 
 import time
+
+boss_zones = set()
+# generate pairs of every wall that could spawn in the corners of the map using boss area
+for x in range(BOSS_AREA):
+    for y in range(BOSS_AREA):
+        # top left
+        boss_zones.add(((x - int(BORDER_X), y - int(BORDER_Y)), (x - int(BORDER_X), y + 1 - int(BORDER_Y))))
+        boss_zones.add(((x - int(BORDER_X), y - int(BORDER_Y)), (x + 1 - int(BORDER_X), y - int(BORDER_Y))))
+
+        # top right
+        boss_zones.add(((x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y - int(BORDER_Y)), (x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + 1 - int(BORDER_Y))))
+        boss_zones.add(((x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y - int(BORDER_Y)), (x + 1 + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y - int(BORDER_Y))))
+
+        # bottom left
+        boss_zones.add(((x - int(BORDER_X), y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (x - int(BORDER_X), y + 1 + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
+        boss_zones.add(((x - int(BORDER_X), y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (x + 1 - int(BORDER_X), y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
+
+        # bottom right
+        boss_zones.add(((x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + 1 + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
+        boss_zones.add(((x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (x + 1 + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
+
+boss_walls = set()
+for x in range(BOSS_AREA):
+    boss_walls.add(((x - int(BORDER_X), -int(BORDER_Y) + BOSS_AREA), (x + 1 - int(BORDER_X), -int(BORDER_Y) + BOSS_AREA)))
+    boss_walls.add(((x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, -int(BORDER_Y) + BOSS_AREA), (x + 1 + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, -int(BORDER_Y) + BOSS_AREA)))
+    boss_walls.add(((x - int(BORDER_X), int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (x + 1 - int(BORDER_X), int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
+    boss_walls.add(((x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (x + 1 + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
+for y in range(BOSS_AREA):
+    boss_walls.add(((-int(BORDER_X) + BOSS_AREA, y - int(BORDER_Y)), (-int(BORDER_X) + BOSS_AREA, y + 1 - int(BORDER_Y))))
+    boss_walls.add(((int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y - int(BORDER_Y)), (int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + 1 - int(BORDER_Y))))
+    boss_walls.add(((-int(BORDER_X) + BOSS_AREA, y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (-int(BORDER_X) + BOSS_AREA, y + 1 + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
+    boss_walls.add(((int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + 1 + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
 
 def create_protected(from_x, from_y):
     protected = set()
@@ -135,6 +169,7 @@ def gen_walls(from_x, from_y):
             if rgen.random() < threshold:
                 walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
 
+    walls -= boss_zones
     walls |= protected
     for x in range(-3, WIDTH // SQUARE_SIZE + 3):
         for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
@@ -269,6 +304,7 @@ def preload_walls(fromx, fromy, tox, toy, walls):
             if rgen.random() < threshold:
                 new_walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
 
+    new_walls -= boss_zones
     new_walls |= protected
     
     for x in range(int(bxl), int(bxr)):
@@ -443,6 +479,8 @@ while True:
         walls = last_walls
     
     walls -= walls_to_remove
+    if keys[pygame.K_LSHIFT]:
+        walls |= boss_walls
 
     walls_to_check = set()
     for x in range(0, 2):
