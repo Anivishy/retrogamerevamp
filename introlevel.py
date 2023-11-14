@@ -27,7 +27,7 @@ class Renderer:
     def tick(self, fps):
         # Alternates between open and closed mouth for Pacman
         pygame.time.set_timer(self._open_mouth, 400)
-        pygame.time.set_timer(self._ghost_slide, 200)
+        pygame.time.set_timer(self._ghost_slide, 150)
 
         while True:
             for object in self._objects:
@@ -634,6 +634,13 @@ class Game:
                     new_renderer.new_wall(Wall(new_renderer, y, x, SIZE, wall_images[ord(column) - 97]))
 
         ghost_colors = ['pink', 'orange', 'blue', 'red']
+        new_game.point_spaces.append((1,1))
+        new_game.point_spaces.append((17,1))
+        new_game.point_spaces.append((9,7))
+        new_game.point_spaces.remove((9, 8))
+        new_game.point_spaces.remove((9, 9))
+        new_game.point_spaces.remove((10, 9))
+        print(len(new_game.point_spaces))
 
         # Points are added to every valid space, besides ghost spawn points
         for location in new_game.point_spaces:
