@@ -57,3 +57,6 @@ class pellets:
 
     def add_ammo(self, amount):
         self.ammo += amount
+
+    def use_ammo(self, amount):
+        self.ammo -= amount
