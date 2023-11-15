@@ -556,6 +556,7 @@ while True:
     #health bar init and score init
     player_health.gen_healthbar(window, WIDTH)
     player_score.display_score(window, WIDTH)
+    player_score.display_ammo(window, WIDTH)
     
     pygame.display.update()
     
