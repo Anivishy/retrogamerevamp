@@ -1,14 +1,3 @@
-# This is a temporary file used to test maze generation,
-# as well as controls and camera movement for the game.
-
-# Later, this will be used for maze generation functions
-# (such as finding the walls at a specific point).
-
-# working title: PAC-ROOMS
-# working title #2: Pac-Man Has a Gun
-
-
-# setup pygame project
 import pygame
 import random
 import os
@@ -17,7 +6,6 @@ import math
 import health
 import pelletsandammo
 
-#os.environ['SDL_VIDEO_CENTERED'] = '1' # You have to call this before pygame.init()
 
 pygame.init()
 player_health = health.healthbar()
@@ -38,7 +26,6 @@ FULLSCREEN = False
 player_health = health.healthbar()
 
 
-# screen
 SQUARE_SIZE = 60
 while True:
     try:
@@ -61,8 +48,6 @@ window = pygame.display.set_mode((WIDTH, HEIGHT), (pygame.FULLSCREEN if FULLSCRE
 pygame.display.set_caption("Maze Generator")
 pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
 
-
-# clock
 clock = pygame.time.Clock()
 
 walls = set()
@@ -93,7 +78,6 @@ UNCAPPED_FPS = (FPS is None)
 import time
 
 boss_zones = set()
-# generate pairs of every wall that could spawn in the corners of the map using boss area
 for x in range(BOSS_AREA):
     for y in range(BOSS_AREA):
         # top left
@@ -409,22 +393,22 @@ while True:
 
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT]: 
+    if keys[pygame.K_LEFT] or keys[pygame.K_a]: 
         if not UNCAPPED_FPS:
             playerx -= velocity / FPS * SQUARE_SIZE
         else:
             playerx -= 5 * (delay_to - last) * SQUARE_SIZE
-    elif keys[pygame.K_RIGHT]:
+    elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
         if not UNCAPPED_FPS:
             playerx += velocity / FPS * SQUARE_SIZE
         else:
             playerx += 5 * (delay_to - last) * SQUARE_SIZE
-    elif keys[pygame.K_UP]:
+    elif keys[pygame.K_UP] or keys[pygame.K_w]:
         if not UNCAPPED_FPS:
             playery -= velocity / FPS * SQUARE_SIZE
         else:
             playery -= 5 * (delay_to - last) * SQUARE_SIZE
-    elif keys[pygame.K_DOWN]:
+    elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
         if not UNCAPPED_FPS:
             playery += velocity / FPS * SQUARE_SIZE
         else:
