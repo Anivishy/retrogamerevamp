@@ -338,7 +338,7 @@ class Ghost(MovingObject):
             if self.fleeing and not self.fleeing_first:
                 self.fleeing_first = True
 
-            if self.distance_to_pacman() < 6 and not self.fleeing and not self.afraid and not self._renderer._game_over:
+            if self.distance_to_pacman() < 4 and not self.fleeing and not self.afraid and not self._renderer._game_over:
                 self.get_path_to_pacman(self)
 
             self.target = self.next_location()
@@ -371,7 +371,7 @@ class Ghost(MovingObject):
     def get_next_direction(self):
         # If there is no new target, new course is determined depending on state of game and state of ghost
         if self.target is None and not self.fleeing and not self._renderer._game_over:
-            if self.distance_to_pacman() <= 6:
+            if self.distance_to_pacman() <= 4:
                 self.get_path_to_pacman(self)
             else:
                 self.get_random_path(self)
@@ -452,7 +452,6 @@ class Ghost(MovingObject):
 
     
     def tick(self):
-        print(f"{self.x} , {self.y}  {self.target}")
         #print(self.location[-1] if self.location else None)
         self.target_reached()
 
@@ -661,7 +660,7 @@ class Game:
             new_renderer.new_ghost(ghost)
 
         # Create pacman, and initilize game
-        pacman = Pacman(new_renderer, 288, 480, SIZE - 2)
+        pacman = Pacman(new_renderer, 288, 480, SIZE - 4)
         new_renderer.new_pacman(pacman)
         new_renderer.tick(60)
 
