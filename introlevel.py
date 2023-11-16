@@ -3,6 +3,11 @@ import pygame
 import os
 from heapq import *
 
+base = os.path.dirname(os.path.abspath(__file__))
+
+def sanitize_path(path):
+    return os.path.join(base, path)
+
 class Renderer:
     def __init__(self, width, height, size):
         pygame.init()
@@ -27,7 +32,7 @@ class Renderer:
     def tick(self, fps):
         # Alternates between open and closed mouth for Pacman
         pygame.time.set_timer(self._open_mouth, 400)
-        pygame.time.set_timer(self._ghost_slide, 200)
+        pygame.time.set_timer(self._ghost_slide, 150)
 
         while True:
             for object in self._objects:
@@ -217,13 +222,13 @@ class MovingObject(GameObject):
         if direction == 0:
             return False, end_point
         elif direction == 1:
-            end_point = (self.x, self.y - 1)
+            end_point = (self.x, self.y - 2)
         elif direction == 2:
-            end_point = (self.x, self.y + 1)
+            end_point = (self.x, self.y + 2)
         elif direction == 3:
-            end_point = (self.x - 1, self.y)
+            end_point = (self.x - 2, self.y)
         elif direction == 4:
-            end_point = (self.x + 1, self.y)
+            end_point = (self.x + 2, self.y)
         
         return self.can_move(end_point), end_point
 
@@ -231,8 +236,8 @@ class Pacman(MovingObject):
     def __init__(self, surface, x, y, size):
         super().__init__(surface, x, y, size, None, False)
         self.last_position = (0, 0)
-        self.open_mouth = pygame.image.load('Images/pacmanOpen.png').convert_alpha()
-        self.closed_mouth = pygame.image.load('Images/pacmanClosed.png').convert_alpha()
+        self.open_mouth = pygame.image.load(sanitize_path('Images/pacmanOpen.png')).convert_alpha()
+        self.closed_mouth = pygame.image.load(sanitize_path('Images/pacmanClosed.png')).convert_alpha()
         self.image = self.open_mouth
         self.open = True
     
@@ -307,22 +312,22 @@ class Ghost(MovingObject):
         self.controller = controller
         self.color = color
         self.state = 0
-        self.fleeing_image_states = [pygame.image.load(f"Images/eyesUp.png").convert(),
-                                     pygame.image.load(f"Images/eyesDown.png").convert(),
-                                     pygame.image.load(f"Images/eyesLeft.png").convert(),
-                                     pygame.image.load(f"Images/eyesRight.png").convert(),
-                                     pygame.image.load(f"Images/scaredGhost.png").convert()]
+        self.fleeing_image_states = [pygame.image.load(sanitize_path(f"Images/eyesUp.png")).convert(),
+                                     pygame.image.load(sanitize_path(f"Images/eyesDown.png")).convert(),
+                                     pygame.image.load(sanitize_path(f"Images/eyesLeft.png")).convert(),
+                                     pygame.image.load(sanitize_path(f"Images/eyesRight.png")).convert(),
+                                     pygame.image.load(sanitize_path(f"Images/scaredGhost.png")).convert()]
 
-        self.regular_image_states = [[pygame.image.load(f"Images/{color}Up.png").convert(),
-                             pygame.image.load(f"Images/{color}Down.png").convert(),
-                             pygame.image.load(f"Images/{color}Left.png").convert(),
-                             pygame.image.load(f"Images/{color}Right.png").convert(),
-                             pygame.image.load(f"Images/scaredGhost.png").convert()], 
-                             [pygame.image.load(f"Images/{color}UpAlternate.png").convert(),
-                             pygame.image.load(f"Images/{color}DownAlternate.png").convert(),
-                             pygame.image.load(f"Images/{color}LeftAlternate.png").convert(),
-                             pygame.image.load(f"Images/{color}RightAlternate.png").convert(),
-                             pygame.image.load(f"Images/scaredGhostAlternate.png").convert()]]
+        self.regular_image_states = [[pygame.image.load(sanitize_path(f"Images/{color}Up.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/{color}Down.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/{color}Left.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/{color}Right.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/scaredGhost.png")).convert()], 
+                             [pygame.image.load(sanitize_path(f"Images/{color}UpAlternate.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/{color}DownAlternate.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/{color}LeftAlternate.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/{color}RightAlternate.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/scaredGhostAlternate.png")).convert()]]
         self.target = None
         self.afraid = False
         self.fleeing = False
@@ -338,7 +343,7 @@ class Ghost(MovingObject):
             if self.fleeing and not self.fleeing_first:
                 self.fleeing_first = True
 
-            if self.distance_to_pacman() < 6 and not self.fleeing and not self.afraid and not self._renderer._game_over:
+            if self.distance_to_pacman() < 4 and not self.fleeing and not self.afraid and not self._renderer._game_over:
                 self.get_path_to_pacman(self)
 
             self.target = self.next_location()
@@ -371,7 +376,7 @@ class Ghost(MovingObject):
     def get_next_direction(self):
         # If there is no new target, new course is determined depending on state of game and state of ghost
         if self.target is None and not self.fleeing and not self._renderer._game_over:
-            if self.distance_to_pacman() <= 6:
+            if self.distance_to_pacman() <= 4:
                 self.get_path_to_pacman(self)
             else:
                 self.get_random_path(self)
@@ -457,14 +462,14 @@ class Ghost(MovingObject):
 
         # Ghost needs to travel at slower speed until it reaches the target it was attempting to reach before pacman collided into it
         if not self.fleeing_first:
-            if int(self.x) == self.x and int(self.y) == self.y:
+            if self.x // 2 * 2 == self.x and self.y // 2 * 2 == self.y:
                 self.fleeing_first = True
 
         # Ghost travels twice as fast when fleeing after it reaches the target it was attempting to reach before pacman collided into it
         if self.fleeing and self.fleeing_first:
-            speed = 1
+            speed = 2
         else:
-            speed = 0.5
+            speed = 1
         self.auto_move(self.direction, speed)
 
     def draw(self):
@@ -610,22 +615,22 @@ class Game:
         game_size = new_game.size
         new_renderer = Renderer(game_size[0] * SIZE, game_size[1] * SIZE, SIZE)
 
-        wall_images = [pygame.image.load('Images/wall1.png').convert(), 
-                   pygame.image.load('Images/wall2.png').convert(),
-                   pygame.image.load('Images/wall3.png').convert(), 
-                   pygame.image.load('Images/wall4.png').convert(),
-                   pygame.image.load('Images/wall5.png').convert(), 
-                   pygame.image.load('Images/wall6.png').convert(),
-                   pygame.image.load('Images/wall7.png').convert(), 
-                   pygame.image.load('Images/wall8.png').convert(),
-                   pygame.image.load('Images/wall9.png').convert(), 
-                   pygame.image.load('Images/wall10.png').convert(),
-                   pygame.image.load('Images/wall11.png').convert(), 
-                   pygame.image.load('Images/wall12.png').convert(),
-                   pygame.image.load("Images/wall13.png").convert(),
-                   pygame.image.load("Images/wall14.png").convert(),
-                   pygame.image.load('Images/wall15.png').convert(),
-                   pygame.image.load('Images/wall16.png').convert()]
+        wall_images = [pygame.image.load(sanitize_path('Images/wall1.png')).convert(), 
+                   pygame.image.load(sanitize_path('Images/wall2.png')).convert(),
+                   pygame.image.load(sanitize_path('Images/wall3.png')).convert(), 
+                   pygame.image.load(sanitize_path('Images/wall4.png')).convert(),
+                   pygame.image.load(sanitize_path('Images/wall5.png')).convert(), 
+                   pygame.image.load(sanitize_path('Images/wall6.png')).convert(),
+                   pygame.image.load(sanitize_path('Images/wall7.png')).convert(), 
+                   pygame.image.load(sanitize_path('Images/wall8.png')).convert(),
+                   pygame.image.load(sanitize_path('Images/wall9.png')).convert(), 
+                   pygame.image.load(sanitize_path('Images/wall10.png')).convert(),
+                   pygame.image.load(sanitize_path('Images/wall11.png')).convert(), 
+                   pygame.image.load(sanitize_path('Images/wall12.png')).convert(),
+                   pygame.image.load(sanitize_path("Images/wall13.png")).convert(),
+                   pygame.image.load(sanitize_path("Images/wall14.png")).convert(),
+                   pygame.image.load(sanitize_path('Images/wall15.png')).convert(),
+                   pygame.image.load(sanitize_path('Images/wall16.png')).convert()]
 
         for x, row in enumerate(new_game.maze):
             for y, column in enumerate(row):
@@ -634,6 +639,14 @@ class Game:
                     new_renderer.new_wall(Wall(new_renderer, y, x, SIZE, wall_images[ord(column) - 97]))
 
         ghost_colors = ['pink', 'orange', 'blue', 'red']
+
+        # Brute force way to fix location of point spawns
+        new_game.point_spaces.append((1,1))
+        new_game.point_spaces.append((17,1))
+        new_game.point_spaces.append((9,7))
+        new_game.point_spaces.remove((9, 8))
+        new_game.point_spaces.remove((9, 9))
+        new_game.point_spaces.remove((10, 9))
 
         # Points are added to every valid space, besides ghost spawn points
         for location in new_game.point_spaces:
@@ -652,7 +665,7 @@ class Game:
             new_renderer.new_ghost(ghost)
 
         # Create pacman, and initilize game
-        pacman = Pacman(new_renderer, 288, 480, SIZE - 2)
+        pacman = Pacman(new_renderer, 288, 480, SIZE - 4)
         new_renderer.new_pacman(pacman)
         new_renderer.tick(60)
 
