@@ -3,6 +3,11 @@ import pygame
 import os
 from heapq import *
 
+base = os.path.dirname(os.path.abspath(__file__))
+
+def sanitize_path(path):
+    return os.path.join(base, path)
+
 class Renderer:
     def __init__(self, width, height, size):
         pygame.init()
@@ -231,8 +236,8 @@ class Pacman(MovingObject):
     def __init__(self, surface, x, y, size):
         super().__init__(surface, x, y, size, None, False)
         self.last_position = (0, 0)
-        self.open_mouth = pygame.image.load('Images/pacmanOpen.png').convert_alpha()
-        self.closed_mouth = pygame.image.load('Images/pacmanClosed.png').convert_alpha()
+        self.open_mouth = pygame.image.load(sanitize_path('Images/pacmanOpen.png')).convert_alpha()
+        self.closed_mouth = pygame.image.load(sanitize_path('Images/pacmanClosed.png')).convert_alpha()
         self.image = self.open_mouth
         self.open = True
     
@@ -307,22 +312,22 @@ class Ghost(MovingObject):
         self.controller = controller
         self.color = color
         self.state = 0
-        self.fleeing_image_states = [pygame.image.load(f"Images/eyesUp.png").convert(),
-                                     pygame.image.load(f"Images/eyesDown.png").convert(),
-                                     pygame.image.load(f"Images/eyesLeft.png").convert(),
-                                     pygame.image.load(f"Images/eyesRight.png").convert(),
-                                     pygame.image.load(f"Images/scaredGhost.png").convert()]
+        self.fleeing_image_states = [pygame.image.load(sanitize_path(f"Images/eyesUp.png")).convert(),
+                                     pygame.image.load(sanitize_path(f"Images/eyesDown.png")).convert(),
+                                     pygame.image.load(sanitize_path(f"Images/eyesLeft.png")).convert(),
+                                     pygame.image.load(sanitize_path(f"Images/eyesRight.png")).convert(),
+                                     pygame.image.load(sanitize_path(f"Images/scaredGhost.png")).convert()]
 
-        self.regular_image_states = [[pygame.image.load(f"Images/{color}Up.png").convert(),
-                             pygame.image.load(f"Images/{color}Down.png").convert(),
-                             pygame.image.load(f"Images/{color}Left.png").convert(),
-                             pygame.image.load(f"Images/{color}Right.png").convert(),
-                             pygame.image.load(f"Images/scaredGhost.png").convert()], 
-                             [pygame.image.load(f"Images/{color}UpAlternate.png").convert(),
-                             pygame.image.load(f"Images/{color}DownAlternate.png").convert(),
-                             pygame.image.load(f"Images/{color}LeftAlternate.png").convert(),
-                             pygame.image.load(f"Images/{color}RightAlternate.png").convert(),
-                             pygame.image.load(f"Images/scaredGhostAlternate.png").convert()]]
+        self.regular_image_states = [[pygame.image.load(sanitize_path(f"Images/{color}Up.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/{color}Down.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/{color}Left.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/{color}Right.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/scaredGhost.png")).convert()], 
+                             [pygame.image.load(sanitize_path(f"Images/{color}UpAlternate.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/{color}DownAlternate.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/{color}LeftAlternate.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/{color}RightAlternate.png")).convert(),
+                             pygame.image.load(sanitize_path(f"Images/scaredGhostAlternate.png")).convert()]]
         self.target = None
         self.afraid = False
         self.fleeing = False
@@ -610,22 +615,22 @@ class Game:
         game_size = new_game.size
         new_renderer = Renderer(game_size[0] * SIZE, game_size[1] * SIZE, SIZE)
 
-        wall_images = [pygame.image.load('Images/wall1.png').convert(), 
-                   pygame.image.load('Images/wall2.png').convert(),
-                   pygame.image.load('Images/wall3.png').convert(), 
-                   pygame.image.load('Images/wall4.png').convert(),
-                   pygame.image.load('Images/wall5.png').convert(), 
-                   pygame.image.load('Images/wall6.png').convert(),
-                   pygame.image.load('Images/wall7.png').convert(), 
-                   pygame.image.load('Images/wall8.png').convert(),
-                   pygame.image.load('Images/wall9.png').convert(), 
-                   pygame.image.load('Images/wall10.png').convert(),
-                   pygame.image.load('Images/wall11.png').convert(), 
-                   pygame.image.load('Images/wall12.png').convert(),
-                   pygame.image.load("Images/wall13.png").convert(),
-                   pygame.image.load("Images/wall14.png").convert(),
-                   pygame.image.load('Images/wall15.png').convert(),
-                   pygame.image.load('Images/wall16.png').convert()]
+        wall_images = [pygame.image.load(sanitize_path('Images/wall1.png')).convert(), 
+                   pygame.image.load(sanitize_path('Images/wall2.png')).convert(),
+                   pygame.image.load(sanitize_path('Images/wall3.png')).convert(), 
+                   pygame.image.load(sanitize_path('Images/wall4.png')).convert(),
+                   pygame.image.load(sanitize_path('Images/wall5.png')).convert(), 
+                   pygame.image.load(sanitize_path('Images/wall6.png')).convert(),
+                   pygame.image.load(sanitize_path('Images/wall7.png')).convert(), 
+                   pygame.image.load(sanitize_path('Images/wall8.png')).convert(),
+                   pygame.image.load(sanitize_path('Images/wall9.png')).convert(), 
+                   pygame.image.load(sanitize_path('Images/wall10.png')).convert(),
+                   pygame.image.load(sanitize_path('Images/wall11.png')).convert(), 
+                   pygame.image.load(sanitize_path('Images/wall12.png')).convert(),
+                   pygame.image.load(sanitize_path("Images/wall13.png")).convert(),
+                   pygame.image.load(sanitize_path("Images/wall14.png")).convert(),
+                   pygame.image.load(sanitize_path('Images/wall15.png')).convert(),
+                   pygame.image.load(sanitize_path('Images/wall16.png')).convert()]
 
         for x, row in enumerate(new_game.maze):
             for y, column in enumerate(row):

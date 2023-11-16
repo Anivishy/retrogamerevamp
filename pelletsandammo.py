@@ -3,6 +3,11 @@ import random
 import os
 import pyautogui
 
+base = os.path.dirname(os.path.abspath(__file__))
+
+def sanitize_path(path):
+    return os.path.join(base, path)
+
 class pellets:
 
     pygame.init()
@@ -17,7 +22,7 @@ class pellets:
         self.font = pygame.font.Font('freesansbold.ttf', 32)
 
         #images
-        self.image = pygame.image.load('Images/ammoIconGrey.png')
+        self.image = pygame.image.load(sanitize_path('Images/ammoIconGrey.png'))
         self.SCALE_SIZE = (75, 75)
         self.image = pygame.transform.scale(self.image, self.SCALE_SIZE)
 
