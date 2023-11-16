@@ -14,7 +14,7 @@ class Renderer:
         self._game_size = size
         self._width = width
         self._height = height
-        self._screen = pygame.display.set_mode((self._width, self._height), pygame.RESIZABLE)
+        self._screen = pygame.display.set_mode((self._width, self._height))
         self._clock = pygame.time.Clock()
         self._game_over = False
         self._objects = []
