@@ -2,7 +2,6 @@
 import pygame
 import random
 import sys
-# import introlevel
 
 class createHomescreen:
     def __init__(self):
@@ -47,7 +46,7 @@ class createHomescreen:
 
                 pygame.draw.line(self.screen, (0, 0, 255), (x * self.size, y * self.size), (x2 * self.size, y2 * self.size), 3)
                 pygame.display.flip()
-                pygame.time.wait(20) #20
+                pygame.time.wait(18) #18
                 self.grid(x2, y2)
             
     def openingText(self, text, x, y):
@@ -77,12 +76,11 @@ class createHomescreen:
     def run(self):
         self.grid(0, 0)
 
+        # title
         self.openingText("Welcome!", self.CenterText("Welcome!"), (.15 * self.HEIGHT))
         pygame.time.wait(500)
         instructions = "Click 'begin' to get started!"
         self.openingText(instructions, self.CenterText(instructions), (.25 * self.HEIGHT))
-
-        openingFont = pygame.font.SysFont("monospace", 40)
 
         # begin button
         pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.beginButtonOutline), 10)
@@ -112,42 +110,43 @@ class createHomescreen:
         x, y = self.CenterButtons("Quit", a, b, c, d)
         self.openingText("Quit", x, y)
 
-        start = False
+        self.start = False
 
-c = createHomescreen()
-c.run()
-
-# g = introlevel.Game()
-# g.start_game()
+if __name__ == "__main__":
+    c = createHomescreen()
+    c.run()
 
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 sys.exit()
+
         elif event.type == pygame.MOUSEBUTTONDOWN:
+            # quit button clicked
             if pygame.Rect(c.quitButtonOutline).collidepoint(pygame.mouse.get_pos()):
                 pygame.quit()
                 sys.exit()
-    
-    # instructions button clicked
-    # if event.type == pygame.MOUSEBUTTONDOWN:
-    #         if pygame.Rect(instructionButtonOutline):
-                
-    # begin button clicked
-    # if event.type == pygame.MOUSEBUTTONDOWN:
-    #         if pygame.Rect(c.beginButtonOutline).collidepoint(pygame.mouse.get_pos()):
-    #             g = introlevel.Game()
-    #             g.start_game()
-                
+            
+            # begin button clicked
+            elif pygame.Rect(c.beginButtonOutline).collidepoint(pygame.mouse.get_pos()):
+                import introlevel
+                g = introlevel.start_game()
+
+            # instruction button clicked
+            elif pygame.Rect(c.instructionButtonOutline).collidepoint(pygame.mouse.get_pos()):
+                import instructions
+                i = instructions.createInstructions()
+     
     pygame.display.flip()
 
-    # todo: buttons functionality, create instructions page
-    # later: splashscreen? Add comments
+    # todo: buttons functionality, create instructions page, decide on and add settings
+    # later: splashscreen? Add comments to code
 
     # things to include in instructions:
         # - up, down, left, right arrows to navigate
