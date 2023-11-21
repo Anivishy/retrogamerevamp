@@ -142,6 +142,11 @@ while True:
             elif pygame.Rect(c.instructionButtonOutline).collidepoint(pygame.mouse.get_pos()):
                 import instructions
                 i = instructions.createInstructions()
+
+            # settings button clicked
+            elif pygame.Rect(c.settingButtonOutline).collidepoint(pygame.mouse.get_pos()):
+                import settings
+                s = settings.openSettings()
      
     pygame.display.flip()
 
