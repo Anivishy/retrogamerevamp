@@ -20,7 +20,7 @@ except:
     HEIGHT = 600
 
 WIDTH = 1600
-HEIGHT = 900
+HEIGHT = 1000
 FULLSCREEN = False
 
 
@@ -51,27 +51,35 @@ pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
 
 clock = pygame.time.Clock()
 
+
 walls = set()
 
 
 MAP_RADIUS = 25 # map consists of 4 adjacent MR*MR squares, blending adjacent edges together
 BOSS_AREA = 5 # BA*BA square in the corners for bosses 
 
+defeated_bosses = set()
+
 RADIUS = int(SQUARE_SIZE / 2) // 2
 FIXED_X = FIXED_Y = False
 BOUND = MAP_RADIUS * SQUARE_SIZE
 
+PADX = PADY = False
+
 BORDER_X = (BOUND - WIDTH / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
 if int((BOUND - WIDTH / 2) / SQUARE_SIZE) == (BOUND - WIDTH / 2) / SQUARE_SIZE:
     BORDER_X += 0.5
+    PADX = True
 if BORDER_X < 0:
     FIXED_X = True
 
 BORDER_Y = (BOUND - HEIGHT / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
 if int((BOUND - HEIGHT / 2) / SQUARE_SIZE) == (BOUND - HEIGHT / 2) / SQUARE_SIZE:
     BORDER_Y += 0.5
+    PADY = True
 if BORDER_Y < 0:
     FIXED_Y = True
+
 
 FPS = 60 # set to None for uncapped FPS - use at your own risk!
 UNCAPPED_FPS = (FPS is None)
@@ -365,9 +373,11 @@ frame_count = 0
 last_walls = walls
 intersected = set()
 
-while True:
-    
+ba_overlap = set()
+wall_lock = False
+sound_lock = set()
 
+while True:
     # events
     direction = 0
     for event in pygame.event.get():
@@ -414,6 +424,14 @@ while True:
             playery += velocity / FPS * SQUARE_SIZE
         else:
             playery += 5 * (delay_to - last) * SQUARE_SIZE
+    elif keys[pygame.K_1]:
+        defeated_bosses.add(1)
+    elif keys[pygame.K_2]:
+        defeated_bosses.add(2)
+    elif keys[pygame.K_3]:
+        defeated_bosses.add(3)
+    elif keys[pygame.K_4]:
+        defeated_bosses.add(4)
 
 
     if keys[pygame.K_ESCAPE]:
@@ -468,8 +486,67 @@ while True:
         walls = last_walls
     
     walls -= walls_to_remove
-    if keys[pygame.K_LSHIFT]:
-        walls |= boss_walls
+    
+    if playerx - WIDTH // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADX else 0)) and playery - HEIGHT // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADY else 0)):
+        if 1 not in defeated_bosses:
+            if not wall_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_spawn.wav"))
+                ba_overlap = boss_walls.intersection(walls)
+                walls |= boss_walls
+                wall_lock = True
+            last_walls = walls
+        else:
+            if 1 not in sound_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
+                sound_lock.add(1)
+            walls = (walls - boss_walls) | ba_overlap
+            last_walls = walls
+            wall_lock = False
+    if playerx - WIDTH // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADX else 0)) + SQUARE_SIZE and playery - HEIGHT // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADY else 0)):
+        if 2 not in defeated_bosses:
+            if not wall_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_spawn.wav"))
+                ba_overlap = boss_walls.intersection(walls)
+                walls |= boss_walls
+                wall_lock = True
+            last_walls = walls
+        else:
+            if 2 not in sound_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
+                sound_lock.add(2)
+            walls = (walls - boss_walls) | ba_overlap
+            last_walls = walls
+            wall_lock = False
+    if playerx - WIDTH // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADX else 0)) and playery - HEIGHT // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADY else 0)) + SQUARE_SIZE:
+        if 3 not in defeated_bosses:
+            if not wall_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_spawn.wav"))
+                ba_overlap = boss_walls.intersection(walls)
+                walls |= boss_walls
+                wall_lock = True
+            last_walls = walls
+        else:
+            if 3 not in sound_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
+                sound_lock.add(3)
+            walls = (walls - boss_walls) | ba_overlap
+            last_walls = walls
+            wall_lock = False
+    if playerx - WIDTH // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADX else 0)) + SQUARE_SIZE and playery - HEIGHT // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADY else 0)) + SQUARE_SIZE:
+        if 4 not in defeated_bosses:
+            if not wall_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_spawn.wav"))
+                ba_overlap = boss_walls.intersection(walls)
+                walls |= boss_walls
+                wall_lock = True
+            last_walls = walls
+        else:
+            if 4 not in sound_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
+                sound_lock.add(4)
+            walls = (walls - boss_walls) | ba_overlap
+            last_walls = walls
+            wall_lock = False
 
     walls_to_check = set()
     for x in range(0, 2):
@@ -521,6 +598,12 @@ while True:
                         ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
                         ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
     
+    pygame.draw.line(window, (0, 255, 0), 
+        ((-startx * SQUARE_SIZE + WIDTH//2 + -BOUND + (BOSS_AREA * SQUARE_SIZE)), 0),
+        ((-startx * SQUARE_SIZE + WIDTH//2 +  -BOUND + (BOSS_AREA * SQUARE_SIZE)), HEIGHT),
+        3
+    )
+
     # if not FIXED_X:
     #     pygame.draw.line(window, (0, 255, 0),
     #         ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER_X*SQUARE_SIZE), 0),
@@ -573,6 +656,7 @@ while True:
                     # the game detects the player picked up a pellet
                     if indicator not in intersected:
                         player_score.update_score()
+                        pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/pellet.wav"))
                     intersected.add(indicator)
                 if indicator not in intersected:            
                     pygame.draw.rect(window, (170, 170, 0), rect)
