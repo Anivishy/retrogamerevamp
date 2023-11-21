@@ -26,6 +26,7 @@ class pellets:
         self.SCALE_SIZE = (75, 75)
         self.image = pygame.transform.scale(self.image, self.SCALE_SIZE)
 
+
         #Window Constants
         #self.WIDTH, self.HEIGHT = pyautogui.size()
 

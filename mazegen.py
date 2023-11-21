@@ -5,11 +5,12 @@ import os
 import math
 import health
 import pelletsandammo
-
+import weapons
 
 pygame.init()
 player_health = health.healthbar()
 player_score = pelletsandammo.pellets()
+player_weapon = weapons.weapons()
 
 try:
     import pyautogui
@@ -414,11 +415,15 @@ while True:
         else:
             playery += 5 * (delay_to - last) * SQUARE_SIZE
 
+
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
         exit()
     if keys[pygame.K_SPACE]:
         breakpoint()
+
+    if keys [pygame.K_RSHIFT]:
+        player_weapon.shoot(window, round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun")
 
 
     startx = (playerx - (WIDTH // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
@@ -436,7 +441,7 @@ while True:
         ((playerx // SQUARE_SIZE, playery // SQUARE_SIZE), (playerx // SQUARE_SIZE, playery // SQUARE_SIZE + 1)),
         ((playerx // SQUARE_SIZE + 1, playery // SQUARE_SIZE), (playerx // SQUARE_SIZE + 1, playery // SQUARE_SIZE + 1)),
         ((playerx // SQUARE_SIZE, playery // SQUARE_SIZE + 1), (playerx // SQUARE_SIZE + 1, playery // SQUARE_SIZE + 1))
-    })
+    })   
 
     # for some reason, there is 1 pixel of extra space at the top and the left
     # so the camera will try to go towards that, but this shifts the camera bound over by 1 pixel
