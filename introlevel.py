@@ -14,7 +14,7 @@ class Renderer:
         self._game_size = size
         self._width = width
         self._height = height
-        self._screen = pygame.display.set_mode((self._width, self._height), pygame.RESIZABLE)
+        self._screen = pygame.display.set_mode((self._width, self._height))
         self._clock = pygame.time.Clock()
         self._game_over = False
         self._objects = []
@@ -27,12 +27,16 @@ class Renderer:
         self._hungry_pacman = False
         self._hungry_event = pygame.USEREVENT + 1
         self._ghost_slide = pygame.USEREVENT + 2
+        self._flashing_ghosts = False
+        self._flashing_event = pygame.USEREVENT + 3
+        self._flash_ghosts = pygame.USEREVENT + 4
         self.paused = False
     
     def tick(self, fps):
         # Alternates between open and closed mouth for Pacman
         pygame.time.set_timer(self._open_mouth, 400)
         pygame.time.set_timer(self._ghost_slide, 150)
+        pygame.time.set_timer(self._flash_ghosts, 250)
 
         while True:
             for object in self._objects:
@@ -55,6 +59,9 @@ class Renderer:
     def start_hungry_timer(self):
         # Pacman enters the mode where he can eat ghosts for 10 seconds
         pygame.time.set_timer(self._hungry_event, 10000)
+        for ghost in self._ghosts:
+            ghost.flashing = False
+        pygame.time.set_timer(self._flashing_event, 7000)
     
     def start_hungry_pacman(self):
         self._hungry_pacman = True
@@ -71,7 +78,9 @@ class Renderer:
         self._pacman.set_position(288, 480)
 
         for ghost in self._ghosts:
-            ghost.set_position(ghost.spawn_point[0], ghost.spawn_point[1])
+            if not ghost.fleeing:
+                ghost.set_position(ghost.spawn_point[0], ghost.spawn_point[1])
+                ghost.get_random_path(ghost)
 
     
     def new_point(self, object):
@@ -124,9 +133,21 @@ class Renderer:
             # Once Pacman hungry event expires, ghosts should no longer be afraid
             if event.type == self._hungry_event:
                 self._hungry_pacman = False
+                self._flashing_ghosts = False
 
                 for ghost in self._ghosts:
                     ghost.afraid = False
+                    ghost.flashing = False
+            
+            if event.type == self._flashing_event:
+                self._flashing_ghosts = True
+
+                for ghost in self._ghosts:
+                    ghost.flashing = True
+            
+            if event.type == self._flash_ghosts:
+                for ghost in self._ghosts:
+                    ghost.flash_state = not ghost.flash_state
         
         key_pressed = pygame.key.get_pressed()
         
@@ -334,6 +355,8 @@ class Ghost(MovingObject):
         self.fleeing_first = True
         self.spawn_point = spawn_point
         self.slide = 0
+        self.flashing = False
+        self.flash_state = False
 
     
     # If ghost reaches current target select next target and then choose corresponding direction, change path following if distance to Pacman
@@ -446,6 +469,10 @@ class Ghost(MovingObject):
         
         if self.afraid and not self.fleeing:
             self.state = 4
+            if self.flashing and self.flash_state:
+                self.state = direction - 1
+            else:
+                self.state = 4
 
     # Sends ghost back to spawn, or out of the arena, depending on the state of the game
     def back_to_spawn(self, ghost, coordinates = (9, 9)):
