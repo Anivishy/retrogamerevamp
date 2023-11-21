@@ -8,8 +8,12 @@ class createHomescreen:
     def __init__(self):
         pygame.init()
 
-        self.WIDTH = 1536
-        self.HEIGHT = 1024
+        try:
+            import pyautogui
+            self.WIDTH, self.HEIGHT = pyautogui.size()
+        except:
+            self.WIDTH = 800
+            self.HEIGHT = 600
 
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
         self.screen.fill((0, 0, 0))
@@ -22,14 +26,14 @@ class createHomescreen:
         self.rows = (self.HEIGHT // self.size) + 2
         self.table = [[0 for x in range(self.cols)] for y in range(self.rows)]
 
-        self.beginButtonOutline = (300, 450, 400, 150)
-        self.beginButton = (310, 460, 380, 130)
-        self.instructionButtonOutline = (800, 450, 400, 150)
-        self.instructionButton = (810, 460, 380, 130)
-        self.settingButtonOutline = (300, 700, 400, 150)
-        self.settingButton = (310, 710, 380, 130)
-        self.quitButtonOutline = (800, 700, 400, 150)
-        self.quitButton = (810, 710, 380, 130)
+        self.beginButtonOutline = ((300/1536)*self.WIDTH, (450/1024)*self.HEIGHT, (400/1536)*self.WIDTH, (150/1024)*self.HEIGHT)
+        self.beginButton = ((310/1536)*self.WIDTH, (460/1024)*self.HEIGHT, (380/1536)*self.WIDTH, (130/1024)*self.HEIGHT)
+        self.instructionButtonOutline = ((800/1536)*self.WIDTH, (450/1024)*self.HEIGHT, (400/1536)*self.WIDTH, (150/1024)*self.HEIGHT)
+        self.instructionButton = ((810/1536)*self.WIDTH, (460/1024)*self.HEIGHT, (380/1536)*self.WIDTH, (130/1024)*self.HEIGHT)
+        self.settingButtonOutline = ((300/1536)*self.WIDTH, (700/1024)*self.HEIGHT, (400/1536)*self.WIDTH, (150/1024)*self.HEIGHT)
+        self.settingButton = ((310/1536)*self.WIDTH, (710/1024)*self.HEIGHT, (380/1536)*self.WIDTH, (130/1024)*self.HEIGHT)
+        self.quitButtonOutline = ((800/1536)*self.WIDTH, (700/1024)*self.HEIGHT, (400/1536)*self.WIDTH, (150/1024)*self.HEIGHT)
+        self.quitButton = ((810/1536)*self.WIDTH, (710/1024)*self.HEIGHT, (380/1536)*self.WIDTH, (130/1024)*self.HEIGHT)
 
     def grid(self, x, y):
         move = [(1, 0), (-1, 0), (0, 1), (0, -1)]
@@ -43,7 +47,7 @@ class createHomescreen:
 
                 pygame.draw.line(self.screen, (0, 0, 255), (x * self.size, y * self.size), (x2 * self.size, y2 * self.size), 3)
                 pygame.display.flip()
-                pygame.time.wait(20)
+                pygame.time.wait(20) #20
                 self.grid(x2, y2)
             
     def openingText(self, text, x, y):
@@ -58,7 +62,7 @@ class createHomescreen:
             pygame.display.flip()
 
             if self.start:
-                pygame.time.wait(115)
+                pygame.time.wait(115) #115
 
     def CenterText(self, text):
         textWidth, textHeight = self.openingFont.size(text)
@@ -83,31 +87,38 @@ class createHomescreen:
         # begin button
         pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.beginButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.beginButton))
-        x, y = self.CenterButtons("Begin", 310, 460, 380, 130)
+        a, b, c, d = self.beginButtonOutline
+        x, y = self.CenterButtons("Begin", a, b, c, d)
         self.openingText("Begin", x, y)
 
         # instructions button
         pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.instructionButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.instructionButton))
-        x, y = self.CenterButtons("Instructions", 810, 460, 380, 130)
+        a, b, c, d = self.instructionButtonOutline
+        x, y = self.CenterButtons("Instructions", a, b, c, d)
         self.openingText("Instructions", x, y)
 
         # settings button
         pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.settingButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.settingButton))
-        x, y = self.CenterButtons("Settings", 310, 710, 380, 130)
+        a, b, c, d = self.settingButtonOutline
+        x, y = self.CenterButtons("Settings", a, b, c, d)
         self.openingText("Settings", x, y)
 
         # quit button
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.quitButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.quitButton))
-        x, y = self.CenterButtons("Quit", 810, 710, 380, 130)
+        a, b, c, d = self.quitButtonOutline
+        x, y = self.CenterButtons("Quit", a, b, c, d)
         self.openingText("Quit", x, y)
 
         start = False
 
 c = createHomescreen()
 c.run()
+
+# g = introlevel.Game()
+# g.start_game()
 
 while True:
     for event in pygame.event.get():
@@ -127,17 +138,15 @@ while True:
     # if event.type == pygame.MOUSEBUTTONDOWN:
     #         if pygame.Rect(instructionButtonOutline):
                 
-
     # begin button clicked
     # if event.type == pygame.MOUSEBUTTONDOWN:
-    #         if pygame.Rect(beginButtonOutline):
-    #             introlevel.new_game
+    #         if pygame.Rect(c.beginButtonOutline).collidepoint(pygame.mouse.get_pos()):
+    #             g = introlevel.Game()
+    #             g.start_game()
                 
     pygame.display.flip()
 
-
-
-    # todo: buttons functionality, screen size, create instructions page
+    # todo: buttons functionality, create instructions page
     # later: splashscreen? Add comments
 
     # things to include in instructions:
@@ -145,5 +154,3 @@ while True:
         # - goal is to collect all pellets in the area (or collect _ number of points?)
         # - if you eat a "power pellet", you can eat ghosts for points
         # once you pass the first level, different zones will be unlocked, each with special challenges (add instructions at the corner of each page with a (?))
-
-# use auto-sizing for screen, speed up the animations
