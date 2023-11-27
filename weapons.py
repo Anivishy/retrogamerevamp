@@ -54,7 +54,7 @@ class weapons:
         start_point = (playerx, playery)
         window.blit(self.laser_flash, start_point)
         pygame.display.update()
-        time.sleep(0.1)
+        time.sleep(0.05)
         window.blit(self.laser_flash, (-150, 150))
         pygame.display.update()
         # if weapon_name == "laser_gun":

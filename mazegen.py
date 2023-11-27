@@ -7,10 +7,13 @@ import health
 import pelletsandammo
 import weapons
 
+import asyncio
+
 pygame.init()
 player_health = health.healthbar()
 player_score = pelletsandammo.pellets()
 player_weapon = weapons.weapons()
+
 
 try:
     import pyautogui
@@ -441,7 +444,9 @@ while True:
         breakpoint()
 
     if keys [pygame.K_RSHIFT]:
-        player_weapon.shoot(window, round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun")
+        if player_score.get_ammo() > 0:
+            player_weapon.shoot(window, round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun")
+            player_score.use_ammo(1)
 
 
     startx = (playerx - (WIDTH // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
@@ -657,7 +662,7 @@ while True:
                     if indicator not in intersected:
                         player_score.update_score()
                         pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/pellet.wav"))
-                    intersected.add(indicator)
+                        intersected.add(indicator)
                 if indicator not in intersected:            
                     pygame.draw.rect(window, (170, 170, 0), rect)
 

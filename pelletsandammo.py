@@ -61,6 +61,9 @@ class pellets:
         window.blit(self.image, (WIDTH - 150, 160))
         #print(self.score)
 
+    def get_ammo(self):
+        return self.ammo
+
     def add_ammo(self, amount):
         self.ammo += amount
 
