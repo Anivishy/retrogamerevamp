@@ -22,10 +22,12 @@ except:
     WIDTH = 800
     HEIGHT = 600
 
-WIDTH = 1600
-HEIGHT = 1000
-FULLSCREEN = False
+WIDTH = 1600 # Δ
+HEIGHT = 1000 # Δ
+FULLSCREEN = False # Δ
 
+SFX_VOLUME = 1.0 # Δ
+MUSIC_VOLUME = 1.0 # Δ i don't think we'll need this
 
 player_health = health.healthbar()
 
@@ -84,10 +86,10 @@ if BORDER_Y < 0:
     FIXED_Y = True
 
 
-FPS = None # set to None for uncapped FPS - use at your own risk!
+FPS = None # set to None for uncapped FPS - use at your own risk! Δ
 UNCAPPED_FPS = (FPS is None)
 
-JOYSTICK_THRESHOLD = 0.5
+JOYSTICK_THRESHOLD = 0.5 # Δ maybe?
 
 import time
 
