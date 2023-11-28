@@ -3,6 +3,7 @@ import random
 import os
 import pyautogui
 import time
+import asyncio
 
 base = os.path.dirname(os.path.abspath(__file__))
 
@@ -50,11 +51,10 @@ class weapons:
                 #chekc if y is equal to etiher start or end of the wall since they will be the same for a horizontal wall
                 pass
 
-    def shoot(self, window, playerx, playery, weapon_name):
+    async def shoot(self, window, playerx, playery, weapon_name):
         start_point = (playerx, playery)
         window.blit(self.laser_flash, start_point)
         pygame.display.update()
-        time.sleep(0.05)
         window.blit(self.laser_flash, (-150, 150))
         pygame.display.update()
         # if weapon_name == "laser_gun":
