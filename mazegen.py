@@ -25,10 +25,12 @@ except:
     WIDTH = 800
     HEIGHT = 600
 
-WIDTH = 1600
-HEIGHT = 1000
-FULLSCREEN = False
+WIDTH = 1600 # Δ
+HEIGHT = 1000 # Δ
+FULLSCREEN = False # Δ
 
+SFX_VOLUME = 1.0 # Δ
+MUSIC_VOLUME = 1.0 # Δ i don't think we'll need this
 
 player_health = health.healthbar()
 
@@ -87,8 +89,10 @@ if BORDER_Y < 0:
     FIXED_Y = True
 
 
-FPS = 60 # set to None for uncapped FPS - use at your own risk!
+FPS = None # set to None for uncapped FPS - use at your own risk! Δ
 UNCAPPED_FPS = (FPS is None)
+
+JOYSTICK_THRESHOLD = 0.5 # Δ maybe?
 
 import time
 
@@ -383,6 +387,12 @@ ba_overlap = set()
 wall_lock = False
 sound_lock = set()
 
+joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
+if len(joysticks) > 0:
+    joystick = joysticks[0]
+else:
+    joystick = None
+
 while True:
     # events
     direction = 0
@@ -401,6 +411,10 @@ while True:
                 direction = 3
             if event.key == pygame.K_DOWN:
                 direction = 4
+        elif event.type == pygame.JOYDEVICEADDED and not joystick:
+            joystick = pygame.joystick.Joystick(event.device_index)
+        elif event.type == pygame.JOYDEVICEREMOVED and joystick:
+            joystick = None
 
     velocity = 5 # squares per second
     copysx = startx
@@ -408,24 +422,26 @@ while True:
     copypx = playerx
     copypy = playery
 
+    
 
+    
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] or keys[pygame.K_a]: 
+    if keys[pygame.K_LEFT] or keys[pygame.K_a] or (joystick and joystick.get_axis(0) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == -1): 
         if not UNCAPPED_FPS:
             playerx -= velocity / FPS * SQUARE_SIZE
         else:
             playerx -= 5 * (delay_to - last) * SQUARE_SIZE
-    elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+    elif keys[pygame.K_RIGHT] or keys[pygame.K_d] or (joystick and joystick.get_axis(0) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == 1):
         if not UNCAPPED_FPS:
             playerx += velocity / FPS * SQUARE_SIZE
         else:
             playerx += 5 * (delay_to - last) * SQUARE_SIZE
-    elif keys[pygame.K_UP] or keys[pygame.K_w]:
+    elif keys[pygame.K_UP] or keys[pygame.K_w] or (joystick and joystick.get_axis(1) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == 1):
         if not UNCAPPED_FPS:
             playery -= velocity / FPS * SQUARE_SIZE
         else:
             playery -= 5 * (delay_to - last) * SQUARE_SIZE
-    elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
+    elif keys[pygame.K_DOWN] or keys[pygame.K_s] or (joystick and joystick.get_axis(1) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == -1):
         if not UNCAPPED_FPS:
             playery += velocity / FPS * SQUARE_SIZE
         else:
@@ -608,12 +624,6 @@ while True:
         pygame.draw.line(window, (33, 33, 222), 
                         ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
                         ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
-    
-    pygame.draw.line(window, (0, 255, 0), 
-        ((-startx * SQUARE_SIZE + WIDTH//2 + -BOUND + (BOSS_AREA * SQUARE_SIZE)), 0),
-        ((-startx * SQUARE_SIZE + WIDTH//2 +  -BOUND + (BOSS_AREA * SQUARE_SIZE)), HEIGHT),
-        3
-    )
 
     # if not FIXED_X:
     #     pygame.draw.line(window, (0, 255, 0),
