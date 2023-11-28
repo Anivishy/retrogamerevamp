@@ -9,40 +9,29 @@ import weapons
 
 import asyncio
 
+from bosses import *
+from user_settings import *
+from calculated_vars import *
+
 pygame.init()
 player_health = health.healthbar()
 player_score = pelletsandammo.pellets()
 player_weapon = weapons.weapons()
 
 
-try:
-    import pyautogui
-    WIDTH, HEIGHT = pyautogui.size()
-except:
-    WIDTH = 800
-    HEIGHT = 600
+# try:
+#     import pyautogui
+#     WIDTH, HEIGHT = pyautogui.size()
+# except:
+#     WIDTH = 800
+#     HEIGHT = 600
 
-WIDTH = 1600 # Δ
-HEIGHT = 1000 # Δ
-FULLSCREEN = False # Δ
 
-SFX_VOLUME = 1.0 # Δ
-MUSIC_VOLUME = 1.0 # Δ i don't think we'll need this
 
 player_health = health.healthbar()
 
 
-SQUARE_SIZE = 60
-while True:
-    try:
-        if WIDTH % SQUARE_SIZE != 0: raise ValueError(f"{WIDTH} % {SQUARE_SIZE} = {WIDTH % SQUARE_SIZE}, not 0")
-        if HEIGHT % SQUARE_SIZE != 0: raise ValueError(f"{HEIGHT} % {SQUARE_SIZE} = {HEIGHT % SQUARE_SIZE}, not 0")
-    except:
-        SQUARE_SIZE += 1
-    else:
-        break
 
-WALL_WIDTH = SQUARE_SIZE // 12
 
 
 print(f"Initializing: {WIDTH}x{HEIGHT}, square size: {SQUARE_SIZE}")
@@ -60,36 +49,13 @@ clock = pygame.time.Clock()
 walls = set()
 
 
-MAP_RADIUS = 25 # map consists of 4 adjacent MR*MR squares, blending adjacent edges together
-BOSS_AREA = 5 # BA*BA square in the corners for bosses 
 
 defeated_bosses = set()
 
-RADIUS = int(SQUARE_SIZE / 2) // 2
-FIXED_X = FIXED_Y = False
-BOUND = MAP_RADIUS * SQUARE_SIZE
-
-PADX = PADY = False
-
-BORDER_X = (BOUND - WIDTH / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
-if int((BOUND - WIDTH / 2) / SQUARE_SIZE) == (BOUND - WIDTH / 2) / SQUARE_SIZE:
-    BORDER_X += 0.5
-    PADX = True
-if BORDER_X < 0:
-    FIXED_X = True
-
-BORDER_Y = (BOUND - HEIGHT / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
-if int((BOUND - HEIGHT / 2) / SQUARE_SIZE) == (BOUND - HEIGHT / 2) / SQUARE_SIZE:
-    BORDER_Y += 0.5
-    PADY = True
-if BORDER_Y < 0:
-    FIXED_Y = True
 
 
-FPS = None # set to None for uncapped FPS - use at your own risk! Δ
-UNCAPPED_FPS = (FPS is None)
 
-JOYSTICK_THRESHOLD = 0.5 # Δ maybe?
+
 
 import time
 
@@ -380,6 +346,8 @@ frame_count = 0
 last_walls = walls
 intersected = set()
 
+ACTIVE_BOSS = None
+
 ba_overlap = set()
 wall_lock = False
 sound_lock = set()
@@ -515,6 +483,7 @@ while True:
                 ba_overlap = boss_walls.intersection(walls)
                 walls |= boss_walls
                 wall_lock = True
+                ACTIVE_BOSS = BossTL(window, 1, WIDTH, HEIGHT)
             last_walls = walls
         else:
             if 1 not in sound_lock:
@@ -615,35 +584,31 @@ while True:
 
     pygame.draw.circle(window, (255, 255, 0), (round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
     for wall in walls:
-        pygame.draw.line(window, (33, 33, 222), 
+        wall_color = (33, 33, 222)
+        if wall[0][0] > (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] > (HEIGHT // 2 // SQUARE_SIZE):
+            wall_color = (120, 50, 120)
+        elif wall[0][0] < (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] > (HEIGHT // 2 // SQUARE_SIZE):
+            wall_color = (75, 150, 230)
+        elif wall[0][0] > (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] < (HEIGHT // 2 // SQUARE_SIZE):
+            wall_color = (240, 30, 40)
+        elif wall[0][0] < (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] < (HEIGHT // 2 // SQUARE_SIZE):
+            wall_color = (30, 220, 50)
+        else:
+            wall_color = (170, 170, 170)
+        
+        if wall[0][0] == WIDTH // 2 // SQUARE_SIZE or wall[1][0] == WIDTH // 2 // SQUARE_SIZE + 1:
+            wall_color = (170, 170, 170)
+        if wall[0][1] == HEIGHT // 2 // SQUARE_SIZE or wall[1][1] == HEIGHT // 2 // SQUARE_SIZE + 1:
+            wall_color = (170, 170, 170)
+
+
+        pygame.draw.line(window, wall_color, 
                         ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
                         ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
 
-    # if not FIXED_X:
-    #     pygame.draw.line(window, (0, 255, 0),
-    #         ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER_X*SQUARE_SIZE), 0),
-    #         ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER_X*SQUARE_SIZE), HEIGHT),
-    #         3
-    #     )
+    if ACTIVE_BOSS:
+        ACTIVE_BOSS.draw(startx, starty)
 
-    #     pygame.draw.line(window, (0, 255, 0),
-    #         ((-startx * SQUARE_SIZE + WIDTH//2 + BORDER_X*SQUARE_SIZE), 0),
-    #         ((-startx * SQUARE_SIZE + WIDTH//2 + BORDER_X*SQUARE_SIZE), HEIGHT),
-    #         3
-    #     )
-    
-
-    # if not FIXED_Y:
-    #     pygame.draw.line(window, (255, 165, 0),
-    #                     (0, (-starty * SQUARE_SIZE + HEIGHT//2 - BORDER_Y*SQUARE_SIZE)),
-    #                     (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 - BORDER_Y*SQUARE_SIZE)),
-    #                     3
-    #                     )
-    #     pygame.draw.line(window, (255, 165, 0),
-    #                     (0, (-starty * SQUARE_SIZE + HEIGHT//2 + BORDER_Y*SQUARE_SIZE)),
-    #                     (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 + BORDER_Y*SQUARE_SIZE)),
-    #                     3
-    #                     )
 
     player_rect = pygame.Rect(
         -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
