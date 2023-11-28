@@ -48,7 +48,7 @@ class createInstructions:
                 pygame.display.flip()
 
                 if self.start:
-                    pygame.time.wait(0) #115
+                    pygame.time.wait(20) #20
 
             x2 = x
             textWidth, textHeight = font.size(text)
@@ -90,7 +90,6 @@ class createInstructions:
             i += 1
 
         lines.append(lineText)
-        print(lines)
         return lines
 
     def printInstructions(self):
@@ -101,11 +100,11 @@ class createInstructions:
 
         controls = "Use your up, down, left, and right arrows for movement. Press 'esc' to exit the game."
 
-        goal = "Goal [...]"
+        goal = "In the intro level, collect all pellets in the area. Then, use your weapons to defeat each of the bosses."
 
-        powerups = "Power Pellets [...]"
+        powerups = "In each of the zones, you can pick up special powerups, including _"
 
-        zones = "Zones [...]"
+        zones = "This game consists of an intro level, similar to standard Pacman, followed by 4 different Zones, each with a boss to beat."
 
         self.printText("Controls", (.2 * self.HEIGHT), True)
         self.printText(controls, (.275 * self.HEIGHT), False)
@@ -124,9 +123,9 @@ class createInstructions:
 
         self.start = False
 
-# if __name__ == "__main__":
-i = createInstructions()
-i.printInstructions()
+if __name__ == "__main__":
+    i = createInstructions()
+    i.printInstructions()
 
 
 while True:
