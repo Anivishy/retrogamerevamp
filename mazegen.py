@@ -15,6 +15,7 @@ player_health = health.healthbar()
 player_score = pelletsandammo.pellets()
 player_weapon = weapons.weapons()
 start_time = time.time()
+last_key = ""
 
 
 
@@ -426,22 +427,26 @@ while True:
 
     
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] or keys[pygame.K_a] or (joystick and joystick.get_axis(0) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == -1): 
+    if keys[pygame.K_LEFT] or keys[pygame.K_a] or (joystick and joystick.get_axis(0) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == -1):
+        last_key = "left" 
         if not UNCAPPED_FPS:
             playerx -= velocity / FPS * SQUARE_SIZE
         else:
             playerx -= 5 * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_RIGHT] or keys[pygame.K_d] or (joystick and joystick.get_axis(0) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == 1):
+        last_key = "right" 
         if not UNCAPPED_FPS:
             playerx += velocity / FPS * SQUARE_SIZE
         else:
             playerx += 5 * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_UP] or keys[pygame.K_w] or (joystick and joystick.get_axis(1) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == 1):
+        last_key = "up" 
         if not UNCAPPED_FPS:
             playery -= velocity / FPS * SQUARE_SIZE
         else:
             playery -= 5 * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_DOWN] or keys[pygame.K_s] or (joystick and joystick.get_axis(1) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == -1):
+        last_key = "down" 
         if not UNCAPPED_FPS:
             playery += velocity / FPS * SQUARE_SIZE
         else:
@@ -467,7 +472,7 @@ while True:
         if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
             start_time = cur_time
             asyncio.run(player_weapon.shoot(window, round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), 
-                                round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun"))
+                                round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun", last_key))
             player_score.use_ammo(1)
 
 

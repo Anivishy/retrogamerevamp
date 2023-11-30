@@ -24,7 +24,22 @@ class weapons:
         self.laser_flash = pygame.image.load(sanitize_path('projectileimgaes/lazerblast.png'))
         self.SCALE_SIZE = (75, 75)
         self.laser_flash = pygame.transform.scale(self.laser_flash, self.SCALE_SIZE)
-        
+        #-------------------------------------------------------------------------------------
+        self.laser_projectile_right = pygame.image.load(sanitize_path('projectileimgaes/lazerprojectile_right.png'))
+        self.SCALE_SIZE = (75, 75)
+        self.laser_projectile_right = pygame.transform.scale(self.laser_projectile_right, self.SCALE_SIZE)
+        #-------------------------------------------------------------------------------------
+        self.laser_projectile_left = pygame.image.load(sanitize_path('projectileimgaes/lazerprojectile_left.png'))
+        self.SCALE_SIZE = (75, 75)
+        self.laser_projectile_left = pygame.transform.scale(self.laser_projectile_left, self.SCALE_SIZE)
+        #-------------------------------------------------------------------------------------
+        self.laser_projectile_up = pygame.image.load(sanitize_path('projectileimgaes/lazerprojectile_up.png'))
+        self.SCALE_SIZE = (75, 75)
+        self.laser_projectile_up = pygame.transform.scale(self.laser_projectile_up, self.SCALE_SIZE)
+        #-------------------------------------------------------------------------------------
+        self.laser_projectile_down = pygame.image.load(sanitize_path('projectileimgaes/lazerprojectile_down.png'))
+        self.SCALE_SIZE = (75, 75)
+        self.laser_projectile_down = pygame.transform.scale(self.laser_projectile_down, self.SCALE_SIZE)
 
         #Window Constants
         #self.WIDTH, self.HEIGHT = pyautogui.size()
@@ -51,22 +66,36 @@ class weapons:
                 #chekc if y is equal to etiher start or end of the wall since they will be the same for a horizontal wall
                 pass
 
-    async def shoot(self, window, playerx, playery, weapon_name):
-        start_point = (playerx, playery)
+    async def shoot(self, window, playerx, playery, weapon_name, last_key):
+        start_point = (playerx - 30, playery - 30)
         window.blit(self.laser_flash, start_point)
         pygame.display.update()
         window.blit(self.laser_flash, (-150, 150))
         pygame.display.update()
-        # if weapon_name == "laser_gun":
-        #     self.shoot_laser(window, start_point)
+        if weapon_name == "laser_gun":
+            self.shoot_laser(window, start_point, last_key)
 
     #Implementation for more guns if added later
     
-    # def shoot_laser(self, window, start_point):
-    #     print("in shoot laser------------------------------")
-    #     window.blit(self.laser_flash, start_point)
-    #     pygame.display.update()
-    #     time.sleep(1)
-    #     self.laser_flash.fill((0,0,0,0))
-    #     pygame.display.update()
+    def shoot_laser(self, window, start_point, last_key):
+        if last_key == "right":
+            window.blit(self.laser_projectile_right, start_point)
+            pygame.display.update()
+            window.blit(self.laser_projectile_right, (-150, 150))
+            pygame.display.update()
+        if last_key == "left":
+            window.blit(self.laser_projectile_left, start_point)
+            pygame.display.update()
+            window.blit(self.laser_projectile_left, (-150, 150))
+            pygame.display.update()
+        if last_key == "up":
+            window.blit(self.laser_projectile_up, start_point)
+            pygame.display.update()
+            window.blit(self.laser_projectile_up, (-150, 150))
+            pygame.display.update()
+        if last_key == "down":
+            window.blit(self.laser_projectile_down, start_point)
+            pygame.display.update()
+            window.blit(self.laser_projectile_down, (-150, 150))
+            pygame.display.update()
 
