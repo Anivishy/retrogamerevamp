@@ -492,14 +492,6 @@ while True:
                 wall_lock = True
                 ACTIVE_BOSS = BossTL(window)
             last_walls = walls
-        else:
-            ACTIVE_BOSS = None
-            if 1 not in sound_lock:
-                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
-                sound_lock.add(1)
-            walls = (walls - boss_walls) | ba_overlap
-            last_walls = walls
-            wall_lock = False
     if playerx - WIDTH // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADX else 0)) + SQUARE_SIZE and playery - HEIGHT // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADY else 0)):
         if 2 not in defeated_bosses:
             if not wall_lock:
@@ -508,13 +500,6 @@ while True:
                 walls |= boss_walls
                 wall_lock = True
             last_walls = walls
-        else:
-            if 2 not in sound_lock:
-                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
-                sound_lock.add(2)
-            walls = (walls - boss_walls) | ba_overlap
-            last_walls = walls
-            wall_lock = False
     if playerx - WIDTH // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADX else 0)) and playery - HEIGHT // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADY else 0)) + SQUARE_SIZE:
         if 3 not in defeated_bosses:
             if not wall_lock:
@@ -523,13 +508,6 @@ while True:
                 walls |= boss_walls
                 wall_lock = True
             last_walls = walls
-        else:
-            if 3 not in sound_lock:
-                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
-                sound_lock.add(3)
-            walls = (walls - boss_walls) | ba_overlap
-            last_walls = walls
-            wall_lock = False
     if playerx - WIDTH // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADX else 0)) + SQUARE_SIZE and playery - HEIGHT // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADY else 0)) + SQUARE_SIZE:
         if 4 not in defeated_bosses:
             if not wall_lock:
@@ -538,16 +516,40 @@ while True:
                 walls |= boss_walls
                 wall_lock = True
             last_walls = walls
-        else:
+
+    if playerx - WIDTH // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)) and playery - HEIGHT // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)):
+        if 1 in defeated_bosses:
+            ACTIVE_BOSS = None
+            if 1 not in sound_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
+                sound_lock.add(1)
+            walls = (walls - boss_walls) | ba_overlap
+            last_walls = walls
+            wall_lock = False
+    if playerx - WIDTH // 2 > (BOUND - ((BOSS_AREA + 1) * SQUARE_SIZE)) + SQUARE_SIZE and playery - HEIGHT // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)):
+        if 2 in defeated_bosses:
+            if 2 not in sound_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
+                sound_lock.add(2)
+            walls = (walls - boss_walls) | ba_overlap
+            last_walls = walls
+            wall_lock = False
+    if playerx - WIDTH // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)) and playery - HEIGHT // 2 > (BOUND - ((BOSS_AREA + 1) * SQUARE_SIZE)) + SQUARE_SIZE:
+        if 3 in defeated_bosses:
+            if 3 not in sound_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
+                sound_lock.add(3)
+            walls = (walls - boss_walls) | ba_overlap
+            last_walls = walls
+            wall_lock = False
+    if playerx - WIDTH // 2 > (BOUND - ((BOSS_AREA + 1) * SQUARE_SIZE)) + SQUARE_SIZE and playery - HEIGHT // 2 > (BOUND - ((BOSS_AREA + 1) * SQUARE_SIZE)) + SQUARE_SIZE:
+        if 4 in defeated_bosses:
             if 4 not in sound_lock:
                 pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
                 sound_lock.add(4)
             walls = (walls - boss_walls) | ba_overlap
             last_walls = walls
             wall_lock = False
-
-    if playerx - WIDTH // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)) and playery - HEIGHT // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)):
-        ...
 
 
 
