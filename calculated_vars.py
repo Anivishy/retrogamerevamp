@@ -36,5 +36,16 @@ if int((BOUND - HEIGHT / 2) / SQUARE_SIZE) == (BOUND - HEIGHT / 2) / SQUARE_SIZE
 if BORDER_Y < 0:
     FIXED_Y = True
 
-
 UNCAPPED_FPS = (FPS is None)
+
+global UNCAPPED_DELAY
+UNCAPPED_DELAY = 0
+
+class UCFDBase:
+    def __init__(self):
+        self.delay = 0
+
+UCFD = UCFDBase() # uncapped frame delay - weird class hack
+
+PLAYER_SPEED = 5
+BOSS_SPEED = PLAYER_SPEED / 5

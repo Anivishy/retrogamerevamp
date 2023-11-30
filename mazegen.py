@@ -12,6 +12,7 @@ import asyncio
 from bosses import *
 from user_settings import *
 from calculated_vars import *
+import colors
 
 pygame.init()
 player_health = health.healthbar()
@@ -381,7 +382,7 @@ while True:
         elif event.type == pygame.JOYDEVICEREMOVED and joystick:
             joystick = None
 
-    velocity = 5 # squares per second
+    velocity = PLAYER_SPEED
     copysx = startx
     copysy = starty
     copypx = playerx
@@ -395,22 +396,22 @@ while True:
         if not UNCAPPED_FPS:
             playerx -= velocity / FPS * SQUARE_SIZE
         else:
-            playerx -= 5 * (delay_to - last) * SQUARE_SIZE
+            playerx -= velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_RIGHT] or keys[pygame.K_d] or (joystick and joystick.get_axis(0) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == 1):
         if not UNCAPPED_FPS:
             playerx += velocity / FPS * SQUARE_SIZE
         else:
-            playerx += 5 * (delay_to - last) * SQUARE_SIZE
+            playerx += velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_UP] or keys[pygame.K_w] or (joystick and joystick.get_axis(1) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == 1):
         if not UNCAPPED_FPS:
             playery -= velocity / FPS * SQUARE_SIZE
         else:
-            playery -= 5 * (delay_to - last) * SQUARE_SIZE
+            playery -= velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_DOWN] or keys[pygame.K_s] or (joystick and joystick.get_axis(1) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == -1):
         if not UNCAPPED_FPS:
             playery += velocity / FPS * SQUARE_SIZE
         else:
-            playery += 5 * (delay_to - last) * SQUARE_SIZE
+            playery += velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_1]:
         defeated_bosses.add(1)
     elif keys[pygame.K_2]:
@@ -483,7 +484,7 @@ while True:
                 ba_overlap = boss_walls.intersection(walls)
                 walls |= boss_walls
                 wall_lock = True
-                ACTIVE_BOSS = BossTL(window, 1, WIDTH, HEIGHT)
+                ACTIVE_BOSS = BossTL(window)
             last_walls = walls
         else:
             if 1 not in sound_lock:
@@ -584,22 +585,22 @@ while True:
 
     pygame.draw.circle(window, (255, 255, 0), (round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
     for wall in walls:
-        wall_color = (33, 33, 222)
+        wall_color = colors.DEFAULT_BLUE
         if wall[0][0] > (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] > (HEIGHT // 2 // SQUARE_SIZE):
-            wall_color = (120, 50, 120)
+            wall_color = colors.SHADOW
         elif wall[0][0] < (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] > (HEIGHT // 2 // SQUARE_SIZE):
-            wall_color = (75, 150, 230)
+            wall_color = colors.ICE
         elif wall[0][0] > (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] < (HEIGHT // 2 // SQUARE_SIZE):
-            wall_color = (240, 30, 40)
+            wall_color = colors.LAVA
         elif wall[0][0] < (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] < (HEIGHT // 2 // SQUARE_SIZE):
-            wall_color = (30, 220, 50)
+            wall_color = colors.FOREST
         else:
-            wall_color = (170, 170, 170)
+            wall_color = colors.GREY
         
         if wall[0][0] == WIDTH // 2 // SQUARE_SIZE or wall[1][0] == WIDTH // 2 // SQUARE_SIZE + 1:
-            wall_color = (170, 170, 170)
+            wall_color = colors.GREY
         if wall[0][1] == HEIGHT // 2 // SQUARE_SIZE or wall[1][1] == HEIGHT // 2 // SQUARE_SIZE + 1:
-            wall_color = (170, 170, 170)
+            wall_color = colors.GREY
 
 
         pygame.draw.line(window, wall_color, 
@@ -607,7 +608,8 @@ while True:
                         ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
 
     if ACTIVE_BOSS:
-        ACTIVE_BOSS.draw(startx, starty)
+        
+        ACTIVE_BOSS.update(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2)
 
 
     player_rect = pygame.Rect(
@@ -658,7 +660,7 @@ while True:
             ...
         last = delay_to
         delay_to = time.time()
-            
+        UCFD.delay = delay_to - last
     else:
         frame_count = (frame_count + 1) % FPS
         clock.tick(FPS)
