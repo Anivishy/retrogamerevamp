@@ -24,6 +24,7 @@ class Renderer:
         self._powerups = []
         self._open_mouth = pygame.USEREVENT
         self._pacman = None
+        self._lives = 1
         self._hungry_pacman = False
         self._hungry_event = pygame.USEREVENT + 1
         self._ghost_slide = pygame.USEREVENT + 2
@@ -40,7 +41,7 @@ class Renderer:
 
         while True:
             for object in self._objects:
-                if not self.paused:
+                if not self.paused and not self._game_over:
                     object.tick()
                 object.draw()
             
@@ -117,6 +118,10 @@ class Renderer:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
+                if event.key == pygame.K_r:
+                    if self._game_over:
+                        new_game = Game()
+                        new_game.start_game()
         
             if event.type == self._open_mouth:
                 if self._pacman is None:
@@ -324,7 +329,11 @@ class Pacman(MovingObject):
                     ghost.fleeing = True
                     ghost.back_to_spawn(ghost)
                 else:
-                    self._renderer.reset_pacman()
+                    if self._renderer._lives > 0:
+                        self._renderer._lives -= 1
+                        self._renderer.reset_pacman()
+                    else:
+                        self._renderer._game_over = True
         
     
 class Ghost(MovingObject):
