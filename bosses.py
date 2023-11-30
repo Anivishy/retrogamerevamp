@@ -122,9 +122,9 @@ class BossTR: # top right
         for projectile in self.projectiles:
             pos = projectile[0]
             if pos[0] + PROJECTILE_RADIUS <= WIDTH + WALL_WIDTH / 2 \
-            and pos[0] + PROJECTILE_RADIUS >= WIDTH - (BOSS_AREA * SQUARE_SIZE + WALL_WIDTH / 2) \
-            and pos[1] - PROJECTILE_RADIUS >= -WALL_WIDTH  / 2 \
-            and pos[1] + PROJECTILE_RADIUS <= BOSS_AREA * SQUARE_SIZE + WALL_WIDTH  / 2:
+            and pos[0] - PROJECTILE_RADIUS >= WIDTH - (BOSS_AREA * SQUARE_SIZE + WALL_WIDTH / 2) \
+            and pos[1] - PROJECTILE_RADIUS >= -WALL_WIDTH / 2 \
+            and pos[1] + PROJECTILE_RADIUS <= BOSS_AREA * SQUARE_SIZE + WALL_WIDTH / 2:
                 cp.add(projectile)
         return cp
 
@@ -133,16 +133,16 @@ class BossTR: # top right
         if frame == 0 or (FPS is None and s - self.last_updated > 1):
             self.last_updated = s
             self.projectiles.add(
-                ((self.x + SQUARE_SIZE // 2, self.y + SQUARE_SIZE // 2), 0, 1.5 * BOSS_SPEED)
+                ((self.x + SQUARE_SIZE // 2, self.y + SQUARE_SIZE // 2), 45, 1.5 * BOSS_SPEED)
             )
             self.projectiles.add(
-                ((self.x + SQUARE_SIZE // 2, self.y + SQUARE_SIZE // 2), 90, 1.5 * BOSS_SPEED)
+                ((self.x + SQUARE_SIZE // 2, self.y + SQUARE_SIZE // 2), 135, 1.5 * BOSS_SPEED)
             )
             self.projectiles.add(
-                ((self.x + SQUARE_SIZE // 2, self.y + SQUARE_SIZE // 2), 180, 1.5 * BOSS_SPEED)
+                ((self.x + SQUARE_SIZE // 2, self.y + SQUARE_SIZE // 2), -135, 1.5 * BOSS_SPEED)
             )
             self.projectiles.add(
-                ((self.x + SQUARE_SIZE // 2, self.y + SQUARE_SIZE // 2), -90, 1.5 * BOSS_SPEED)
+                ((self.x + SQUARE_SIZE // 2, self.y + SQUARE_SIZE // 2), -45, 1.5 * BOSS_SPEED)
             )
             
         c = set()

@@ -5,6 +5,6 @@ FULLSCREEN = False # Δ
 SFX_VOLUME = 1.0 # Δ
 MUSIC_VOLUME = 1.0 # Δ i don't think we'll need this
 
-FPS = 60 # set to None for uncapped FPS - use at your own risk! Δ
+FPS = None # set to None for uncapped FPS - use at your own risk! Δ
 
 JOYSTICK_THRESHOLD = 0.5 # Δ maybe?
