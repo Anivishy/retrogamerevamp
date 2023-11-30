@@ -13,7 +13,7 @@ while True:
 WALL_WIDTH = SQUARE_SIZE // 12
 
 
-MAP_RADIUS = 25 # map consists of 4 adjacent MR*MR squares, blending adjacent edges together
+MAP_RADIUS = 15 # map consists of 4 adjacent MR*MR squares, blending adjacent edges together
 BOSS_AREA = 5 # BA*BA square in the corners for bosses 
 
 RADIUS = int(SQUARE_SIZE / 2) // 2
@@ -49,3 +49,4 @@ UCFD = UCFDBase() # uncapped frame delay - weird class hack
 
 PLAYER_SPEED = 5
 BOSS_SPEED = PLAYER_SPEED / 5
+PROJECTILE_RADIUS = SQUARE_SIZE * 2/5 / 2
