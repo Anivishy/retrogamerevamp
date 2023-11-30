@@ -6,6 +6,7 @@ from calculated_vars import *
 import colors
 
 import math
+import time
 
 class BossTL: # top left
     def __init__(self, screen):
@@ -17,6 +18,8 @@ class BossTL: # top left
         self.width = self.height = SQUARE_SIZE * 0.75
         self.speed = BOSS_SPEED
         self.projectiles = set()
+        self.created_at = time.time()
+        self.last_updated = time.time()
 
 
     def check_all_collisions(self):
@@ -31,7 +34,9 @@ class BossTL: # top left
         return cp
 
     def process_projectiles(self, frame):
-        if frame == 0:
+        s = time.time()
+        if frame == 0 or (FPS is None and s - self.last_updated > 1):
+            self.last_updated = s
             self.projectiles.add(
                 ((self.x + SQUARE_SIZE // 2, self.y + SQUARE_SIZE // 2), 0, 1.5 * BOSS_SPEED)
             )
@@ -86,7 +91,6 @@ class BossTL: # top left
         
         self.process_projectiles(frame)
         self.draw()
-        pygame.draw.line(self.screen, (255, 0, 0), (relx, rely), (self.x + self.width // 2, self.y + self.height // 2), 2)
 
     def draw(self):
         pygame.draw.rect(

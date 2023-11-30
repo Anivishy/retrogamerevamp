@@ -587,36 +587,10 @@ while True:
             starty = copysy
             break 
 
+    # draw calls - a LOT of them
     window.fill((0, 0, 0))
 
     pygame.draw.circle(window, (255, 255, 0), (round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
-    for wall in walls:
-        wall_color = colors.DEFAULT_BLUE
-        if wall[0][0] > (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] > (HEIGHT // 2 // SQUARE_SIZE):
-            wall_color = colors.SHADOW
-        elif wall[0][0] < (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] > (HEIGHT // 2 // SQUARE_SIZE):
-            wall_color = colors.ICE
-        elif wall[0][0] > (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] < (HEIGHT // 2 // SQUARE_SIZE):
-            wall_color = colors.LAVA
-        elif wall[0][0] < (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] < (HEIGHT // 2 // SQUARE_SIZE):
-            wall_color = colors.FOREST
-        else:
-            wall_color = colors.GREY
-        
-        if wall[0][0] == WIDTH // 2 // SQUARE_SIZE or wall[1][0] == WIDTH // 2 // SQUARE_SIZE + 1:
-            wall_color = colors.GREY
-        if wall[0][1] == HEIGHT // 2 // SQUARE_SIZE or wall[1][1] == HEIGHT // 2 // SQUARE_SIZE + 1:
-            wall_color = colors.GREY
-
-
-        pygame.draw.line(window, wall_color, 
-                        ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
-                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
-
-    if ACTIVE_BOSS:
-        
-        ACTIVE_BOSS.update(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, frame_count)
-
 
     player_rect = pygame.Rect(
         -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
@@ -648,6 +622,32 @@ while True:
                         intersected.add(indicator)
                 if indicator not in intersected:            
                     pygame.draw.rect(window, (170, 170, 0), rect)
+
+    if ACTIVE_BOSS:        
+        ACTIVE_BOSS.update(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, frame_count)
+
+    for wall in walls:
+        wall_color = colors.DEFAULT_BLUE
+        if wall[0][0] > (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] > (HEIGHT // 2 // SQUARE_SIZE):
+            wall_color = colors.SHADOW
+        elif wall[0][0] < (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] > (HEIGHT // 2 // SQUARE_SIZE):
+            wall_color = colors.ICE
+        elif wall[0][0] > (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] < (HEIGHT // 2 // SQUARE_SIZE):
+            wall_color = colors.LAVA
+        elif wall[0][0] < (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] < (HEIGHT // 2 // SQUARE_SIZE):
+            wall_color = colors.FOREST
+        else:
+            wall_color = colors.GREY
+        
+        if wall[0][0] == WIDTH // 2 // SQUARE_SIZE or wall[1][0] == WIDTH // 2 // SQUARE_SIZE + 1:
+            wall_color = colors.GREY
+        if wall[0][1] == HEIGHT // 2 // SQUARE_SIZE or wall[1][1] == HEIGHT // 2 // SQUARE_SIZE + 1:
+            wall_color = colors.GREY
+
+
+        pygame.draw.line(window, wall_color, 
+                        ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
+                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
 
     # draw player
     # yellow circle at center of screen
