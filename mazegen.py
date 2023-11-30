@@ -8,6 +8,7 @@ import pelletsandammo
 import weapons
 
 import asyncio
+import time
 
 from bosses import *
 from user_settings import *
@@ -18,6 +19,8 @@ pygame.init()
 player_health = health.healthbar()
 player_score = pelletsandammo.pellets()
 player_weapon = weapons.weapons()
+start_time = time.time()
+
 
 
 # try:
@@ -429,8 +432,11 @@ while True:
         breakpoint()
 
     if keys [pygame.K_RSHIFT]:
-        if player_score.get_ammo() > 0:
-            player_weapon.shoot(window, round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun")
+        cur_time = time.time()
+        if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
+            start_time = cur_time
+            asyncio.run(player_weapon.shoot(window, round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), 
+                                round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun"))
             player_score.use_ammo(1)
 
 
