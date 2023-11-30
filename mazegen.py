@@ -10,6 +10,11 @@ import weapons
 import asyncio
 import time
 
+from bosses import *
+from user_settings import *
+from calculated_vars import *
+import colors
+
 pygame.init()
 player_health = health.healthbar()
 player_score = pelletsandammo.pellets()
@@ -19,34 +24,19 @@ last_key = ""
 
 
 
-try:
-    import pyautogui
-    WIDTH, HEIGHT = pyautogui.size()
-except:
-    WIDTH = 800
-    HEIGHT = 600
+# try:
+#     import pyautogui
+#     WIDTH, HEIGHT = pyautogui.size()
+# except:
+#     WIDTH = 800
+#     HEIGHT = 600
 
-WIDTH = 1600 # Δ
-HEIGHT = 1000 # Δ
-FULLSCREEN = False # Δ
 
-SFX_VOLUME = 1.0 # Δ
-MUSIC_VOLUME = 1.0 # Δ i don't think we'll need this
 
 player_health = health.healthbar()
 
 
-SQUARE_SIZE = 60
-while True:
-    try:
-        if WIDTH % SQUARE_SIZE != 0: raise ValueError(f"{WIDTH} % {SQUARE_SIZE} = {WIDTH % SQUARE_SIZE}, not 0")
-        if HEIGHT % SQUARE_SIZE != 0: raise ValueError(f"{HEIGHT} % {SQUARE_SIZE} = {HEIGHT % SQUARE_SIZE}, not 0")
-    except:
-        SQUARE_SIZE += 1
-    else:
-        break
 
-WALL_WIDTH = SQUARE_SIZE // 12
 
 
 print(f"Initializing: {WIDTH}x{HEIGHT}, square size: {SQUARE_SIZE}")
@@ -64,36 +54,13 @@ clock = pygame.time.Clock()
 walls = set()
 
 
-MAP_RADIUS = 25 # map consists of 4 adjacent MR*MR squares, blending adjacent edges together
-BOSS_AREA = 5 # BA*BA square in the corners for bosses 
 
 defeated_bosses = set()
 
-RADIUS = int(SQUARE_SIZE / 2) // 2
-FIXED_X = FIXED_Y = False
-BOUND = MAP_RADIUS * SQUARE_SIZE
-
-PADX = PADY = False
-
-BORDER_X = (BOUND - WIDTH / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
-if int((BOUND - WIDTH / 2) / SQUARE_SIZE) == (BOUND - WIDTH / 2) / SQUARE_SIZE:
-    BORDER_X += 0.5
-    PADX = True
-if BORDER_X < 0:
-    FIXED_X = True
-
-BORDER_Y = (BOUND - HEIGHT / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
-if int((BOUND - HEIGHT / 2) / SQUARE_SIZE) == (BOUND - HEIGHT / 2) / SQUARE_SIZE:
-    BORDER_Y += 0.5
-    PADY = True
-if BORDER_Y < 0:
-    FIXED_Y = True
 
 
-FPS = None # set to None for uncapped FPS - use at your own risk! Δ
-UNCAPPED_FPS = (FPS is None)
 
-JOYSTICK_THRESHOLD = 0.5 # Δ maybe?
+
 
 import time
 
@@ -384,6 +351,8 @@ frame_count = 0
 last_walls = walls
 intersected = set()
 
+ACTIVE_BOSS = None
+
 ba_overlap = set()
 wall_lock = False
 sound_lock = set()
@@ -417,7 +386,7 @@ while True:
         elif event.type == pygame.JOYDEVICEREMOVED and joystick:
             joystick = None
 
-    velocity = 5 # squares per second
+    velocity = PLAYER_SPEED
     copysx = startx
     copysy = starty
     copypx = playerx
@@ -432,25 +401,25 @@ while True:
         if not UNCAPPED_FPS:
             playerx -= velocity / FPS * SQUARE_SIZE
         else:
-            playerx -= 5 * (delay_to - last) * SQUARE_SIZE
+            playerx -= velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_RIGHT] or keys[pygame.K_d] or (joystick and joystick.get_axis(0) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == 1):
         last_key = "right" 
         if not UNCAPPED_FPS:
             playerx += velocity / FPS * SQUARE_SIZE
         else:
-            playerx += 5 * (delay_to - last) * SQUARE_SIZE
+            playerx += velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_UP] or keys[pygame.K_w] or (joystick and joystick.get_axis(1) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == 1):
         last_key = "up" 
         if not UNCAPPED_FPS:
             playery -= velocity / FPS * SQUARE_SIZE
         else:
-            playery -= 5 * (delay_to - last) * SQUARE_SIZE
+            playery -= velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_DOWN] or keys[pygame.K_s] or (joystick and joystick.get_axis(1) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == -1):
         last_key = "down" 
         if not UNCAPPED_FPS:
             playery += velocity / FPS * SQUARE_SIZE
         else:
-            playery += 5 * (delay_to - last) * SQUARE_SIZE
+            playery += velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_1]:
         defeated_bosses.add(1)
     elif keys[pygame.K_2]:
@@ -526,14 +495,8 @@ while True:
                 ba_overlap = boss_walls.intersection(walls)
                 walls |= boss_walls
                 wall_lock = True
+                ACTIVE_BOSS = BossTL(window)
             last_walls = walls
-        else:
-            if 1 not in sound_lock:
-                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
-                sound_lock.add(1)
-            walls = (walls - boss_walls) | ba_overlap
-            last_walls = walls
-            wall_lock = False
     if playerx - WIDTH // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADX else 0)) + SQUARE_SIZE and playery - HEIGHT // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADY else 0)):
         if 2 not in defeated_bosses:
             if not wall_lock:
@@ -542,13 +505,6 @@ while True:
                 walls |= boss_walls
                 wall_lock = True
             last_walls = walls
-        else:
-            if 2 not in sound_lock:
-                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
-                sound_lock.add(2)
-            walls = (walls - boss_walls) | ba_overlap
-            last_walls = walls
-            wall_lock = False
     if playerx - WIDTH // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADX else 0)) and playery - HEIGHT // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADY else 0)) + SQUARE_SIZE:
         if 3 not in defeated_bosses:
             if not wall_lock:
@@ -557,13 +513,6 @@ while True:
                 walls |= boss_walls
                 wall_lock = True
             last_walls = walls
-        else:
-            if 3 not in sound_lock:
-                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
-                sound_lock.add(3)
-            walls = (walls - boss_walls) | ba_overlap
-            last_walls = walls
-            wall_lock = False
     if playerx - WIDTH // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADX else 0)) + SQUARE_SIZE and playery - HEIGHT // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADY else 0)) + SQUARE_SIZE:
         if 4 not in defeated_bosses:
             if not wall_lock:
@@ -572,13 +521,42 @@ while True:
                 walls |= boss_walls
                 wall_lock = True
             last_walls = walls
-        else:
+
+    if playerx - WIDTH // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)) and playery - HEIGHT // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)):
+        if 1 in defeated_bosses:
+            ACTIVE_BOSS = None
+            if 1 not in sound_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
+                sound_lock.add(1)
+            walls = (walls - boss_walls) | ba_overlap
+            last_walls = walls
+            wall_lock = False
+    if playerx - WIDTH // 2 > (BOUND - ((BOSS_AREA + 1) * SQUARE_SIZE)) + SQUARE_SIZE and playery - HEIGHT // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)):
+        if 2 in defeated_bosses:
+            if 2 not in sound_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
+                sound_lock.add(2)
+            walls = (walls - boss_walls) | ba_overlap
+            last_walls = walls
+            wall_lock = False
+    if playerx - WIDTH // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)) and playery - HEIGHT // 2 > (BOUND - ((BOSS_AREA + 1) * SQUARE_SIZE)) + SQUARE_SIZE:
+        if 3 in defeated_bosses:
+            if 3 not in sound_lock:
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
+                sound_lock.add(3)
+            walls = (walls - boss_walls) | ba_overlap
+            last_walls = walls
+            wall_lock = False
+    if playerx - WIDTH // 2 > (BOUND - ((BOSS_AREA + 1) * SQUARE_SIZE)) + SQUARE_SIZE and playery - HEIGHT // 2 > (BOUND - ((BOSS_AREA + 1) * SQUARE_SIZE)) + SQUARE_SIZE:
+        if 4 in defeated_bosses:
             if 4 not in sound_lock:
                 pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_defeat.wav"))
                 sound_lock.add(4)
             walls = (walls - boss_walls) | ba_overlap
             last_walls = walls
             wall_lock = False
+
+
 
     walls_to_check = set()
     for x in range(0, 2):
@@ -622,39 +600,10 @@ while True:
             starty = copysy
             break 
 
+    # draw calls - a LOT of them
     window.fill((0, 0, 0))
 
     pygame.draw.circle(window, (255, 255, 0), (round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
-    for wall in walls:
-        pygame.draw.line(window, (33, 33, 222), 
-                        ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
-                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
-
-    # if not FIXED_X:
-    #     pygame.draw.line(window, (0, 255, 0),
-    #         ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER_X*SQUARE_SIZE), 0),
-    #         ((-startx * SQUARE_SIZE + WIDTH//2 - BORDER_X*SQUARE_SIZE), HEIGHT),
-    #         3
-    #     )
-
-    #     pygame.draw.line(window, (0, 255, 0),
-    #         ((-startx * SQUARE_SIZE + WIDTH//2 + BORDER_X*SQUARE_SIZE), 0),
-    #         ((-startx * SQUARE_SIZE + WIDTH//2 + BORDER_X*SQUARE_SIZE), HEIGHT),
-    #         3
-    #     )
-    
-
-    # if not FIXED_Y:
-    #     pygame.draw.line(window, (255, 165, 0),
-    #                     (0, (-starty * SQUARE_SIZE + HEIGHT//2 - BORDER_Y*SQUARE_SIZE)),
-    #                     (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 - BORDER_Y*SQUARE_SIZE)),
-    #                     3
-    #                     )
-    #     pygame.draw.line(window, (255, 165, 0),
-    #                     (0, (-starty * SQUARE_SIZE + HEIGHT//2 + BORDER_Y*SQUARE_SIZE)),
-    #                     (WIDTH, (-starty * SQUARE_SIZE + HEIGHT//2 + BORDER_Y*SQUARE_SIZE)),
-    #                     3
-    #                     )
 
     player_rect = pygame.Rect(
         -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
@@ -687,6 +636,32 @@ while True:
                 if indicator not in intersected:            
                     pygame.draw.rect(window, (170, 170, 0), rect)
 
+    if ACTIVE_BOSS:        
+        ACTIVE_BOSS.update(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, frame_count)
+
+    for wall in walls:
+        wall_color = colors.DEFAULT_BLUE
+        if wall[0][0] > (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] > (HEIGHT // 2 // SQUARE_SIZE):
+            wall_color = colors.SHADOW
+        elif wall[0][0] < (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] > (HEIGHT // 2 // SQUARE_SIZE):
+            wall_color = colors.ICE
+        elif wall[0][0] > (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] < (HEIGHT // 2 // SQUARE_SIZE):
+            wall_color = colors.LAVA
+        elif wall[0][0] < (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] < (HEIGHT // 2 // SQUARE_SIZE):
+            wall_color = colors.FOREST
+        else:
+            wall_color = colors.GREY
+        
+        if wall[0][0] == WIDTH // 2 // SQUARE_SIZE or wall[1][0] == WIDTH // 2 // SQUARE_SIZE + 1:
+            wall_color = colors.GREY
+        if wall[0][1] == HEIGHT // 2 // SQUARE_SIZE or wall[1][1] == HEIGHT // 2 // SQUARE_SIZE + 1:
+            wall_color = colors.GREY
+
+
+        pygame.draw.line(window, wall_color, 
+                        ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
+                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
+
     # draw player
     # yellow circle at center of screen
 
@@ -704,7 +679,7 @@ while True:
             ...
         last = delay_to
         delay_to = time.time()
-            
+        UCFD.delay = delay_to - last
     else:
         frame_count = (frame_count + 1) % FPS
         clock.tick(FPS)

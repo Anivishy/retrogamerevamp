@@ -19,7 +19,12 @@ class createInstructions:
         self.exitButtonOutline = ((100/1536)*self.WIDTH, (150/1024)*self.HEIGHT, (100/1536)*self.WIDTH, (150/1024)*self.HEIGHT)
         self.start = True
 
-    def printText(self, text, y, font):
+    def printText(self, text, y, title):
+        font = pygame.font.SysFont("monospace", 30)
+
+        if title:
+            font = pygame.font.SysFont("monospace", 50)
+
         lines = self.breakLines(text, font)
 
         for l in lines:
@@ -27,14 +32,15 @@ class createInstructions:
             x2 = x
 
             for i in range(len(l)):
-                char = font.render(l[i], True, (255, 255, 255), (0, 0, 0))
+
+                color = (200, 200, 200)
+                if title:
+                    color = (255, 255, 255)
+                
+                char = font.render(l[i], True, color, (0, 0, 0))
                 self.screen.blit(char, (x2, y))
 
                 x2 += char.get_width()
-
-                if x2 > (self.WIDTH - (.1* self.WIDTH)):
-                    y += char.get_height() + 15
-                    x2 = x
 
                 if i != len(l)-1:
                     self.screen.blit(font.render("|", True, (255, 255, 255)), (x2, y))
@@ -42,32 +48,44 @@ class createInstructions:
                 pygame.display.flip()
 
                 if self.start:
-                    pygame.time.wait(0) #115
+                    pygame.time.wait(20) #20
+
+            x2 = x
+            textWidth, textHeight = font.size(text)
+            y += textHeight
 
     def centerText(self, text, font):
         textWidth, textHeight = font.size(text)
         return (self.WIDTH - textWidth) / 2
         
     def breakLines(self, text, font):
-        maxWidth = self.WIDTH - (.1*self.WIDTH)
+        maxWidth = self.WIDTH - (.2 * self.WIDTH)
         chars = len(text)
         lines = []
         lineText = ""
         i = 0
-        extraWidth, h = font.size("|")
+        word = ""
         
         while i < chars:
             if text[i] == " ":
-                l = lineText + text[i]
-                textWidth, textHeight = font.size(l)
-                if textWidth > maxWidth:
+                textWidth, textHeight = font.size(lineText)
+                wordWidth, wordHeight = font.size(word)
+
+                if (textWidth + wordWidth) > maxWidth:
                     lines.append(lineText)
-                    lineText = text[i]
+                    lineText = word + " "
+                    word = ""
+
                 else:
-                    lineText += text[i]
+                    word += " "
+                    lineText += word
+                    word = ""
 
             else:
-                lineText += text[i]
+                word += text[i]
+
+            if i == chars - 1:
+                lineText += word
 
             i += 1
 
@@ -78,36 +96,36 @@ class createInstructions:
         titleFont = pygame.font.SysFont("monospace", 50)
         bodyFont = pygame.font.SysFont("monospace", 35)
 
-        self.printText("Instructions:", (.1 * self.HEIGHT), titleFont)
+        self.printText("Instructions", (.1 * self.HEIGHT), titleFont)
 
         controls = "Use your up, down, left, and right arrows for movement. Press 'esc' to exit the game."
 
-        goal = "Goal"
+        goal = "In the intro level, collect all pellets in the area. Then, use your weapons to defeat each of the bosses."
 
-        powerPellets = "Power Pellets"
+        powerups = "In each of the zones, you can pick up special powerups, including _"
 
-        mapGeneration = "Map Bounds"
+        zones = "This game consists of an intro level, similar to standard Pacman, followed by 4 different Zones, each with a boss to beat."
 
-        zones = "Zones"
+        self.printText("Controls", (.2 * self.HEIGHT), True)
+        self.printText(controls, (.275 * self.HEIGHT), False)
 
-        self.printText("Controls", (.2 * self.HEIGHT), titleFont)
-        self.printText(controls, (.25 * self.HEIGHT), bodyFont)
+        self.printText("Zones", (.4 * self.HEIGHT), True)
+        self.printText(zones, (.475 * self.HEIGHT), False)
 
-        self.printText(goal, (.35 * self.HEIGHT), bodyFont)
+        self.printText("Goal", (.6 * self.HEIGHT), True)
+        self.printText(goal, (.675 * self.HEIGHT), False)
 
-        self.printText(powerPellets, (.5 * self.HEIGHT), bodyFont)
+        self.printText("Powerups", (.8 * self.HEIGHT), True)
+        self.printText(powerups, (.875 * self.HEIGHT), False)
 
-        self.printText(mapGeneration, (.65 * self.HEIGHT), bodyFont)
-
-        self.printText(zones, (.8 * self.HEIGHT), bodyFont)
 
         pygame.display.flip()
 
         self.start = False
 
-# if __name__ == "__main__":
-i = createInstructions()
-i.printInstructions()
+if __name__ == "__main__":
+    i = createInstructions()
+    i.printInstructions()
 
 
 while True:
@@ -134,6 +152,6 @@ while True:
     # defeat all 4 of the bosses with weapons - shoot the bosses
     # once you pass the first level, different zones will be unlocked, each with special challenges (maybe add instructions at the corner of each page with a (?))
 
-    # update tasks
+    # update tasks, improve visuals
 
-    # create a scrollbar: https://copyprogramming.com/howto/pygame-scrolling-down-page#pygame-scrolling-down-page
+    # create a scrollbar if needed: https://copyprogramming.com/howto/pygame-scrolling-down-page#pygame-scrolling-down-page
