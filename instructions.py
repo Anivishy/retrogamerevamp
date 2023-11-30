@@ -16,7 +16,8 @@ class createInstructions:
         self.screen.fill((0, 0, 0))
         pygame.display.set_caption("Instructions")
 
-        self.exitButtonOutline = ((100/1536)*self.WIDTH, (150/1024)*self.HEIGHT, (100/1536)*self.WIDTH, (150/1024)*self.HEIGHT)
+        self.exitButtonOutline = ((50/1536)*self.WIDTH, (70/1024)*self.HEIGHT, (50/1536)*self.WIDTH, (50/1024)*self.HEIGHT)
+        self.exitButton = ((55/1536)*self.WIDTH, (75/1024)*self.HEIGHT, (40/1536)*self.WIDTH, (40/1024)*self.HEIGHT)
         self.start = True
 
     def printText(self, text, y, title):
@@ -48,11 +49,13 @@ class createInstructions:
                 pygame.display.flip()
 
                 if self.start:
-                    pygame.time.wait(20) #20
+                    pygame.time.wait(15) #15
 
             x2 = x
             textWidth, textHeight = font.size(text)
             y += textHeight
+        
+        self.start = False
 
     def centerText(self, text, font):
         textWidth, textHeight = font.size(text)
@@ -96,7 +99,7 @@ class createInstructions:
         titleFont = pygame.font.SysFont("monospace", 50)
         bodyFont = pygame.font.SysFont("monospace", 35)
 
-        self.printText("Instructions", (.1 * self.HEIGHT), titleFont)
+        self.printText("Instructions", (.1 * self.HEIGHT), True)
 
         controls = "Use your up, down, left, and right arrows for movement. Press 'esc' to exit the game."
 
@@ -123,9 +126,14 @@ class createInstructions:
 
         self.start = False
 
-if __name__ == "__main__":
-    i = createInstructions()
-    i.printInstructions()
+    def run(self):
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.exitButtonOutline), 10)
+        pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.exitButton))
+        self.printInstructions()
+
+# if __name__ == "__main__":
+i = createInstructions()
+i.run()
 
 
 while True:
@@ -140,8 +148,9 @@ while True:
                 pygame.quit()
                 sys.exit()
 
-        # elif event.type == pygame.MOUSEBUTTONDOWN:
-        #     if pygame.Rect(i.exitButton).collidepoint(pygame.mouse.get_pos()):
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if pygame.Rect(i.exitButtonOutline).collidepoint(pygame.mouse.get_pos()):
+                import homescreen
         
 
 
@@ -152,6 +161,6 @@ while True:
     # defeat all 4 of the bosses with weapons - shoot the bosses
     # once you pass the first level, different zones will be unlocked, each with special challenges (maybe add instructions at the corner of each page with a (?))
 
-    # update tasks, improve visuals
+    # update tasks, improve visuals, add a 'back' button
 
     # create a scrollbar if needed: https://copyprogramming.com/howto/pygame-scrolling-down-page#pygame-scrolling-down-page

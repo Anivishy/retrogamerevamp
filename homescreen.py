@@ -46,7 +46,7 @@ class createHomescreen:
 
                 pygame.draw.line(self.screen, (0, 0, 255), (x * self.size, y * self.size), (x2 * self.size, y2 * self.size), 3)
                 pygame.display.flip()
-                pygame.time.wait(18) #18
+                pygame.time.wait(15) #15
                 self.grid(x2, y2)
             
     def openingText(self, text, x, y):
@@ -61,7 +61,7 @@ class createHomescreen:
             pygame.display.flip()
 
             if self.start:
-                pygame.time.wait(115) #115
+                pygame.time.wait(50) #50
 
     def CenterText(self, text):
         textWidth, textHeight = self.openingFont.size(text)
@@ -112,9 +112,8 @@ class createHomescreen:
 
         self.start = False
 
-if __name__ == "__main__":
-    c = createHomescreen()
-    c.run()
+c = createHomescreen()
+c.run()
 
 while True:
     for event in pygame.event.get():
@@ -136,21 +135,21 @@ while True:
             # begin button clicked
             elif pygame.Rect(c.beginButtonOutline).collidepoint(pygame.mouse.get_pos()):
                 import introlevel
-                g = introlevel.start_game()
+                # g = introlevel.start_game()
 
             # instruction button clicked
             elif pygame.Rect(c.instructionButtonOutline).collidepoint(pygame.mouse.get_pos()):
                 import instructions
-                i = instructions.createInstructions()
+                # i = instructions.createInstructions()
 
             # settings button clicked
             elif pygame.Rect(c.settingButtonOutline).collidepoint(pygame.mouse.get_pos()):
                 import settings
-                s = settings.openSettings()
+                # s = settings.openSettings()
      
     pygame.display.flip()
 
-    # todo: buttons functionality, create instructions page, decide on and add settings
+    # todo: buttons functionality, settings page, fix how pages are connected, don't re-animate every time a page opens
     # later: splashscreen? Add comments to code
 
     # things to include in instructions:
