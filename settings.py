@@ -123,8 +123,8 @@ class openSettings:
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.Rect(self.exitButtonOutline).collidepoint(pygame.mouse.get_pos()):
-                        i = homescreen.createHomescreen()
-                        i.run()
+                        c = homescreen.createHomescreen()
+                        c.run(False)
 
                 pygame.display.flip()
 

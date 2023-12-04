@@ -20,7 +20,6 @@ class createHomescreen:
         self.screen.fill((0, 0, 0))
         pygame.display.set_caption("Homescreen")
         self.openingFont = pygame.font.SysFont("monospace", 50)
-        self.start = True
 
         self.size = 115
         self.cols = (self.WIDTH // self.size) + 2
@@ -36,7 +35,7 @@ class createHomescreen:
         self.quitButtonOutline = ((800/1536)*self.WIDTH, (700/1024)*self.HEIGHT, (400/1536)*self.WIDTH, (150/1024)*self.HEIGHT)
         self.quitButton = ((810/1536)*self.WIDTH, (710/1024)*self.HEIGHT, (380/1536)*self.WIDTH, (130/1024)*self.HEIGHT)
 
-    def grid(self, x, y):
+    def grid(self, x, y, start):
         move = [(1, 0), (-1, 0), (0, 1), (0, -1)]
         random.shuffle(move)
 
@@ -48,10 +47,11 @@ class createHomescreen:
 
                 pygame.draw.line(self.screen, (0, 0, 255), (x * self.size, y * self.size), (x2 * self.size, y2 * self.size), 3)
                 pygame.display.flip()
-                pygame.time.wait(15) #15
-                self.grid(x2, y2)
+                if start:
+                    pygame.time.wait(15) #15
+                self.grid(x2, y2, start)
             
-    def openingText(self, text, x, y):
+    def openingText(self, text, x, y, start):
         for i in range(len(text)):
             char = self.openingFont.render(text[i], True, (255, 255, 255), (0, 0, 0))
             self.screen.blit(char, (x, y))
@@ -62,7 +62,7 @@ class createHomescreen:
 
             pygame.display.flip()
 
-            if self.start:
+            if start:
                 pygame.time.wait(50) #50
 
     def CenterText(self, text):
@@ -75,47 +75,48 @@ class createHomescreen:
         startY = buttonY + (buttonHeight - textHeight) / 2
         return (startX, startY)
     
-    def setup(self):
-        self.grid(0, 0)
+    def setup(self, start):
+        self.grid(0, 0, start)
 
         # title
-        self.openingText("Welcome!", self.CenterText("Welcome!"), (.15 * self.HEIGHT))
-        pygame.time.wait(500)
+        self.openingText("Welcome!", self.CenterText("Welcome!"), (.15 * self.HEIGHT), start)
+
+        if start:
+            pygame.time.wait(500)
+
         instructions = "Click 'begin' to get started!"
-        self.openingText(instructions, self.CenterText(instructions), (.25 * self.HEIGHT))
+        self.openingText(instructions, self.CenterText(instructions), (.25 * self.HEIGHT), start)
 
         # begin button
         pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.beginButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.beginButton))
         a, b, c, d = self.beginButtonOutline
         x, y = self.CenterButtons("Begin", a, b, c, d)
-        self.openingText("Begin", x, y)
+        self.openingText("Begin", x, y, start)
 
         # instructions button
         pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.instructionButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.instructionButton))
         a, b, c, d = self.instructionButtonOutline
         x, y = self.CenterButtons("Instructions", a, b, c, d)
-        self.openingText("Instructions", x, y)
+        self.openingText("Instructions", x, y, start)
 
         # settings button
         pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.settingButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.settingButton))
         a, b, c, d = self.settingButtonOutline
         x, y = self.CenterButtons("Settings", a, b, c, d)
-        self.openingText("Settings", x, y)
+        self.openingText("Settings", x, y, start)
 
         # quit button
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.quitButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.quitButton))
         a, b, c, d = self.quitButtonOutline
         x, y = self.CenterButtons("Quit", a, b, c, d)
-        self.openingText("Quit", x, y)
+        self.openingText("Quit", x, y, start)
 
-        self.start = False
-
-    def run(self):
-        self.setup()
+    def run(self, start):
+        self.setup(start)
 
         while True:
             for event in pygame.event.get():
@@ -151,11 +152,11 @@ class createHomescreen:
             
             pygame.display.flip()
 
-if __name__ == "__main___":
+if __name__ == "__main__":
     c = createHomescreen()
-    c.run()
+    c.run(True)
 
 
-    # todo: buttons functionality, settings page, fix how pages are connected, don't re-animate every time a page opens
+    # todo: buttons functionality, settings page,  don't re-animate every time a page opens
     # later: splashscreen? Add comments to code
     # don't run animations every time!!

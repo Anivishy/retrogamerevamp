@@ -147,19 +147,11 @@ class createInstructions:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.Rect(self.exitButtonOutline).collidepoint(pygame.mouse.get_pos()):
                         c = homescreen.createHomescreen()
-                        c.run()
+                        c.run(False)
 
 if __name__ == "__main__":
     i = createInstructions()
     i.run()
-
-        
-# things to include in instructions:
-    # - up, down, left, right arrows to navigate
-    # - goal is to collect all pellets in the area (or collect _ number of points?)
-    # different powerups - infinite ammo [add more later]
-    # defeat all 4 of the bosses with weapons - shoot the bosses
-    # once you pass the first level, different zones will be unlocked, each with special challenges (maybe add instructions at the corner of each page with a (?))
 
     # update tasks, improve visuals, add a 'back' button
 
