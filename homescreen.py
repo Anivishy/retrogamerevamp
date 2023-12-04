@@ -2,6 +2,8 @@
 import pygame
 import random
 import sys
+import instructions
+import settings
 
 class createHomescreen:
     def __init__(self):
@@ -73,7 +75,7 @@ class createHomescreen:
         startY = buttonY + (buttonHeight - textHeight) / 2
         return (startX, startY)
     
-    def run(self):
+    def setup(self):
         self.grid(0, 0)
 
         # title
@@ -112,48 +114,48 @@ class createHomescreen:
 
         self.start = False
 
-c = createHomescreen()
-c.run()
+    def run(self):
+        self.setup()
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
 
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            # quit button clicked
-            if pygame.Rect(c.quitButtonOutline).collidepoint(pygame.mouse.get_pos()):
-                pygame.quit()
-                sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    # quit button clicked
+                    if pygame.Rect(self.quitButtonOutline).collidepoint(pygame.mouse.get_pos()):
+                        pygame.quit()
+                        sys.exit()
+                    
+                    # begin button clicked
+                    elif pygame.Rect(self.beginButtonOutline).collidepoint(pygame.mouse.get_pos()):
+                        import introlevel # fix this!!
+                        g = introlevel.start_game()
+
+                    # instruction button clicked
+                    elif pygame.Rect(self.instructionButtonOutline).collidepoint(pygame.mouse.get_pos()):
+                        i = instructions.createInstructions()
+                        i.run()
+
+                    # settings button clicked
+                    elif pygame.Rect(self.settingButtonOutline).collidepoint(pygame.mouse.get_pos()):
+                        s = settings.openSettings()
+                        s.run()
             
-            # begin button clicked
-            elif pygame.Rect(c.beginButtonOutline).collidepoint(pygame.mouse.get_pos()):
-                import introlevel
-                # g = introlevel.start_game()
+            pygame.display.flip()
 
-            # instruction button clicked
-            elif pygame.Rect(c.instructionButtonOutline).collidepoint(pygame.mouse.get_pos()):
-                import instructions
-                # i = instructions.createInstructions()
+if __name__ == "__main___":
+    c = createHomescreen()
+    c.run()
 
-            # settings button clicked
-            elif pygame.Rect(c.settingButtonOutline).collidepoint(pygame.mouse.get_pos()):
-                import settings
-                # s = settings.openSettings()
-     
-    pygame.display.flip()
 
     # todo: buttons functionality, settings page, fix how pages are connected, don't re-animate every time a page opens
     # later: splashscreen? Add comments to code
-
-    # things to include in instructions:
-        # - up, down, left, right arrows to navigate
-        # - goal is to collect all pellets in the area (or collect _ number of points?)
-        # - if you eat a "power pellet", you can eat ghosts for points
-        # once you pass the first level, different zones will be unlocked, each with special challenges (add instructions at the corner of each page with a (?))
+    # don't run animations every time!!

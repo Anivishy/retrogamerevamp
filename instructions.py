@@ -1,5 +1,6 @@
 import pygame
 import sys
+import homescreen
 
 class createInstructions:
     def __init__(self):
@@ -131,29 +132,28 @@ class createInstructions:
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.exitButton))
         self.printInstructions()
 
-# if __name__ == "__main__":
-i = createInstructions()
-i.run()
+        while True:
+            for event in pygame.event.get():
 
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-while True:
-    for event in pygame.event.get():
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
 
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.Rect(self.exitButtonOutline).collidepoint(pygame.mouse.get_pos()):
+                        c = homescreen.createHomescreen()
+                        c.run()
 
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
+if __name__ == "__main__":
+    i = createInstructions()
+    i.run()
 
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if pygame.Rect(i.exitButtonOutline).collidepoint(pygame.mouse.get_pos()):
-                import homescreen
         
-
-
 # things to include in instructions:
     # - up, down, left, right arrows to navigate
     # - goal is to collect all pellets in the area (or collect _ number of points?)

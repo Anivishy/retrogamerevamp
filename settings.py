@@ -1,5 +1,6 @@
 import pygame
 import sys
+import homescreen
 
 class openSettings:
     def __init__(self):
@@ -108,28 +109,29 @@ class openSettings:
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.exitButton))
         self.text()
 
-# if __name__ == "__main__":
-s = openSettings()
-s.run()
+        while True:
+            for event in pygame.event.get():
 
-while True:
-    for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
 
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.Rect(self.exitButtonOutline).collidepoint(pygame.mouse.get_pos()):
+                        i = homescreen.createHomescreen()
+                        i.run()
 
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if pygame.Rect(s.exitButtonOutline).collidepoint(pygame.mouse.get_pos()):
-                import homescreen
+                pygame.display.flip()
 
-        # elif event.type == pygame.MOUSEBUTTONDOWN:
-        #     if pygame.Rect(i.exitButton).collidepoint(pygame.mouse.get_pos()):
-        
-    
+
+if __name__ == "__main__":
+    s = openSettings()
+    s.run()
+
+
     
