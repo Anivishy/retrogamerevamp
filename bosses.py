@@ -49,6 +49,7 @@ class BossTL: # top left
             self.projectiles.add(
                 ((self.x + SQUARE_SIZE // 2, self.y + SQUARE_SIZE // 2), -90, 1.5 * BOSS_SPEED)
             )
+            pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_shoot.wav"))
             
         c = set()
         for _ in range(len(self.projectiles)):
@@ -144,6 +145,7 @@ class BossTR: # top right
             self.projectiles.add(
                 ((self.x + SQUARE_SIZE // 2, self.y + SQUARE_SIZE // 2), -45, 1.5 * BOSS_SPEED)
             )
+            pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_shoot.wav"))
             
         c = set()
         for _ in range(len(self.projectiles)):
@@ -258,7 +260,8 @@ class BossBL: # bottom left
                 self.projectiles.add(
                     ((self.x + SQUARE_SIZE // 2, self.y + SQUARE_SIZE // 2), -90, 1.5 * BOSS_SPEED)
                 )    
-            
+            pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_shoot.wav"))
+
         c = set()
         for _ in range(len(self.projectiles)):
             projectile = list(self.projectiles.pop())
@@ -357,6 +360,7 @@ class BossBR: # bottom right
             self.projectiles.append(
                 ((self.x + SQUARE_SIZE // 2, self.y + SQUARE_SIZE // 2), a, 1.5 * BOSS_SPEED)
             )
+            pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_shoot.wav"))
         c = []
         for _ in range(len(self.projectiles)):
             projectile = list(self.projectiles.pop())
