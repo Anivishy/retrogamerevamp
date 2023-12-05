@@ -10,6 +10,8 @@ base = os.path.dirname(os.path.abspath(__file__))
 def sanitize_path(path):
     return os.path.join(base, path)
 
+
+
 class weapons:
 
     def __init__(self):
@@ -43,6 +45,7 @@ class weapons:
 
         #Window Constants
         #self.WIDTH, self.HEIGHT = pyautogui.size()
+        
 
         #Colors
         self.GREEN = (0, 255, 0)
@@ -51,20 +54,22 @@ class weapons:
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
         self.COLOR = ()
+        self.active_projectiles = []
 
-    def check_projectile_collision(self, walls, proj_x, proj_y, last_key):
+    def check_projectile_collision(self, point, last_key):
         if (last_key == "up_arrow" or last_key == "down_arrow" or last_key == "w" or last_key == "s"):
-            if (proj_x, proj_y):
-                #if moving up and down last, potential coliding walls must be horizontal
-                #check if x is between start and end values of the wall
-                #chekc if y is equal to etiher start or end of the wall since they will be the same for a horizontal wall
-                pass
-        else:
-            if (proj_x, proj_y):
-                #if moving up and down last, potential coliding walls must be vertical
-                #check if x is between start and end values of the wall
-                #chekc if y is equal to etiher start or end of the wall since they will be the same for a horizontal wall
-                pass
+            return True
+        #     if (proj_x, proj_y):
+        #         #if moving up and down last, potential coliding walls must be horizontal
+        #         #check if x is between start and end values of the wall
+        #         #chekc if y is equal to etiher start or end of the wall since they will be the same for a horizontal wall
+        #         pass
+        # else:
+        #     if (proj_x, proj_y):
+        #         #if moving up and down last, potential coliding walls must be vertical
+        #         #check if x is between start and end values of the wall
+        #         #chekc if y is equal to etiher start or end of the wall since they will be the same for a horizontal wall
+        #         pass
 
     async def shoot(self, window, playerx, playery, weapon_name, last_key):
         start_point = (playerx - 30, playery - 30)
@@ -77,25 +82,40 @@ class weapons:
 
     #Implementation for more guns if added later
     
-    def shoot_laser(self, window, start_point, last_key):
-        if last_key == "right":
-            window.blit(self.laser_projectile_right, start_point)
-            pygame.display.update()
-            window.blit(self.laser_projectile_right, (-150, 150))
-            pygame.display.update()
-        if last_key == "left":
-            window.blit(self.laser_projectile_left, start_point)
-            pygame.display.update()
-            window.blit(self.laser_projectile_left, (-150, 150))
-            pygame.display.update()
-        if last_key == "up":
-            window.blit(self.laser_projectile_up, start_point)
-            pygame.display.update()
-            window.blit(self.laser_projectile_up, (-150, 150))
-            pygame.display.update()
-        if last_key == "down":
-            window.blit(self.laser_projectile_down, start_point)
-            pygame.display.update()
-            window.blit(self.laser_projectile_down, (-150, 150))
-            pygame.display.update()
+    # def shoot_laser(self, window, start_point, last_key):
+    #     if last_key == "right":
+    #         window.blit(self.laser_projectile_right, start_point)
+    #         time.sleep(0.05)
+    #         pygame.display.update()
+    #         window.blit(self.laser_projectile_right, (-150, 150))
+    #         pygame.display.update()
+    #     if last_key == "left":
+    #         window.blit(self.laser_projectile_left, start_point)
+    #         pygame.display.update()
+    #         window.blit(self.laser_projectile_left, (-150, 150))
+    #         pygame.display.update()
+    #     if last_key == "up":
+    #         window.blit(self.laser_projectile_up, start_point)
+    #         pygame.display.update()
+    #         window.blit(self.laser_projectile_up, (-150, 150))
+    #         pygame.display.update()
+    #     if last_key == "down":
+    #         window.blit(self.laser_projectile_down, start_point)
+    #         pygame.display.update()
+    #         window.blit(self.laser_projectile_down, (-150, 150))
+    #         pygame.display.update()
+    #     self.active_projectiles.append((start_point, last_key))
+
+    # def track_laser(self, window):
+    #     for i in self.active_projectiles:
+    #         if self.check_projectile_collision(i[0], i[1]):
+    #             if i[1] == "right":
+    #                 start_point = (i[0][0] + 50, i[0][1])
+    #                 self.active_projectiles.remove(i)
+    #                 self.shoot_laser(window, start_point, i[1])
+                
+            
+
+    # def get_projectiles(self):
+    #     return self.active_projectiles
 
