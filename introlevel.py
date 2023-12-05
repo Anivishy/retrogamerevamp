@@ -172,11 +172,13 @@ class Renderer:
                 for ghost in self._ghosts:
                     ghost.flash_state = not ghost.flash_state
             
-            if event.type == self._wall_event and self.destroy_wall:
+            if event.type == self._wall_event and self.destroy_wall and len(self.walls) > 0:
                 wall = self.walls.pop()
                 self._objects.remove(wall)
 
                 if len(self.walls) == 0:
+
+                    #Add code to transition to mazegen here
                     pass
         
         key_pressed = pygame.key.get_pressed()
