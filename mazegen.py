@@ -444,6 +444,11 @@ while True:
                                 round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun", last_key))
             player_score.use_ammo(1)
 
+    cur_proj = player_weapon.get_projectiles()
+    if len(cur_proj) > 0:
+        for i in cur_proj:
+            player_weapon.track_laser(window)
+
 
     startx = (playerx - (WIDTH // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
     starty = (playery - (HEIGHT // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
