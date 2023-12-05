@@ -6,6 +6,7 @@ import math
 import health
 import pelletsandammo
 import weapons
+import mousetargettracker
 
 import asyncio
 import time
@@ -20,6 +21,7 @@ player_health = health.healthbar()
 player_score = pelletsandammo.pellets()
 player_weapon = weapons.weapons()
 start_time = time.time()
+player_target = mousetargettracker.mouseTarget()
 last_key = ""
 
 
@@ -436,18 +438,20 @@ while True:
     if keys[pygame.K_SPACE]:
         breakpoint()
 
-    if keys [pygame.K_RSHIFT]:
-        cur_time = time.time()
-        if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
-            start_time = cur_time
-            asyncio.run(player_weapon.shoot(window, round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), 
-                                round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun", last_key))
-            player_score.use_ammo(1)
+    #Old shooting code, ignore for now, do not delete
 
-    cur_proj = player_weapon.get_projectiles()
-    if len(cur_proj) > 0:
-        for i in cur_proj:
-            player_weapon.track_laser(window)
+    # if keys [pygame.K_RSHIFT]:
+    #     cur_time = time.time()
+    #     if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
+    #         start_time = cur_time
+    #         asyncio.run(player_weapon.shoot(window, round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), 
+    #                             round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun", last_key))
+    #         player_score.use_ammo(1)
+
+    # cur_proj = player_weapon.get_projectiles()
+    # if len(cur_proj) > 0:
+    #     for i in cur_proj:
+    #         player_weapon.track_laser(window)
 
 
     startx = (playerx - (WIDTH // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
@@ -680,6 +684,7 @@ while True:
     player_health.gen_healthbar(window, WIDTH)
     player_score.display_score(window, WIDTH)
     player_score.display_ammo(window, WIDTH)
+    player_target.update_target(window, (0,0))
     
     pygame.display.update()
     
