@@ -24,7 +24,7 @@ class Renderer:
         self._powerups = []
         self._open_mouth = pygame.USEREVENT
         self._pacman = None
-        self._lives = 1
+        self._lives = 3
         self._hungry_pacman = False
         self._hungry_event = pygame.USEREVENT + 1
         self._ghost_slide = pygame.USEREVENT + 2
@@ -32,9 +32,12 @@ class Renderer:
         self._flashing_event = pygame.USEREVENT + 3
         self._flash_ghosts = pygame.USEREVENT + 4
         self.paused = False
+        self._next_level = False
         self.font = pygame.font.SysFont('timesnewroman', 24)
         self.text = self.font.render(f"Lives Remaining: {self._lives}", True, (255, 255, 255)).convert_alpha()
         self.game_over_text = self.font.render(f"Game Over Press r to Restart", True, (255, 255, 255)).convert_alpha()
+        self.destroy_wall = False
+        self._wall_event = pygame.USEREVENT + 5
                         
 
     def tick(self, fps):
@@ -42,6 +45,7 @@ class Renderer:
         pygame.time.set_timer(self._open_mouth, 400)
         pygame.time.set_timer(self._ghost_slide, 150)
         pygame.time.set_timer(self._flash_ghosts, 250)
+        pygame.time.set_timer(self._wall_event, 50)
 
         while True:
             
@@ -52,7 +56,7 @@ class Renderer:
                     self._screen.blit(self.game_over_text, (160, 288))
                 
                 object.draw()
-                
+
             self._screen.blit(self.text, (10, 0))
             pygame.display.update()
             self._clock.tick(fps)
@@ -66,6 +70,10 @@ class Renderer:
     def new_wall(self, object):
         self._objects.append(object)
         self.walls.append(object)
+    
+    def destroy_walls(self):
+        self.destroy_wall = True
+
     
     def start_hungry_timer(self):
         # Pacman enters the mode where he can eat ghosts for 10 seconds
@@ -163,9 +171,19 @@ class Renderer:
             if event.type == self._flash_ghosts:
                 for ghost in self._ghosts:
                     ghost.flash_state = not ghost.flash_state
+            
+            if event.type == self._wall_event and self.destroy_wall and len(self.walls) > 0:
+                wall = self.walls.pop()
+                self._objects.remove(wall)
+
+                if len(self.walls) == 0:
+
+                    #Add code to transition to mazegen here
+                    pass
         
         key_pressed = pygame.key.get_pressed()
-        
+
+
         # 1 is up, 2 is down, 3 is left, 4 is right, this notation will be used throughout this file
         if not self.paused and not self._game_over:
             if key_pressed[pygame.K_UP]:
@@ -272,8 +290,8 @@ class Pacman(MovingObject):
     def __init__(self, surface, x, y, size):
         super().__init__(surface, x, y, size, None, False)
         self.last_position = (0, 0)
-        self.open_mouth = pygame.image.load(sanitize_path('Images/pacmanOpen.png')).convert_alpha()
-        self.closed_mouth = pygame.image.load(sanitize_path('Images/pacmanClosed.png')).convert_alpha()
+        self.open_mouth = pygame.transform.scale(pygame.image.load(sanitize_path('Images/pacmanOpen.png')).convert_alpha(), (30, 30))
+        self.closed_mouth = pygame.transform.scale(pygame.image.load(sanitize_path('Images/pacmanClosed.png')).convert_alpha(), (30, 30))
         self.image = self.open_mouth
         self.open = True
     
@@ -314,8 +332,8 @@ class Pacman(MovingObject):
             points.remove(points_reached)
         
         # Triggers Game Over pro
-        if len(self._renderer._points) == 0:
-            self._renderer._game_over = True
+        if len(self._renderer._points) <= 160:
+            self._renderer._next_level = True
             for ghost in self._renderer._ghosts:
                 ghost.end_game()
 
@@ -418,18 +436,22 @@ class Ghost(MovingObject):
     
     def get_next_direction(self):
         # If there is no new target, new course is determined depending on state of game and state of ghost
-        if self.target is None and not self.fleeing and not self._renderer._game_over:
+        if self.target is None and not self.fleeing and not (self._renderer._game_over or self._renderer._next_level):
             if self.distance_to_pacman() <= 4:
                 self.get_path_to_pacman(self)
             else:
                 self.get_random_path(self)
             return 0
-        elif self.target is None and self.fleeing and not self._renderer._game_over:
+        elif self.target is None and self.fleeing and not (self._renderer._game_over or self._renderer._next_level):
             self.fleeing = False
             self.get_random_path(self)
             return 0
-        elif self.target is None and self._renderer._game_over:
+        elif self.target is None and self._renderer._next_level:
             self._renderer._objects.remove(self)
+            self._renderer._ghosts.remove(self)
+
+            self._renderer.destroy_walls()
+
             return
 
         dx = self.target[0] - self.x

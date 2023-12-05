@@ -13,7 +13,7 @@ def sanitize_path(path):
 class mouseTarget:
 
     def __init__ (self):
-        self.target = pygame.image.load(sanitize_path('projectileimgaes/lazerblast.png')) #temp image
+        self.target = pygame.image.load(sanitize_path('Images/crosshair.png')) 
         self.SCALE_SIZE = (75, 75)
         self.target = pygame.transform.scale(self.target, self.SCALE_SIZE)
 
