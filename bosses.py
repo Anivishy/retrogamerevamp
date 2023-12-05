@@ -21,6 +21,9 @@ class BossTL: # top left
         self.created_at = time.time()
         self.last_updated = time.time()
 
+        self.cam_x = 0
+        self.cam_y = 0
+
 
     def check_all_collisions(self):
         cp = set()
@@ -65,15 +68,20 @@ class BossTL: # top left
                 
             pos = (pos[0] + dx, pos[1] + dy)
             projectile[0] = pos
-
             c.add(tuple(projectile))
+
+
 
         self.projectiles = c
         self.projectiles = self.check_all_collisions()
         
         for projectile in self.projectiles:
-            pygame.draw.circle(self.screen, (0, 0, 0), projectile[0], PROJECTILE_RADIUS)
-            pygame.draw.circle(self.screen, colors.FOREST, projectile[0], PROJECTILE_RADIUS, width=int(PROJECTILE_RADIUS // 3))
+            pygame.draw.circle(self.screen, (0, 0, 0), (projectile[0][0] - self.cam_x, projectile[0][1] - self.cam_y), PROJECTILE_RADIUS)
+            pygame.draw.circle(self.screen, colors.FOREST, (projectile[0][0] - self.cam_x, projectile[0][1] - self.cam_y), PROJECTILE_RADIUS, width=int(PROJECTILE_RADIUS // 3))
+
+    def update_cam(self, left, right, top, bottom):
+        self.cam_x = left * SQUARE_SIZE
+        self.cam_y = top * SQUARE_SIZE
 
     def update(self, relx, rely, frame):
         dy = rely - (self.y + self.height // 2)
@@ -116,6 +124,13 @@ class BossTR: # top right
         self.projectiles = set()
         self.created_at = time.time()
         self.last_updated = time.time()
+
+        self.cam_x = 0
+        self.cam_y = 0
+    
+    def update_cam(self, left, right, top, bottom):
+        self.cam_x = right * SQUARE_SIZE
+        self.cam_y = top * SQUARE_SIZE
 
 
     def check_all_collisions(self):
@@ -168,8 +183,8 @@ class BossTR: # top right
         self.projectiles = self.check_all_collisions()
         
         for projectile in self.projectiles:
-            pygame.draw.circle(self.screen, (0, 0, 0), projectile[0], PROJECTILE_RADIUS)
-            pygame.draw.circle(self.screen, colors.LAVA, projectile[0], PROJECTILE_RADIUS, width=int(PROJECTILE_RADIUS // 3))
+            pygame.draw.circle(self.screen, (0, 0, 0), (projectile[0][0] - self.cam_x, projectile[0][1] - self.cam_y), PROJECTILE_RADIUS)
+            pygame.draw.circle(self.screen, colors.LAVA, (projectile[0][0] - self.cam_x, projectile[0][1] - self.cam_y), PROJECTILE_RADIUS, width=int(PROJECTILE_RADIUS // 3))
 
     def update(self, relx, rely, frame):
         dy = rely - (self.y + self.height // 2)
@@ -215,7 +230,9 @@ class BossBL: # bottom left
 
         self.marker = 0
 
-
+    def update_cam(self, left, right, top, bottom):
+        self.cam_x = left * SQUARE_SIZE
+        self.cam_y = bottom * SQUARE_SIZE
 
     def check_all_collisions(self):
         cp = set()
@@ -283,8 +300,8 @@ class BossBL: # bottom left
         self.projectiles = self.check_all_collisions()
         
         for projectile in self.projectiles:
-            pygame.draw.circle(self.screen, (0, 0, 0), projectile[0], PROJECTILE_RADIUS)
-            pygame.draw.circle(self.screen, colors.ICE, projectile[0], PROJECTILE_RADIUS, width=int(PROJECTILE_RADIUS // 3))
+            pygame.draw.circle(self.screen, (0, 0, 0), (projectile[0][0] - self.cam_x, projectile[0][1] - self.cam_y), PROJECTILE_RADIUS)
+            pygame.draw.circle(self.screen, colors.ICE, (projectile[0][0] - self.cam_x, projectile[0][1] - self.cam_y), PROJECTILE_RADIUS, width=int(PROJECTILE_RADIUS // 3))
 
     def update(self, relx, rely, frame):
         dy = rely - (self.y + self.height // 2)
@@ -382,8 +399,12 @@ class BossBR: # bottom right
         self.projectiles = self.check_all_collisions()
         
         for projectile in self.projectiles:
-            pygame.draw.circle(self.screen, (0, 0, 0), projectile[0], PROJECTILE_RADIUS)
-            pygame.draw.circle(self.screen, colors.SHADOW, projectile[0], PROJECTILE_RADIUS, width=int(PROJECTILE_RADIUS // 3))
+            pygame.draw.circle(self.screen, (0, 0, 0), (projectile[0][0] - self.cam_x, projectile[0][1] - self.cam_y), PROJECTILE_RADIUS)
+            pygame.draw.circle(self.screen, colors.SHADOW, (projectile[0][0] - self.cam_x, projectile[0][1] - self.cam_y), PROJECTILE_RADIUS, width=int(PROJECTILE_RADIUS // 3))
+    
+    def update_cam(self, left, right, top, bottom):
+        self.cam_x = right * SQUARE_SIZE
+        self.cam_y = bottom * SQUARE_SIZE
 
     def update(self, relx, rely, frame):
         dy = rely - (self.y + self.height // 2)
