@@ -1,5 +1,6 @@
 import pygame
 import sys
+import homescreen
 
 class createInstructions:
     def __init__(self):
@@ -16,7 +17,8 @@ class createInstructions:
         self.screen.fill((0, 0, 0))
         pygame.display.set_caption("Instructions")
 
-        self.exitButtonOutline = ((100/1536)*self.WIDTH, (150/1024)*self.HEIGHT, (100/1536)*self.WIDTH, (150/1024)*self.HEIGHT)
+        self.exitButtonOutline = ((50/1536)*self.WIDTH, (70/1024)*self.HEIGHT, (50/1536)*self.WIDTH, (50/1024)*self.HEIGHT)
+        self.exitButton = ((55/1536)*self.WIDTH, (75/1024)*self.HEIGHT, (40/1536)*self.WIDTH, (40/1024)*self.HEIGHT)
         self.start = True
 
     def printText(self, text, y, title):
@@ -48,11 +50,13 @@ class createInstructions:
                 pygame.display.flip()
 
                 if self.start:
-                    pygame.time.wait(20) #20
+                    pygame.time.wait(15) #15
 
             x2 = x
             textWidth, textHeight = font.size(text)
             y += textHeight
+        
+        self.start = False
 
     def centerText(self, text, font):
         textWidth, textHeight = font.size(text)
@@ -96,7 +100,7 @@ class createInstructions:
         titleFont = pygame.font.SysFont("monospace", 50)
         bodyFont = pygame.font.SysFont("monospace", 35)
 
-        self.printText("Instructions", (.1 * self.HEIGHT), titleFont)
+        self.printText("Instructions", (.1 * self.HEIGHT), True)
 
         controls = "Use your up, down, left, and right arrows for movement. Press 'esc' to exit the game."
 
@@ -123,35 +127,32 @@ class createInstructions:
 
         self.start = False
 
+    def run(self):
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.exitButtonOutline), 10)
+        pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.exitButton))
+        self.printInstructions()
+
+        while True:
+            for event in pygame.event.get():
+
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.Rect(self.exitButtonOutline).collidepoint(pygame.mouse.get_pos()):
+                        c = homescreen.createHomescreen()
+                        c.run(False)
+
 if __name__ == "__main__":
     i = createInstructions()
-    i.printInstructions()
+    i.run()
 
-
-while True:
-    for event in pygame.event.get():
-
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
-
-        # elif event.type == pygame.MOUSEBUTTONDOWN:
-        #     if pygame.Rect(i.exitButton).collidepoint(pygame.mouse.get_pos()):
-        
-
-
-# things to include in instructions:
-    # - up, down, left, right arrows to navigate
-    # - goal is to collect all pellets in the area (or collect _ number of points?)
-    # different powerups - infinite ammo [add more later]
-    # defeat all 4 of the bosses with weapons - shoot the bosses
-    # once you pass the first level, different zones will be unlocked, each with special challenges (maybe add instructions at the corner of each page with a (?))
-
-    # update tasks, improve visuals
+    # update tasks, improve visuals, add a 'back' button
 
     # create a scrollbar if needed: https://copyprogramming.com/howto/pygame-scrolling-down-page#pygame-scrolling-down-page

@@ -24,6 +24,7 @@ class Renderer:
         self._powerups = []
         self._open_mouth = pygame.USEREVENT
         self._pacman = None
+        self._lives = 1
         self._hungry_pacman = False
         self._hungry_event = pygame.USEREVENT + 1
         self._ghost_slide = pygame.USEREVENT + 2
@@ -31,7 +32,11 @@ class Renderer:
         self._flashing_event = pygame.USEREVENT + 3
         self._flash_ghosts = pygame.USEREVENT + 4
         self.paused = False
-    
+        self.font = pygame.font.SysFont('timesnewroman', 24)
+        self.text = self.font.render(f"Lives Remaining: {self._lives}", True, (255, 255, 255)).convert_alpha()
+        self.game_over_text = self.font.render(f"Game Over Press r to Restart", True, (255, 255, 255)).convert_alpha()
+                        
+
     def tick(self, fps):
         # Alternates between open and closed mouth for Pacman
         pygame.time.set_timer(self._open_mouth, 400)
@@ -39,15 +44,21 @@ class Renderer:
         pygame.time.set_timer(self._flash_ghosts, 250)
 
         while True:
-            for object in self._objects:
-                if not self.paused:
-                    object.tick()
-                object.draw()
             
+            for object in self._objects:
+                if not self.paused and not self._game_over:
+                    object.tick()
+                if self._game_over:
+                    self._screen.blit(self.game_over_text, (160, 288))
+                
+                object.draw()
+                
+            self._screen.blit(self.text, (10, 0))
             pygame.display.update()
             self._clock.tick(fps)
             self._screen.fill((0, 0, 0))
             self._handle_events()
+           
     
     def new_object(self, object):
         self._objects.append(object)
@@ -117,6 +128,10 @@ class Renderer:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
+                if event.key == pygame.K_r:
+                    if self._game_over:
+                        new_game = Game()
+                        new_game.start_game()
         
             if event.type == self._open_mouth:
                 if self._pacman is None:
@@ -152,7 +167,7 @@ class Renderer:
         key_pressed = pygame.key.get_pressed()
         
         # 1 is up, 2 is down, 3 is left, 4 is right, this notation will be used throughout this file
-        if not self.paused:
+        if not self.paused and not self._game_over:
             if key_pressed[pygame.K_UP]:
                 self._pacman.change_direction(1)
             elif key_pressed[pygame.K_DOWN]:
@@ -324,7 +339,12 @@ class Pacman(MovingObject):
                     ghost.fleeing = True
                     ghost.back_to_spawn(ghost)
                 else:
-                    self._renderer.reset_pacman()
+                    if self._renderer._lives > 0:
+                        self._renderer._lives -= 1
+                        self._renderer.text = self._renderer.font.render(f"Lives Remaining: {self._renderer._lives}", True, (255, 255, 255))
+                        self._renderer.reset_pacman()
+                    else:
+                        self._renderer._game_over = True
         
     
 class Ghost(MovingObject):
