@@ -52,6 +52,7 @@ class healthbar:
         window.blit(health, healthRect)
 
     def gen_shieldbar(self, window, WIDTH):
+        pygame.draw.rect(window, self.BLUE, [WIDTH - 350, 60, 302, 52], 2)
         pygame.draw.rect(window, self.BLUE, [WIDTH - 350, 60, 300 * (self.player_shield/50), 50])
         self.gen_shieldbar_percent(window, WIDTH)
 
