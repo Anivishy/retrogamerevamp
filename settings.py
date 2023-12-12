@@ -1,113 +1,67 @@
 import pygame
 import sys
 import homescreen
+import instructions
+import pyautogui
 
 class openSettings:
-    def __init__(self):
+    def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
         pygame.init()
 
-        try:
-            import pyautogui
-            self.WIDTH, self.HEIGHT = pyautogui.size()
-        except:
-            self.WIDTH = 800
-            self.HEIGHT = 600
+        self.WIDTH = WIDTH
+        self.HEIGHT = HEIGHT
 
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
+        if (FULLSCREEN):
+            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
+            self.fullscreen = True
+
+        else:
+            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+            self.fullscreen = False
+
         self.screen.fill((0, 0, 0))
         pygame.display.set_caption("Settings")
 
-        self.exitButtonOutline = ((50/1536)*self.WIDTH, (70/1024)*self.HEIGHT, (50/1536)*self.WIDTH, (50/1024)*self.HEIGHT)
         self.exitButton = ((55/1536)*self.WIDTH, (75/1024)*self.HEIGHT, (40/1536)*self.WIDTH, (40/1024)*self.HEIGHT)
+
+        self.SD1 = ((.15)*self.WIDTH, (.25)*self.HEIGHT, (.125)*self.WIDTH, (.08)*self.HEIGHT)
+        self.SD2 = ((.35)*self.WIDTH, (.25)*self.HEIGHT, (.125)*self.WIDTH, (.08)*self.HEIGHT)
+        self.SD3 = ((.55)*self.WIDTH, (.25)*self.HEIGHT, (.125)*self.WIDTH, (.08)*self.HEIGHT)
+        self.SD4 = ((.75)*self.WIDTH, (.25)*self.HEIGHT, (.125)*self.WIDTH, (.08)*self.HEIGHT)
+        # make this centered!!
+
         self.start = True
 
-    def printText(self, text, y, title): # delete when done
-        font = pygame.font.SysFont("monospace", 30)
-
-        if title:
-            font = pygame.font.SysFont("monospace", 50)
-
-        lines = self.breakLines(text, font)
-
-        for l in lines:
-            x = self.centerText(l, font)
-            x2 = x
-
-            for i in range(len(l)):
-
-                color = (200, 200, 200)
-                if title:
-                    color = (255, 255, 255)
-                
-                char = font.render(l[i], True, color, (0, 0, 0))
-                self.screen.blit(char, (x2, y))
-
-                x2 += char.get_width()
-
-                if i != len(l)-1:
-                    self.screen.blit(font.render("|", True, (255, 255, 255)), (x2, y))
-
-                pygame.display.flip()
-
-                if self.start:
-                    pygame.time.wait(15) #15
-
-            x2 = x
-            textWidth, textHeight = font.size(text)
-            y += textHeight
+        self.fullscreenToggle = (728, 700, 80, 50)
+        self.input = (700, 900, 134, 75)
         
-        self.start = False
 
-    def centerText(self, text, font):
-        textWidth, textHeight = font.size(text)
-        return (self.WIDTH - textWidth) / 2
-        
-    def breakLines(self, text, font):
-        maxWidth = self.WIDTH - (.2 * self.WIDTH)
-        chars = len(text)
-        lines = []
-        lineText = ""
-        i = 0
-        word = ""
-        
-        while i < chars:
-            if text[i] == " ":
-                textWidth, textHeight = font.size(lineText)
-                wordWidth, wordHeight = font.size(word)
-
-                if (textWidth + wordWidth) > maxWidth:
-                    lines.append(lineText)
-                    lineText = word + " "
-                    word = ""
-
-                else:
-                    word += " "
-                    lineText += word
-                    word = ""
-
-            else:
-                word += text[i]
-
-            if i == chars - 1:
-                lineText += word
-
-            i += 1
-
-        lines.append(lineText)
-        return lines # delete when done
+        self.input = ""
 
     def text(self):
-        titleFont = pygame.font.SysFont("monospace", 50)
-        bodyFont = pygame.font.SysFont("monospace", 35)
+        i = instructions.createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
 
-        self.printText("Settings", (.1 * self.HEIGHT), True)
+        i.printText("Settings", (.1 * self.HEIGHT), True)
+        i.printText("Screen Dimensions", (.2 * self.HEIGHT), False)
 
         pygame.display.flip()
 
-    def run(self):
-        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.exitButtonOutline), 10)
-        pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.exitButton))
+    def setup(self):
         self.text()
+
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.exitButton), 2)
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.SD1), 3)
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.SD2), 3)
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.SD3), 3)
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.SD4), 3)
+
+        if self.fullscreen:
+            pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.fullscreenToggle))
+        else:
+            pygame.draw.rect(self.screen, (125, 125, 125), pygame.Rect(self.fullscreenToggle))
+
+    def run(self):
+        self.setup()
 
         while True:
             for event in pygame.event.get():
@@ -122,16 +76,66 @@ class openSettings:
                         sys.exit()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if pygame.Rect(self.exitButtonOutline).collidepoint(pygame.mouse.get_pos()):
-                        c = homescreen.createHomescreen()
+                    if pygame.Rect(self.exitButton).collidepoint(pygame.mouse.get_pos()):
+                        c = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
                         c.run(False)
+                   
+                    elif pygame.Rect(self.fullscreenToggle).collidepoint(pygame.mouse.get_pos()):
+                        pygame.display.toggle_fullscreen() # fix
+                        self.fullscreen = not self.fullscreen
+
+                    # square screen
+                    elif pygame.Rect(self.SD1).collidepoint(pygame.mouse.get_pos()):
+                        try:
+                            _, h = pyautogui.size()
+                        except:
+                            h = 600
+                        squareDimensions = h - (.1*h)
+                        s = openSettings(squareDimensions, squareDimensions, False)
+                        s.run()
+
+                    # vertical
+                    elif pygame.Rect(self.SD2).collidepoint(pygame.mouse.get_pos()):
+                        try:
+                            w, h = pyautogui.size()
+                        except:
+                            w, h = 800, 600
+                        height = h - (.1*h)
+                        width = height * (2/3)
+                        s = openSettings(width, height, False)
+                        s.run()
+
+                    # landscape
+                    elif pygame.Rect(self.SD3).collidepoint(pygame.mouse.get_pos()):
+                        try:
+                            w, h = pyautogui.size()
+                        except:
+                            w, h = 800, 600
+                        height = h - (.1*h)
+                        width = w - (.1*w)
+                        s = openSettings(width, height, False)
+                        s.run()
+
+                    # fullscreen
+                    elif pygame.Rect(self.SD4).collidepoint(pygame.mouse.get_pos()):
+                        try:
+                            w, h = pyautogui.size()
+                        except:
+                            w, h = 800, 600
+                        s = openSettings(w, h, True)
+                        s.run()
 
                 pygame.display.flip()
 
-
 if __name__ == "__main__":
-    s = openSettings()
+    try:
+        WIDTH, HEIGHT = pyautogui.size()
+    except:
+        WIDTH = 800
+        HEIGHT = 600
+
+    s = openSettings(WIDTH, HEIGHT, True)
     s.run()
 
-
-    
+# add image for back button/toggle, add sliders/input for settings, connect changes in settings to other pages
+# scale text size

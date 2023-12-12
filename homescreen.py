@@ -4,26 +4,30 @@ import random
 import sys
 import instructions
 import settings
+import pyautogui
 
 class createHomescreen:
-    def __init__(self):
+    def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
         pygame.init()
 
-        try:
-            import pyautogui
-            self.WIDTH, self.HEIGHT = pyautogui.size()
-        except:
-            self.WIDTH = 800
-            self.HEIGHT = 600
+        self.WIDTH = WIDTH
+        self.HEIGHT = HEIGHT
 
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
+        if (FULLSCREEN):
+            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
+            self.fullscreen = True
+
+        else:
+            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+            self.fullscreen = False
+
         self.screen.fill((0, 0, 0))
         pygame.display.set_caption("Homescreen")
         self.openingFont = pygame.font.SysFont("monospace", 50)
 
         self.size = 115
-        self.cols = (self.WIDTH // self.size) + 2
-        self.rows = (self.HEIGHT // self.size) + 2
+        self.cols = int(round((self.WIDTH // self.size) + 2))
+        self.rows = int(round((self.HEIGHT // self.size) + 2))
         self.table = [[0 for x in range(self.cols)] for y in range(self.rows)]
 
         self.beginButtonOutline = ((300/1536)*self.WIDTH, (450/1024)*self.HEIGHT, (400/1536)*self.WIDTH, (150/1024)*self.HEIGHT)
@@ -142,21 +146,22 @@ class createHomescreen:
 
                     # instruction button clicked
                     elif pygame.Rect(self.instructionButtonOutline).collidepoint(pygame.mouse.get_pos()):
-                        i = instructions.createInstructions()
+                        i = instructions.createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
                         i.run()
 
                     # settings button clicked
                     elif pygame.Rect(self.settingButtonOutline).collidepoint(pygame.mouse.get_pos()):
-                        s = settings.openSettings()
+                        s = settings.openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
             
             pygame.display.flip()
 
 if __name__ == "__main__":
-    c = createHomescreen()
+    try:
+        WIDTH, HEIGHT = pyautogui.size()
+    except:
+        WIDTH = 800
+        HEIGHT = 600
+
+    c = createHomescreen(WIDTH, HEIGHT, True)
     c.run(True)
-
-
-    # todo: buttons functionality, settings page,  don't re-animate every time a page opens
-    # later: splashscreen? Add comments to code
-    # don't run animations every time!!
