@@ -37,6 +37,7 @@ class Renderer:
         self.text = self.font.render(f"Lives Remaining: {self._lives}", True, (255, 255, 255)).convert_alpha()
         self.game_over_text = self.font.render(f"Game Over Press r to Restart", True, (255, 255, 255)).convert_alpha()
         self.destroy_wall = False
+        self.pause = pygame.image.load(sanitize_path('Images/pause.png')).convert()
         self._wall_event = pygame.USEREVENT + 5
                         
 
@@ -56,6 +57,9 @@ class Renderer:
                     self._screen.blit(self.game_over_text, (160, 288))
                 
                 object.draw()
+
+            if self.paused:
+                self._screen.blit(self.pause, (281, 278))
 
             self._screen.blit(self.text, (10, 0))
             pygame.display.update()
@@ -88,7 +92,8 @@ class Renderer:
         # Ghosts get sent on a random path after Pacman eats a powerup
         for ghost in self._ghosts:
             ghost.afraid = True
-            ghost.get_random_path(ghost)
+            if not ghost.fleeing:
+                ghost.get_random_path(ghost)
 
         self.start_hungry_timer()
     
@@ -172,12 +177,11 @@ class Renderer:
                 for ghost in self._ghosts:
                     ghost.flash_state = not ghost.flash_state
             
-            if event.type == self._wall_event and self.destroy_wall and len(self.walls) > 0:
+            if event.type == self._wall_event and self.destroy_wall and len(self.walls) > 0 and not self.paused:
                 wall = self.walls.pop()
                 self._objects.remove(wall)
 
                 if len(self.walls) == 0:
-
                     #Add code to transition to mazegen here
                     pass
         
@@ -332,7 +336,7 @@ class Pacman(MovingObject):
             points.remove(points_reached)
         
         # Triggers Game Over pro
-        if len(self._renderer._points) <= 160:
+        if len(self._renderer._points) == 0:
             self._renderer._next_level = True
             for ghost in self._renderer._ghosts:
                 ghost.end_game()

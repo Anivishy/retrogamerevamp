@@ -661,6 +661,12 @@ while True:
                     pygame.draw.rect(window, (170, 170, 0), rect)
 
     if ACTIVE_BOSS:        
+        ACTIVE_BOSS.update_cam(
+            startx + BORDER_X,
+            startx - BORDER_X,
+            starty + BORDER_Y,
+            starty - BORDER_Y
+        )
         ACTIVE_BOSS.update(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, frame_count)
 
     for wall in walls:
