@@ -41,7 +41,7 @@ class pellets:
     def display_score(self, window, WIDTH):
         score_disp = self.font.render("Score: " + str(self.score), True, self.WHITE) 
         score_rect = score_disp.get_rect()
-        score_rect.center = (WIDTH - 120, 130)
+        score_rect.center = (WIDTH - 120, 180)
         window.blit(score_disp, score_rect)
         #print(self.score)
 
@@ -56,9 +56,9 @@ class pellets:
     def display_ammo(self, window, WIDTH):
         ammo_disp = self.font.render(str(self.ammo), True, self.WHITE) 
         ammo_rect = ammo_disp.get_rect()
-        ammo_rect.center = (WIDTH - 60, 200)
+        ammo_rect.center = (WIDTH - 70, 250)
         window.blit(ammo_disp, ammo_rect)
-        window.blit(self.image, (WIDTH - 150, 160))
+        window.blit(self.image, (WIDTH - 160, 210))
         #print(self.score)
 
     def get_ammo(self):

@@ -5,7 +5,7 @@ import os
 import math
 import health
 import pelletsandammo
-import weapons
+#import weapons
 import mousetargettracker
 
 import asyncio
@@ -19,12 +19,14 @@ import colors
 pygame.init()
 player_health = health.healthbar()
 player_score = pelletsandammo.pellets()
-player_weapon = weapons.weapons()
+#player_weapon = weapons.weapons()
 start_time = time.time()
+shield_regen_timer = time.time()
+cur_health = player_health.get_health()
 player_target = mousetargettracker.mouseTarget()
 last_key = ""
-
-
+regen_time = 10
+#temp = 0 testing variable for shield regen
 
 # try:
 #     import pyautogui
@@ -394,7 +396,14 @@ while True:
     copypx = playerx
     copypy = playery
 
-    
+    #testing for shield regeneration
+    # cur_health = 100
+    # temp += 1
+    # print("TEMP------------------------------------" + str(temp))
+    # if temp > 1000:
+
+    cur_health = player_health.get_health()
+
 
     
     keys = pygame.key.get_pressed()
@@ -681,9 +690,20 @@ while True:
     # yellow circle at center of screen
 
     #health bar init and score init
+    #shield regen 
+    # print("SRT" + str(shield_regen_timer))
+    # print("Regen time" + str(regen_time))
+    # print("Difference" + str(shield_regen_timer - regen_time))
+    if (cur_health == player_health.get_health()):
+        regen_time = time.time()
+    else:
+        shield_regen_timer = time.time()
+    if (-1 * (shield_regen_timer - regen_time) > 10):
+        player_health.regen(1)
     player_health.gen_healthbar(window, WIDTH)
+    player_health.gen_shieldbar(window, WIDTH)
     player_score.display_score(window, WIDTH)
-    player_score.display_ammo(window, WIDTH)
+    player_score.display_ammo(window, WIDTH)    
     player_target.update_target(window, (0,0))
     
     pygame.display.update()
