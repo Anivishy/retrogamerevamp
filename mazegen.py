@@ -106,8 +106,6 @@ ba_overlap = set()
 wall_lock = False
 sound_lock = set()
 
-eternal_walls = set()
-eternal_walls |= walls
 
 joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 if len(joysticks) > 0:
@@ -432,11 +430,7 @@ while True:
         )
         ACTIVE_BOSS.update(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, frame_count)
 
-    for wall in eternal_walls:
-        pygame.draw.line(window, (255, 255, 255), 
-                        ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
-                        ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
-
+    
     for wall in walls:
         wall_color = colors.DEFAULT_BLUE
         if wall[0][0] > (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] > (HEIGHT // 2 // SQUARE_SIZE):
@@ -459,7 +453,6 @@ while True:
         pygame.draw.line(window, wall_color, 
                         ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
                         ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
-    eternal_walls |= walls
 
     # draw player
     # yellow circle at center of screen
