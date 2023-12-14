@@ -44,8 +44,7 @@ class weapons:
         self.laser_projectile_down = pygame.transform.scale(self.laser_projectile_down, self.SCALE_SIZE)
 
         #Window Constants
-        #self.WIDTH, self.HEIGHT = pyautogui.size()
-        
+        #self.WIDTH, self.HEIGHT = pyautogui.size()       
 
         #Colors
         self.GREEN = (0, 255, 0)

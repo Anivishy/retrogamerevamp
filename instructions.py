@@ -1,31 +1,34 @@
 import pygame
 import sys
 import homescreen
+import pyautogui
 
 class createInstructions:
-    def __init__(self):
+    def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
         pygame.init()
 
-        try:
-            import pyautogui
-            self.WIDTH, self.HEIGHT = pyautogui.size()
-        except:
-            self.WIDTH = 800
-            self.HEIGHT = 600
+        self.WIDTH = WIDTH
+        self.HEIGHT = HEIGHT
 
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
+        if (FULLSCREEN):
+            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
+            self.fullscreen = True
+
+        else:
+            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+            self.fullscreen = False
+
         self.screen.fill((0, 0, 0))
         pygame.display.set_caption("Instructions")
 
         self.exitButtonOutline = ((50/1536)*self.WIDTH, (70/1024)*self.HEIGHT, (50/1536)*self.WIDTH, (50/1024)*self.HEIGHT)
         self.exitButton = ((55/1536)*self.WIDTH, (75/1024)*self.HEIGHT, (40/1536)*self.WIDTH, (40/1024)*self.HEIGHT)
-        self.start = True
 
     def printText(self, text, y, title):
-        font = pygame.font.SysFont("monospace", 30)
+        font = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
 
         if title:
-            font = pygame.font.SysFont("monospace", 50)
+            font = pygame.font.SysFont("monospace", int(50*self.WIDTH/1536))
 
         lines = self.breakLines(text, font)
 
@@ -34,8 +37,8 @@ class createInstructions:
             x2 = x
 
             for i in range(len(l)):
-
                 color = (200, 200, 200)
+                
                 if title:
                     color = (255, 255, 255)
                 
@@ -49,8 +52,11 @@ class createInstructions:
 
                 pygame.display.flip()
 
-                if self.start:
-                    pygame.time.wait(15) #15
+                if title:
+                    pygame.time.wait(20) #20
+
+                else:
+                    pygame.time.wait(5) #5
 
             x2 = x
             textWidth, textHeight = font.size(text)
@@ -125,8 +131,6 @@ class createInstructions:
 
         pygame.display.flip()
 
-        self.start = False
-
     def run(self):
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.exitButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.exitButton))
@@ -146,13 +150,21 @@ class createInstructions:
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.Rect(self.exitButtonOutline).collidepoint(pygame.mouse.get_pos()):
-                        c = homescreen.createHomescreen()
+                        c = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
                         c.run(False)
 
 if __name__ == "__main__":
-    i = createInstructions()
+    try:
+        WIDTH, HEIGHT = pyautogui.size()
+    except:
+        WIDTH = 800
+        HEIGHT = 600
+
+    i = createInstructions(WIDTH, HEIGHT, True)
     i.run()
 
-    # update tasks, improve visuals, add a 'back' button
+    # update tasks, improve visuals, add a 'back' button, fix text for 2nd screen setting
 
     # create a scrollbar if needed: https://copyprogramming.com/howto/pygame-scrolling-down-page#pygame-scrolling-down-page
+
+    
