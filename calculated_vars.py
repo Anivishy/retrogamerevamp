@@ -15,7 +15,6 @@ while True:
     p1 += 1
     p2 -= 1
 
-
 WALL_WIDTH = SQUARE_SIZE // 12
 
 
@@ -56,3 +55,6 @@ UCFD = UCFDBase() # uncapped frame delay - weird class hack
 PLAYER_SPEED = 5
 BOSS_SPEED = PLAYER_SPEED / 5
 PROJECTILE_RADIUS = SQUARE_SIZE * 1.5/5 / 2
+
+
+SAFE_RADIUS = 2

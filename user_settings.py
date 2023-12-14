@@ -1,11 +1,14 @@
-WIDTH = 1920 # Δ
-HEIGHT = 1200 # Δ
-FULLSCREEN = True # Δ
+WIDTH = 1600 # Δ
+HEIGHT = 900 # Δ
+FULLSCREEN = False # Δ
 
 SFX_VOLUME = 1.0 # Δ
 MUSIC_VOLUME = 1.0 # Δ i don't think we'll need this
 
 FPS = None # Δ set to None for uncapped FPS - use at your own risk!
+
+if FPS and not(20 <= FPS):
+    raise ValueError("The minimum FPS cap must be set to at least 20")
 
 JOYSTICK_THRESHOLD = 0.5 # Δ maybe?
 
