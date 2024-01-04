@@ -8,7 +8,7 @@ class healthbar:
     pygame.init()
 
     def __init__ (self):
-        self.player_health = 90
+        self.player_health = 100
         self.player_shield = 0
         
         #Fonts

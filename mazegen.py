@@ -68,254 +68,7 @@ defeated_bosses = set()
 
 import time
 
-boss_zones = set()
-for x in range(BOSS_AREA):
-    for y in range(BOSS_AREA):
-        # top left
-        boss_zones.add(((x - int(BORDER_X), y - int(BORDER_Y)), (x - int(BORDER_X), y + 1 - int(BORDER_Y))))
-        boss_zones.add(((x - int(BORDER_X), y - int(BORDER_Y)), (x + 1 - int(BORDER_X), y - int(BORDER_Y))))
-
-        # top right
-        boss_zones.add(((x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y - int(BORDER_Y)), (x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + 1 - int(BORDER_Y))))
-        boss_zones.add(((x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y - int(BORDER_Y)), (x + 1 + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y - int(BORDER_Y))))
-
-        # bottom left
-        boss_zones.add(((x - int(BORDER_X), y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (x - int(BORDER_X), y + 1 + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
-        boss_zones.add(((x - int(BORDER_X), y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (x + 1 - int(BORDER_X), y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
-
-        # bottom right
-        boss_zones.add(((x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + 1 + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
-        boss_zones.add(((x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (x + 1 + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
-
-boss_walls = set()
-for x in range(BOSS_AREA):
-    boss_walls.add(((x - int(BORDER_X), -int(BORDER_Y) + BOSS_AREA), (x + 1 - int(BORDER_X), -int(BORDER_Y) + BOSS_AREA)))
-    boss_walls.add(((x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, -int(BORDER_Y) + BOSS_AREA), (x + 1 + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, -int(BORDER_Y) + BOSS_AREA)))
-    boss_walls.add(((x - int(BORDER_X), int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (x + 1 - int(BORDER_X), int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
-    boss_walls.add(((x + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (x + 1 + int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
-for y in range(BOSS_AREA):
-    boss_walls.add(((-int(BORDER_X) + BOSS_AREA, y - int(BORDER_Y)), (-int(BORDER_X) + BOSS_AREA, y + 1 - int(BORDER_Y))))
-    boss_walls.add(((int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y - int(BORDER_Y)), (int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + 1 - int(BORDER_Y))))
-    boss_walls.add(((-int(BORDER_X) + BOSS_AREA, y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (-int(BORDER_X) + BOSS_AREA, y + 1 + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
-    boss_walls.add(((int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1), (int(BORDER_X) + (WIDTH // SQUARE_SIZE) - BOSS_AREA + 1, y + 1 + int(BORDER_Y) + (HEIGHT // SQUARE_SIZE) - BOSS_AREA + 1)))
-
-def create_protected(from_x, from_y):
-    protected = set()
-    if abs(from_x) >= int(BORDER_X) - 1:
-        if from_x < 0:
-            for y in range(from_y - 1, from_y + (HEIGHT // SQUARE_SIZE) + 2):
-                protected.add(
-                    ((int(-BORDER_X), y), (int(-BORDER_X), y + 1))
-                )
-        else:
-            for y in range(from_y - 1, from_y + (HEIGHT // SQUARE_SIZE) + 2):
-                protected.add(
-                    ((int(BORDER_X) + WIDTH // SQUARE_SIZE + 1, y), (int(BORDER_X) + WIDTH // SQUARE_SIZE + 1, y + 1))
-                )
-
-    if abs(from_y) >= int(BORDER_Y) - 2:
-        if from_y < 0:
-            for x in range(from_x - 1, from_x + (WIDTH // SQUARE_SIZE) + 2):
-                protected.add(
-                    ((x, int(-BORDER_Y)), (x + 1, int(-BORDER_Y)))
-                )
-        else:
-            for x in range(from_x - 1, from_x + (WIDTH // SQUARE_SIZE) + 2):
-                protected.add(
-                    ((x, int(BORDER_Y) + HEIGHT // SQUARE_SIZE + 1), (x + 1, int(BORDER_Y) + HEIGHT // SQUARE_SIZE + 1))
-                )
-    return protected
-
-def gen_walls(from_x, from_y):
-    walls = set()
-    protected = create_protected(from_x, from_y)
-
-    for x in range(-3, WIDTH // SQUARE_SIZE + 3):
-        for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
-            point = ((from_x + x), (from_y + y))
-            rgen = random.Random((from_x + x) * SQUARE_SIZE + (from_y + y))
-            threshold = rgen.randint(15, 35) / 100
-            if rgen.random() < threshold:
-                walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
-            if rgen.random() < threshold:
-                walls.add(tuple(sorted([point, (point[0], point[1] + 1)])))
-            if rgen.random() < threshold:
-                walls.add(tuple(sorted([point, (point[0] - 1, point[1])])))
-            if rgen.random() < threshold:
-                walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
-
-    walls -= boss_zones
-    walls |= protected
-    for x in range(-3, WIDTH // SQUARE_SIZE + 3):
-        for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
-            point = ((from_x + x), (from_y + y))
-            rgen = random.Random((from_x + x) * SQUARE_SIZE + (from_y + y))
-            # boilerplate extravaganza - you have been warned!
-            x1 = point[0]
-            y1 = point[1]
-            x2 = point[0] + 1
-            y2 = point[1] + 1
-
-            top = ((x1, y1), (x2, y1)) # top
-            left = ((x1, y1), (x1, y2)) # left
-            right = ((x2, y1), (x2, y2)) # right
-            bottom = ((x1, y2), (x2, y2)) # bottom
-
-
-            go = True
-            while go:
-                go = False
-                for possibility in [
-                    {top, left, right},
-                    {left, top, bottom},
-                    {right, top, bottom},
-                    {bottom, left, right}
-                    ]:
-                    if all(p in walls for p in possibility):
-                            w = rgen.choice((list(possibility)))
-                            if w not in protected:
-                                walls.discard(w)
-                                go = True
-                                break
-    return walls
-
-def preload_walls(fromx, fromy, tox, toy, walls):
-    direction = 0
-    if fromx > tox:    
-        direction = 1 # left
-    elif fromx < tox:
-        direction = 2 # right
-    elif fromy > toy:
-        direction = 3 # up
-    elif fromy < toy:
-        direction = 4 # down
-
-    protected = create_protected(tox, toy)
-
-    if fromx == tox:
-        bxl = fromx - 3
-        bxr = fromx + (WIDTH // SQUARE_SIZE) + 3
-    if fromy == toy:
-        byt = fromy - 3
-        byb = fromy + (HEIGHT // SQUARE_SIZE) + 3
-    
-    if direction == 1:
-        bxl = tox - 3
-        bxr = tox + 1
-    elif direction == 2:
-        bxl = tox + WIDTH // SQUARE_SIZE - 1
-        bxr = tox + WIDTH // SQUARE_SIZE + 3
-    elif direction == 3:
-        byt = toy - 3
-        byb = toy + 1
-    elif direction == 4:
-        byt = toy + HEIGHT // SQUARE_SIZE - 1
-        byb = toy + HEIGHT // SQUARE_SIZE + 3
-
-
-    new_walls = set()
-    if direction == 1:
-        for wall in walls:
-            if wall[0][0] != fromx + 3 + (WIDTH // SQUARE_SIZE) and wall[1][0] != fromx + 3 + (WIDTH // SQUARE_SIZE):
-                new_walls.add(wall)
-        for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
-            point = ((tox - 2), (toy + y))
-            rgen = random.Random((tox - 2) * SQUARE_SIZE + (toy + y))
-            threshold = rgen.randint(15, 35) / 100
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0], point[1] + 1)])))
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0] - 1, point[1])])))
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
-    elif direction == 2:
-        for wall in walls:
-            if wall[0][0] != fromx - 3 and wall[1][0] != fromx - 3:
-                new_walls.add(wall)
-        for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
-            point = ((tox + WIDTH / SQUARE_SIZE + 2), (toy + y))
-            rgen = random.Random((tox + WIDTH / SQUARE_SIZE + 2) * SQUARE_SIZE + (toy + y))
-            threshold = rgen.randint(15, 35) / 100
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0], point[1] + 1)])))
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0] - 1, point[1])])))
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
-    elif direction == 3:
-        for wall in walls:
-            if wall[0][1] != fromy + 3 + (HEIGHT // SQUARE_SIZE) and wall[1][1] != fromy + 3 + (HEIGHT // SQUARE_SIZE):
-                new_walls.add(wall)
-        for x in range(-3, WIDTH // SQUARE_SIZE + 3):
-            point = ((tox + x), (toy - 2))
-            rgen = random.Random((tox + x) * SQUARE_SIZE + (toy - 2))
-            threshold = rgen.randint(15, 35) / 100
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0], point[1] + 1)])))
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0] - 1, point[1])])))
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
-    elif direction == 4:
-        for wall in walls:
-            if wall[0][1] != fromy - 3 and wall[1][1] != fromy - 3:
-                new_walls.add(wall)
-        for x in range(-3, WIDTH // SQUARE_SIZE + 3):
-            point = ((tox + x), (toy + HEIGHT / SQUARE_SIZE + 2))
-            rgen = random.Random((tox + x) * SQUARE_SIZE + (toy + HEIGHT / 2 + 2))
-            threshold = rgen.randint(15, 35) / 100
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0], point[1] + 1)])))
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0] - 1, point[1])])))
-            if rgen.random() < threshold:
-                new_walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
-
-    new_walls -= boss_zones
-    new_walls |= protected
-    
-    for x in range(int(bxl), int(bxr)):
-        for y in range(int(byt), int(byb)):
-            point = ((x), (y))
-            rgen = random.Random((x) * SQUARE_SIZE + (y))
-            # boilerplate extravaganza - you have been warned!
-            x1 = point[0]
-            y1 = point[1]
-            x2 = point[0] + 1
-            y2 = point[1] + 1
-
-            top = ((x1, y1), (x2, y1)) # top
-            left = ((x1, y1), (x1, y2)) # left
-            right = ((x2, y1), (x2, y2)) # right
-            bottom = ((x1, y2), (x2, y2)) # bottom
-
-
-            go = True
-            while go:
-                go = False
-                for possibility in [
-                    {top, left, right},
-                    {left, top, bottom},
-                    {right, top, bottom},
-                    {bottom, left, right}
-                    ]:
-                    if all(p in new_walls for p in possibility):
-                            w = rgen.choice((list(possibility)))
-                            if w not in protected:
-                                new_walls.discard(w)
-                                go = True
-                                break
-
-    return new_walls
-
+from wall_generation import *
 
 
 playerx = WIDTH // 2 + SQUARE_SIZE // 2
@@ -336,15 +89,7 @@ lasty = starty
 delay_to = time.time()
 last = delay_to - (1/60)
 
-SAFE_RADIUS = 2
 
-walls_to_remove = set()
-x_off = int((WIDTH / SQUARE_SIZE) / 2)
-y_off = int((HEIGHT / SQUARE_SIZE) / 2)
-for x in range(-SAFE_RADIUS, SAFE_RADIUS+1):
-    for y in range(-SAFE_RADIUS, SAFE_RADIUS+1):
-        walls_to_remove.add(((x + x_off, y + y_off), (x + x_off, y + y_off + 1)))
-        walls_to_remove.add(((x + x_off, y + y_off), (x + x_off + 1, y + y_off)))
 
         
 #walls_to_remove = set()
@@ -361,11 +106,15 @@ ba_overlap = set()
 wall_lock = False
 sound_lock = set()
 
+
 joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 if len(joysticks) > 0:
     joystick = joysticks[0]
 else:
     joystick = None
+
+import big_maze_ghosts as bmg
+a_ghost = bmg.Ghost(window, 1)
 
 while True:
     # events
@@ -385,6 +134,22 @@ while True:
                 direction = 3
             if event.key == pygame.K_DOWN:
                 direction = 4
+            if event.key == pygame.K_SPACE:
+                w = (walls_around(playerx // SQUARE_SIZE, playery // SQUARE_SIZE))
+                print(walls.intersection(w))
+                print(playerx // SQUARE_SIZE, playery // SQUARE_SIZE)
+                bx, by = playerx // SQUARE_SIZE, playery // SQUARE_SIZE
+                if ((bx, by), (bx + 1, by)) not in w:
+                    print("up available")
+                if ((bx + 1, by), (bx + 1, by + 1)) not in w:
+                    print("right available")
+                if ((bx, by + 1), (bx + 1, by + 1)) not in w:
+                    print("down available")
+                if ((bx, by), (bx, by + 1)) not in w:
+                    print("left available")
+                        #breakpoint()
+            if event.key == pygame.K_q:
+                a_ghost.step()
         elif event.type == pygame.JOYDEVICEADDED and not joystick:
             joystick = pygame.joystick.Joystick(event.device_index)
         elif event.type == pygame.JOYDEVICEREMOVED and joystick:
@@ -444,9 +209,6 @@ while True:
     if keys[pygame.K_ESCAPE]:
         pygame.quit()
         exit()
-    if keys[pygame.K_SPACE]:
-        breakpoint()
-
     #Old shooting code, ignore for now, do not delete
 
     # if keys [pygame.K_RSHIFT]:
@@ -494,8 +256,7 @@ while True:
 
 
     if int(startx) != lastx or int(starty) != lasty:
-        #walls = gen_walls(int(startx), int(starty)) - walls_to_remove
-        walls = preload_walls(lastx, lasty, int(startx), int(starty), walls)
+        walls = gen_walls(int(startx), int(starty)) - walls_to_remove
         lastx = int(startx)
         lasty = int(starty)
 
@@ -669,6 +430,7 @@ while True:
         )
         ACTIVE_BOSS.update(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, frame_count)
 
+    
     for wall in walls:
         wall_color = colors.DEFAULT_BLUE
         if wall[0][0] > (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] > (HEIGHT // 2 // SQUARE_SIZE):
@@ -712,6 +474,8 @@ while True:
     player_score.display_ammo(window, WIDTH)    
     player_target.update_target(window, (0,0))
     
+    a_ghost.update(startx, starty)
+
     pygame.display.update()
     
     if UNCAPPED_FPS:

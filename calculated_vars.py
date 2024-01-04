@@ -1,14 +1,19 @@
 from user_settings import *
 
 SQUARE_SIZE = 100
+
+p1 = SQUARE_SIZE
+p2 = SQUARE_SIZE
+
 while True:
-    try:
-        if WIDTH % SQUARE_SIZE != 0: raise ValueError(f"{WIDTH} % {SQUARE_SIZE} = {WIDTH % SQUARE_SIZE}, not 0")
-        if HEIGHT % SQUARE_SIZE != 0: raise ValueError(f"{HEIGHT} % {SQUARE_SIZE} = {HEIGHT % SQUARE_SIZE}, not 0")
-    except:
-        SQUARE_SIZE += 1
-    else:
+    if WIDTH % p1 == 0 and HEIGHT % p1 == 0:
+        SQUARE_SIZE = p1
         break
+    if WIDTH % p2 == 0 and HEIGHT % p2 == 0:
+        SQUARE_SIZE = p2
+        break
+    p1 += 1
+    p2 -= 1
 
 WALL_WIDTH = SQUARE_SIZE // 12
 
@@ -50,3 +55,6 @@ UCFD = UCFDBase() # uncapped frame delay - weird class hack
 PLAYER_SPEED = 5
 BOSS_SPEED = PLAYER_SPEED / 5
 PROJECTILE_RADIUS = SQUARE_SIZE * 1.5/5 / 2
+
+
+SAFE_RADIUS = 2

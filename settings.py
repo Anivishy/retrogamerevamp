@@ -32,17 +32,19 @@ class openSettings:
 
         self.start = True
 
-        self.fullscreenToggle = (728, 700, 80, 50)
+        self.fullscreenToggle = (728, .435*self.HEIGHT, 80, 50)
         self.input = (700, 900, 134, 75)
-        
 
-        self.input = ""
+        self.volumeSliderOutline = ((.25)*self.WIDTH, (.6)*self.HEIGHT, (.6)*self.WIDTH, (.02)*self.HEIGHT)
+        self.volumeSlider = ((.26)*self.WIDTH, (.6025)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
 
     def text(self):
         i = instructions.createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
 
         i.printText("Settings", (.1 * self.HEIGHT), True)
         i.printText("Screen Dimensions", (.2 * self.HEIGHT), False)
+        i.printText("Fullscreen", (.375 * self.HEIGHT), False)
+        i.printText("Volume", (.55 * self.HEIGHT), False)
 
         pygame.display.flip()
 
@@ -55,6 +57,9 @@ class openSettings:
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.SD3), 3)
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.SD4), 3)
 
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.volumeSliderOutline))
+        pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.volumeSlider))
+
         if self.fullscreen:
             pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.fullscreenToggle))
         else:
@@ -62,6 +67,7 @@ class openSettings:
 
     def run(self):
         self.setup()
+        mouseDown = False
 
         while True:
             for event in pygame.event.get():
@@ -124,6 +130,29 @@ class openSettings:
                             w, h = 800, 600
                         s = openSettings(w, h, True)
                         s.run()
+
+                    # volume slider moved
+                    elif pygame.Rect(self.volumeSlider).collidepoint(pygame.mouse.get_pos()):
+                        a, b, c, d = self.volumeSlider
+                        currentX = pygame.mouse.get_pos()
+                        mouseDown = True
+
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    mouseDown = False
+
+                if mouseDown:
+                    if pygame.mouse.get_pos != currentX:
+                        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.volumeSlider))
+                        a, _ = pygame.mouse.get_pos()
+
+                        if a < self.volumeSliderOutline[0] + .01*self.WIDTH:
+                            a = self.volumeSliderOutline[0] + .01*self.WIDTH
+                        
+                        elif a > self.volumeSliderOutline[0] + self.volumeSliderOutline[2] - .01*self.WIDTH - self.volumeSlider[2]:
+                            a = self.volumeSliderOutline[0] + self.volumeSliderOutline[2] - .01*self.WIDTH - self.volumeSlider[2]
+
+                        self.volumeSlider = (a, b, c, d)
+                        pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.volumeSlider))
 
                 pygame.display.flip()
 
