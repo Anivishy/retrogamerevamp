@@ -2,7 +2,7 @@ import pygame
 import sys
 import homescreen
 import instructions
-#import pyautogui
+import pyautogui
 
 class openSettings:
     def __init__(self, WIDTH, HEIGHT, FULLSCREEN):

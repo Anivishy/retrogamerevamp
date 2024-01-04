@@ -4,7 +4,7 @@ import random
 import sys
 import instructions
 import settings
-#import pyautogui
+import pyautogui
 
 class createHomescreen:
     def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
