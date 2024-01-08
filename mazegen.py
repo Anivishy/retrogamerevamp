@@ -115,6 +115,11 @@ else:
 
 import big_maze_ghosts as bmg
 a_ghost = bmg.Ghost(window, 1)
+a_ghost.tx = int(playerx // SQUARE_SIZE)
+# a_ghost.ty = int(playery // SQUARE_SIZE)
+#a_ghost.astar(int((playerx + WIDTH // 2) // SQUARE_SIZE), int((playery + HEIGHT // 2) // SQUARE_SIZE))
+
+ghosts = {a_ghost}
 
 while True:
     # events
@@ -135,19 +140,7 @@ while True:
             if event.key == pygame.K_DOWN:
                 direction = 4
             if event.key == pygame.K_SPACE:
-                w = (walls_around(playerx // SQUARE_SIZE, playery // SQUARE_SIZE))
-                print(walls.intersection(w))
-                print(playerx // SQUARE_SIZE, playery // SQUARE_SIZE)
-                bx, by = playerx // SQUARE_SIZE, playery // SQUARE_SIZE
-                if ((bx, by), (bx + 1, by)) not in w:
-                    print("up available")
-                if ((bx + 1, by), (bx + 1, by + 1)) not in w:
-                    print("right available")
-                if ((bx, by + 1), (bx + 1, by + 1)) not in w:
-                    print("down available")
-                if ((bx, by), (bx, by + 1)) not in w:
-                    print("left available")
-                        #breakpoint()
+                breakpoint()
             if event.key == pygame.K_q:
                 a_ghost.step()
         elif event.type == pygame.JOYDEVICEADDED and not joystick:
@@ -261,6 +254,11 @@ while True:
         lasty = int(starty)
 
         last_walls = walls
+        
+        for ghost in ghosts:
+            print(playerx, playery)
+            if abs(playerx // SQUARE_SIZE - ghost.x) + abs(playery // SQUARE_SIZE - ghost.y) <= 10:
+                ghost.astar(int(playerx // SQUARE_SIZE), int(playery // SQUARE_SIZE))
 
     else:
         walls = last_walls
