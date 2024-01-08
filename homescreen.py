@@ -23,7 +23,7 @@ class createHomescreen:
 
         self.screen.fill((0, 0, 0))
         pygame.display.set_caption("Homescreen")
-        self.openingFont = pygame.font.SysFont("monospace", 50)
+        self.openingFont = pygame.font.SysFont("monospace", int(50*self.WIDTH/1536))
 
         self.size = 115
         self.cols = int(round((self.WIDTH // self.size) + 2))
@@ -142,7 +142,7 @@ class createHomescreen:
                     # begin button clicked
                     elif pygame.Rect(self.beginButtonOutline).collidepoint(pygame.mouse.get_pos()):
                         import introlevel # fix this!!
-                        g = introlevel.start_game()
+                        introlevel.run()
 
                     # instruction button clicked
                     elif pygame.Rect(self.instructionButtonOutline).collidepoint(pygame.mouse.get_pos()):

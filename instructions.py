@@ -25,10 +25,10 @@ class createInstructions:
         self.exitButton = ((55/1536)*self.WIDTH, (75/1024)*self.HEIGHT, (40/1536)*self.WIDTH, (40/1024)*self.HEIGHT)
 
     def printText(self, text, y, title):
-        font = pygame.font.SysFont("monospace", 30)
+        font = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
 
         if title:
-            font = pygame.font.SysFont("monospace", 50)
+            font = pygame.font.SysFont("monospace", int(50*self.WIDTH/1536))
 
         lines = self.breakLines(text, font)
 
@@ -163,6 +163,8 @@ if __name__ == "__main__":
     i = createInstructions(WIDTH, HEIGHT, True)
     i.run()
 
-    # update tasks, improve visuals, add a 'back' button
+    # update tasks, improve visuals, add a 'back' button, fix text for 2nd screen setting
 
     # create a scrollbar if needed: https://copyprogramming.com/howto/pygame-scrolling-down-page#pygame-scrolling-down-page
+
+    
