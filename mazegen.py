@@ -7,6 +7,8 @@ import health
 import pelletsandammo
 #import weapons
 import mousetargettracker
+import updatedshooting
+
 
 import asyncio
 import time
@@ -19,6 +21,7 @@ import colors
 pygame.init()
 player_health = health.healthbar()
 player_score = pelletsandammo.pellets()
+player_bullets = updatedshooting.player_lazer()
 #player_weapon = weapons.weapons()
 start_time = time.time()
 shield_regen_timer = time.time()
@@ -446,6 +449,17 @@ while True:
         exit()
     if keys[pygame.K_SPACE]:
         breakpoint()
+
+    if keys[pygame.K_RSHIFT]: 
+        print("-------------------------------------------")
+        player_bullets.calculate_path(pygame.mouse.get_pos(), playerx, playery)
+        print("________________________________________________")
+
+    active_paths = player_bullets.get_projectiles()
+    print(len(active_paths))
+    if len(active_paths) > 0:
+        #print("-------------------------------------------")
+        player_bullets.draw_lazers(window)
 
     #Old shooting code, ignore for now, do not delete
 
