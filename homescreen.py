@@ -142,7 +142,7 @@ class createHomescreen:
                     # begin button clicked
                     elif pygame.Rect(self.beginButtonOutline).collidepoint(pygame.mouse.get_pos()):
                         import introlevel # fix this!!
-                        g = introlevel.start_game()
+                        introlevel.run()
 
                     # instruction button clicked
                     elif pygame.Rect(self.instructionButtonOutline).collidepoint(pygame.mouse.get_pos()):

@@ -682,7 +682,7 @@ class Controller:
     
 class Game:
 
-    def start_game(self):
+    def new_game(self):
         SIZE = 32
         new_game = Controller()
         game_size = new_game.size
@@ -742,5 +742,9 @@ class Game:
         new_renderer.new_pacman(pacman)
         new_renderer.tick(60)
 
-new_game = Game()
-new_game.start_game()
+
+def run():
+    new_game = Game()
+    new_game.new_game()
+
+run()

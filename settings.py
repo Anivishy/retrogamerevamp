@@ -3,6 +3,7 @@ import sys
 import homescreen
 import instructions
 import pyautogui
+import math
 
 class openSettings:
     def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
@@ -32,11 +33,12 @@ class openSettings:
 
         self.start = True
 
-        self.fullscreenToggle = (728, .435*self.HEIGHT, 80, 50)
-        self.input = (700, 900, 134, 75)
+        self.fullscreenToggle = (self.WIDTH * .5, .435*self.HEIGHT, .05*self.WIDTH, .05* self.HEIGHT)
 
         self.volumeSliderOutline = ((.25)*self.WIDTH, (.6)*self.HEIGHT, (.6)*self.WIDTH, (.02)*self.HEIGHT)
         self.volumeSlider = ((.26)*self.WIDTH, (.6025)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
+        self.currentVolume = 1.0
+        self.printVol = str(self.currentVolume * 100)
 
     def text(self):
         i = instructions.createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
@@ -85,10 +87,27 @@ class openSettings:
                     if pygame.Rect(self.exitButton).collidepoint(pygame.mouse.get_pos()):
                         c = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
                         c.run(False)
-                   
+
+                    # fullscreen
                     elif pygame.Rect(self.fullscreenToggle).collidepoint(pygame.mouse.get_pos()):
-                        pygame.display.toggle_fullscreen() # fix
+                        if self.fullscreen:
+                            try:
+                                w, h = pyautogui.size()
+                            except:
+                                w, h = 800, 600
+                            height = h - (.025*h)
+                            width = w - (.025*w)
+                            s = openSettings(width, height, False)
+
+                        else:
+                            try:
+                                w, h = pyautogui.size()
+                            except:
+                                w, h = 800, 600
+                            s = openSettings(w, h, True)
+
                         self.fullscreen = not self.fullscreen
+                        s.run()
 
                     # square screen
                     elif pygame.Rect(self.SD1).collidepoint(pygame.mouse.get_pos()):
@@ -132,27 +151,52 @@ class openSettings:
                         s.run()
 
                     # volume slider moved
-                    elif pygame.Rect(self.volumeSlider).collidepoint(pygame.mouse.get_pos()):
+                    elif pygame.Rect(self.volumeSliderOutline).collidepoint(pygame.mouse.get_pos()):
                         a, b, c, d = self.volumeSlider
                         currentX = pygame.mouse.get_pos()
                         mouseDown = True
 
                 elif event.type == pygame.MOUSEBUTTONUP:
                     mouseDown = False
+                    # x, _, _, _ = self.volumeSliderOutline
+                    # _, volY, _, _ = self.volumeSlider
+                    # volX = x - .1 * self.WIDTH
+                    # volLocation = (volX, volY)
 
+                    # self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentVolume, True, (255, 255, 255), (0, 0, 0)), volLocation)
+                    
                 if mouseDown:
                     if pygame.mouse.get_pos != currentX:
                         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.volumeSlider))
                         a, _ = pygame.mouse.get_pos()
 
-                        if a < self.volumeSliderOutline[0] + .01*self.WIDTH:
-                            a = self.volumeSliderOutline[0] + .01*self.WIDTH
+                        min = self.volumeSliderOutline[0] + .01*self.WIDTH
+                        max = self.volumeSliderOutline[0] + self.volumeSliderOutline[2] - .01*self.WIDTH - self.volumeSlider[2]
+
+                        _, b, c, d = self.volumeSlider
+
+                        if a < min:
+                            a = min
                         
-                        elif a > self.volumeSliderOutline[0] + self.volumeSliderOutline[2] - .01*self.WIDTH - self.volumeSlider[2]:
-                            a = self.volumeSliderOutline[0] + self.volumeSliderOutline[2] - .01*self.WIDTH - self.volumeSlider[2]
+
+                        elif a > max:
+                            a = max
 
                         self.volumeSlider = (a, b, c, d)
                         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.volumeSlider))
+
+                        self.currentVolume = ((a - min) / (max-min)) * 100
+                        
+                        # self.currentVolume = str(self.currentVolume)
+                        self.currentVolume = str(round(self.currentVolume))
+
+                        x, _, _, _ = self.volumeSliderOutline
+                        _, volY, _, _ = self.volumeSlider
+                        volX = x - .1 * self.WIDTH
+                        volLocation = (volX, volY)
+
+                        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentVolume + ' ', True, (255, 255, 255), (0, 0, 0)), volLocation)
+                            
 
                 pygame.display.flip()
 
