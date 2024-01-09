@@ -55,14 +55,14 @@ class createHomescreen:
                     pygame.time.wait(15) #15
                 self.grid(x2, y2, start)
             
-    def openingText(self, text, x, y, start):
+    def openingText(self, text, x, y, start, font):
         for i in range(len(text)):
-            char = self.openingFont.render(text[i], True, (255, 255, 255), (0, 0, 0))
+            char = font.render(text[i], True, (255, 255, 255), (0, 0, 0))
             self.screen.blit(char, (x, y))
 
             x += char.get_width()
             if i != len(text)-1:
-                self.screen.blit(self.openingFont.render("|", True, (255, 255, 255)), (x, y))
+                self.screen.blit(font.render("|", True, (255, 255, 255)), (x, y))
 
             pygame.display.flip()
 
@@ -73,8 +73,8 @@ class createHomescreen:
         textWidth, textHeight = self.openingFont.size(text)
         return ((self.WIDTH - textWidth) / 2)
 
-    def CenterButtons(self, text, buttonX, buttonY, buttonWidth, buttonHeight):
-        textWidth, textHeight = self.openingFont.size(text)
+    def CenterButtons(self, text, buttonX, buttonY, buttonWidth, buttonHeight, font):
+        textWidth, textHeight = font.size(text)
         startX = buttonX + (buttonWidth - textWidth) / 2
         startY = buttonY + (buttonHeight - textHeight) / 2
         return (startX, startY)
@@ -83,41 +83,41 @@ class createHomescreen:
         self.grid(0, 0, start)
 
         # title
-        self.openingText("Welcome!", self.CenterText("Welcome!"), (.15 * self.HEIGHT), start)
+        self.openingText("Welcome!", self.CenterText("Welcome!"), (.15 * self.HEIGHT), start, self.openingFont)
 
         if start:
             pygame.time.wait(500)
 
         instructions = "Click 'begin' to get started!"
-        self.openingText(instructions, self.CenterText(instructions), (.25 * self.HEIGHT), start)
+        self.openingText(instructions, self.CenterText(instructions), (.25 * self.HEIGHT), start, self.openingFont)
 
         # begin button
         pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.beginButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.beginButton))
         a, b, c, d = self.beginButtonOutline
-        x, y = self.CenterButtons("Begin", a, b, c, d)
-        self.openingText("Begin", x, y, start)
+        x, y = self.CenterButtons("Begin", a, b, c, d, self.openingFont)
+        self.openingText("Begin", x, y, start, self.openingFont)
 
         # instructions button
         pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.instructionButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.instructionButton))
         a, b, c, d = self.instructionButtonOutline
-        x, y = self.CenterButtons("Instructions", a, b, c, d)
-        self.openingText("Instructions", x, y, start)
+        x, y = self.CenterButtons("Instructions", a, b, c, d, self.openingFont)
+        self.openingText("Instructions", x, y, start, self.openingFont)
 
         # settings button
         pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.settingButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.settingButton))
         a, b, c, d = self.settingButtonOutline
-        x, y = self.CenterButtons("Settings", a, b, c, d)
-        self.openingText("Settings", x, y, start)
+        x, y = self.CenterButtons("Settings", a, b, c, d, self.openingFont)
+        self.openingText("Settings", x, y, start, self.openingFont)
 
         # quit button
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.quitButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.quitButton))
         a, b, c, d = self.quitButtonOutline
-        x, y = self.CenterButtons("Quit", a, b, c, d)
-        self.openingText("Quit", x, y, start)
+        x, y = self.CenterButtons("Quit", a, b, c, d, self.openingFont)
+        self.openingText("Quit", x, y, start, self.openingFont)
 
     def run(self, start):
         self.setup(start)
