@@ -92,8 +92,6 @@ lasty = starty
 delay_to = time.time()
 last = delay_to - (1/60)
 
-
-
         
 #walls_to_remove = set()
 walls = gen_walls(0, 0) - walls_to_remove
@@ -117,12 +115,21 @@ else:
     joystick = None
 
 import big_maze_ghosts as bmg
-a_ghost = bmg.Ghost(window, 1)
-a_ghost.tx = int(playerx // SQUARE_SIZE)
+a_ghost = bmg.Ghost(window, 1, 0, 0)
 # a_ghost.ty = int(playery // SQUARE_SIZE)
 #a_ghost.astar(int((playerx + WIDTH // 2) // SQUARE_SIZE), int((playery + HEIGHT // 2) // SQUARE_SIZE))
 
-ghosts = {a_ghost}
+
+
+ghosts = []
+for _ in range(15):
+    #ghosts.append(bmg.Ghost(window, 1, -MAP_RADIUS + real_round((WIDTH / 2) / SQUARE_SIZE) - int(0.2 * MAP_RADIUS), -MAP_RADIUS + real_round((HEIGHT / 2) / SQUARE_SIZE) - int(0.2 * MAP_RADIUS)))
+    
+    ghosts.append(bmg.Ghost(window, 1, -int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), -int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
+    ghosts.append(bmg.Ghost(window, 2, int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), -int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
+    ghosts.append(bmg.Ghost(window, 3, -int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
+    ghosts.append(bmg.Ghost(window, 4, int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
+    
 
 while True:
     # events
@@ -214,7 +221,6 @@ while True:
         print("________________________________________________")
 
     active_paths = player_bullets.get_projectiles()
-    print(len(active_paths))
     if len(active_paths) > 0:
         #print("-------------------------------------------")
         player_bullets.draw_lazers(window)
@@ -225,8 +231,8 @@ while True:
     #     cur_time = time.time()
     #     if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
     #         start_time = cur_time
-    #         asyncio.run(player_weapon.shoot(window, round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), 
-    #                             round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun", last_key))
+    #         asyncio.run(player_weapon.shoot(window, real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), 
+    #                             real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun", last_key))
     #         player_score.use_ammo(1)
 
     # cur_proj = player_weapon.get_projectiles()
@@ -272,10 +278,6 @@ while True:
 
         last_walls = walls
         
-        for ghost in ghosts:
-            print(playerx, playery)
-            if abs(playerx // SQUARE_SIZE - ghost.x) + abs(playery // SQUARE_SIZE - ghost.y) <= 10:
-                ghost.astar(int(playerx // SQUARE_SIZE), int(playery // SQUARE_SIZE))
 
     else:
         walls = last_walls
@@ -403,7 +405,7 @@ while True:
     # draw calls - a LOT of them
     window.fill((0, 0, 0))
 
-    pygame.draw.circle(window, (255, 255, 0), (round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
+    pygame.draw.circle(window, (255, 255, 0), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
 
     player_rect = pygame.Rect(
         -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
@@ -489,14 +491,15 @@ while True:
     player_score.display_ammo(window, WIDTH)    
     player_target.update_target(window, (0,0))
     
-    a_ghost.update(startx, starty)
+    for ghost in ghosts:
+        ghost.update(startx, starty)
 
     pygame.display.update()
     
     if UNCAPPED_FPS:
         frame_count += 1
         if frame_count % 1000 == 0:
-            #print(round(1/(time.time() - delay_to)))
+            #print(real_round(1/(time.time() - delay_to)))
             ...
         last = delay_to
         delay_to = time.time()
@@ -505,5 +508,5 @@ while True:
         frame_count = (frame_count + 1) % FPS
         clock.tick(FPS)
         if frame_count == 0:
-            #print(round(clock.get_fps()))
+            #print(real_round(clock.get_fps()))
             ...

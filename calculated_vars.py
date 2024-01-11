@@ -58,3 +58,9 @@ PROJECTILE_RADIUS = SQUARE_SIZE * 1.5/5 / 2
 
 
 SAFE_RADIUS = 2
+
+import math
+def real_round(d):
+    r = d % 1
+    if r >= 0.5: return int(math.ceil(d))
+    else: return int(math.floor(d))
