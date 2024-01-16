@@ -21,6 +21,10 @@ To run the game first download the following libraries.
 After downloading the appropriate libraries to run the game run the file `homescreen.py`
 Upon running this you will be presented a screen including instructions, settings and a button to begin the game
 
+## Architecture
+
+&nbsp;&nbsp;&nbsp;&nbsp; The program is divided into 3 main components that the user interacts with, **homescreen introlevel and mazegen**, we decided to do this in part to make it easier to divide the work, 
+
 ## **User Experience** 
 
 Overall, the game is meant to provide a fresh spin on a classic game, the combination of nostalgia and unique gameplay is what we hope would attract users to the game initially. 
@@ -42,3 +46,5 @@ Overall, the game is meant to provide a fresh spin on a classic game, the combin
 &nbsp;&nbsp;&nbsp;&nbsp;Upon completing the intro level, they will once again be transported to the main game, but the map they receive this playthrough will likely be far different than their previous games. The user should have no trouble with the movement mechanics, but with the new world to explore it will likely take them some time to navigate each quadrant of the maze successfully. 
 
 &nbsp;&nbsp;&nbsp;&nbsp;The boss fights in each section of the maze and should still prevent a challenge to the user, due to the boss’s strong tracking abilities, allowing a rewarding feeling for the user upon victory. Similar to a new user, the whole game should not take an excessively long time for the user to complete, allowing returning users to have a rewarding potentially nostalgic experience that will hopefully have them continuing to return. 
+
+## Retrospective
