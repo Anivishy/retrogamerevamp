@@ -19,6 +19,9 @@ class Ghost:
 
         self.path = []
 
+        self.width = 25
+        self.height = 25
+
 
         self.ctx = x
         self.cty = y
@@ -41,6 +44,10 @@ class Ghost:
                 self.unavailable.add((MAP_RADIUS - BOSS_AREA + x + real_round((WIDTH / 2) / SQUARE_SIZE), MAP_RADIUS - BOSS_AREA + y + real_round(HEIGHT / 2 / SQUARE_SIZE)))
                 self.unavailable.add((-MAP_RADIUS + x + real_round((WIDTH / 2) / SQUARE_SIZE), MAP_RADIUS - BOSS_AREA + y + real_round(HEIGHT / 2 / SQUARE_SIZE)))
                 self.unavailable.add((MAP_RADIUS - BOSS_AREA + x + real_round((WIDTH / 2) / SQUARE_SIZE), -MAP_RADIUS + y + real_round(HEIGHT / 2 / SQUARE_SIZE)))
+
+        self.health = 100
+        self.dead = False
+        self.dead_counter = 0
 
     def heuristic(self, x1, y1, x2, y2):
         return (abs(x1 - x2) + abs(y1 - y2))
@@ -138,52 +145,66 @@ class Ghost:
                 raise
 
     def update(self, startx, starty):
-        
-        dy = (self.cty - self.y)
-        dx = (self.ctx - self.x)
 
-        distance = (dx ** 2 + dy ** 2) ** 0.5
-        if distance != 0:
-            if UNCAPPED_FPS:
-                ratio = self.speed * SQUARE_SIZE * UCFD.delay / distance
-            else:
-                ratio = (self.speed * SQUARE_SIZE) / FPS / distance
+        if self.health < 0:
+            self.dead = True
+        if not self.dead:
+            
+            dy = (self.cty - self.y)
+            dx = (self.ctx - self.x)
 
-            if abs(dx * ratio) > abs(dx):
-                self.x += dx
-            else:
-                self.x += dx * ratio
+            distance = (dx ** 2 + dy ** 2) ** 0.5
+            if distance != 0:
+                if UNCAPPED_FPS:
+                    ratio = self.speed * SQUARE_SIZE * UCFD.delay / distance
+                else:
+                    ratio = (self.speed * SQUARE_SIZE) / FPS / distance
 
-            if abs(dy * ratio) > abs(dy):
-                self.y += dy
+                if abs(dx * ratio) > abs(dx):
+                    self.x += dx
+                else:
+                    self.x += dx * ratio
+
+                if abs(dy * ratio) > abs(dy):
+                    self.y += dy
+                else:
+                    self.y += dy * ratio
             else:
-                self.y += dy * ratio
+                self.step()
         else:
-            self.step()
+            if not UNCAPPED_FPS:
+                self.dead_counter += 1
+                if self.dead_counter >= FPS * GHOST_RESPAWN:
+                    self.dead = False
+                    self.health = 100
+                    self.dead_counter = 0
+            else:
+                self.dead_counter += UCFD.delay
+                if self.dead_counter >= GHOST_RESPAWN:
+                    self.dead = False
+                    self.health = 100
+                    self.dead_counter = 0
+        
+        
+            
+        if not self.dead:
 
-        # pygame.draw.rect(
-        #     self.screen, (235, 131, 52), pygame.Rect(
-        #         self.tx * SQUARE_SIZE - startx * SQUARE_SIZE,
-        #         self.ty * SQUARE_SIZE - starty * SQUARE_SIZE,
-        #         25,25
-        #     )
-        # )
-
-        pygame.draw.rect(
-            self.screen, self.color, pygame.Rect(
-                self.x * SQUARE_SIZE - startx * SQUARE_SIZE,
-                self.y * SQUARE_SIZE - starty * SQUARE_SIZE,
-                25,25
+            pygame.draw.rect(
+                self.screen, self.color, pygame.Rect(
+                    self.x * SQUARE_SIZE - startx * SQUARE_SIZE - self.width // 2,
+                    self.y * SQUARE_SIZE - starty * SQUARE_SIZE - self.height // 2,
+                    self.width, self.height
+                )
             )
-        )
 
-        pygame.draw.rect(
-            self.screen, (255, 0, 0), pygame.Rect(
-                self.x * SQUARE_SIZE - startx * SQUARE_SIZE,
-                self.y * SQUARE_SIZE - starty * SQUARE_SIZE,
-                10,10
+        else:
+            pygame.draw.rect(
+                self.screen, (170, 170, 170), pygame.Rect(
+                    self.x * SQUARE_SIZE - startx * SQUARE_SIZE - self.width // 2,
+                    self.y * SQUARE_SIZE - starty * SQUARE_SIZE - self.height // 2,
+                    self.width, self.height
+                )
             )
-        )
 
 
         

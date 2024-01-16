@@ -131,6 +131,7 @@ for _ in range(15):
     ghosts.append(bmg.Ghost(window, 4, int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
     
 
+
 while True:
     # events
     direction = 0
@@ -321,6 +322,10 @@ while True:
                 ACTIVE_BOSS = BossBR(window)
             last_walls = walls
 
+    if ACTIVE_BOSS:
+        if ACTIVE_BOSS.health <= 0:
+            defeated_bosses.add(ACTIVE_BOSS.type_)
+
     if playerx - WIDTH // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)) and playery - HEIGHT // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)):
         if 1 in defeated_bosses:
             ACTIVE_BOSS = None
@@ -471,6 +476,10 @@ while True:
                         ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
                         ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
 
+    
+    for ghost in ghosts:
+        ghost.update(startx, starty)
+    
     # draw player
     # yellow circle at center of screen
 
@@ -491,8 +500,6 @@ while True:
     player_score.display_ammo(window, WIDTH)    
     player_target.update_target(window, (0,0))
     
-    for ghost in ghosts:
-        ghost.update(startx, starty)
 
     pygame.display.update()
     
