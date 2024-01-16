@@ -29,12 +29,11 @@ class openSettings:
         self.SD3 = ((.525)*self.WIDTH, (.25)*self.HEIGHT, (.15)*self.WIDTH, (.06)*self.HEIGHT)
         self.SD4 = ((.725)*self.WIDTH, (.25)*self.HEIGHT, (.15)*self.WIDTH, (.06)*self.HEIGHT)
 
-        self.FPS1 = ((.15)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
-        self.FPS2 = ((.3)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
-        self.FPS3 = ((.45)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
-        self.FPS4 = ((.6)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
-        self.FPS5 = ((.75)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
-        # ^ delete .125 from all widths to center
+        self.FPS1 = ((.1375)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
+        self.FPS2 = ((.2875)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
+        self.FPS3 = ((.4375)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
+        self.FPS4 = ((.5875)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
+        self.FPS5 = ((.7375)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
 
         self.start = True
 
@@ -43,102 +42,124 @@ class openSettings:
         self.difficultyToggle = (.47*self.WIDTH, .875*self.HEIGHT, .06*self.WIDTH, .045* self.HEIGHT)
 
         self.volumeSliderOutline = ((.25)*self.WIDTH, (.525)*self.HEIGHT, (.6)*self.WIDTH, (.02)*self.HEIGHT)
-        self.volumeSlider = ((.26)*self.WIDTH, (.5275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
-        self.currentVolume = 1.0
-        self.printVol = str(self.currentVolume * 100)
+        self.volumeSliderStart = .26*self.WIDTH + (.6)*self.WIDTH - .03*self.WIDTH
+        self.volumeSlider = (self.volumeSliderStart, (.5275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
+        self.volLocation = ((self.volumeSliderOutline[0] - .1 * self.WIDTH), self.volumeSliderOutline[1])
+
+        self.currentVolume = 1.0 # value to use in game
 
         self.joystickSliderOutline = ((.25)*self.WIDTH, (.625)*self.HEIGHT, (.6)*self.WIDTH, (.02)*self.HEIGHT)
-        self.joystickSlider = ((.26)*self.WIDTH, (.6275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
-        self.currentjoystick = 0.5
+        self.joystickSliderStart = .26*self.WIDTH + (.3)*self.WIDTH - .03*self.WIDTH
+        self.joystickSlider = (self.joystickSliderStart, (.6275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
+        self.joystickLocation = ((self.joystickSliderOutline[0] - .1 * self.WIDTH), self.joystickSliderOutline[1])
+
+        self.currentjoystick = 0.5 # value to use in game
 
         self.difficulty = False
 
-    def text(self):
-        i = instructions.createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
-        h = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
+    def text(self, i, h):
 
-        i.printText("Settings", (.1 * self.HEIGHT), True)
-        i.printText("Screen Dimensions", (.2 * self.HEIGHT), False)
-        i.printText("Fullscreen", (.35 * self.HEIGHT), False)
-        i.printText("Volume", (.475 * self.HEIGHT), False)
-        i.printText("Joystick Threshold", (.575 * self.HEIGHT), False)
-        i.printText("FPS", (.675 * self.HEIGHT), False)
-        i.printText("Final Level Difficulty", (.825 * self.HEIGHT), False)
+        i.printText("Settings", (.1 * self.HEIGHT), True, False)
+        i.printText("Screen Dimensions", (.2 * self.HEIGHT), False, False)
+        i.printText("Fullscreen", (.35 * self.HEIGHT), False, False)
+        i.printText("Volume", (.475 * self.HEIGHT), False, False)
+        i.printText("Joystick Threshold", (.575 * self.HEIGHT), False, False)
+        i.printText("FPS", (.675 * self.HEIGHT), False, False)
+        i.printText("Increase Final Level Difficulty?", (.825 * self.HEIGHT), False, False)
 
         buttonFont = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
 
         # Screen Dimension Labels
         a, b, c, d = self.SD1
         x, y = h.CenterButtons("Square", a, b, c, d, buttonFont)
-        h.openingText("Square", x, y, False, buttonFont)
+        self.screen.blit(buttonFont.render("Square", True, (255, 255, 255)), (x, y))
 
         a, b, c, d = self.SD2
         x, y = h.CenterButtons("Vertical", a, b, c, d, buttonFont)
-        h.openingText("Vertical", x, y, False, buttonFont)
+        self.screen.blit(buttonFont.render("Vertical", True, (255, 255, 255)), (x, y))
 
         a, b, c, d = self.SD3
         x, y = h.CenterButtons("Landscape", a, b, c, d, buttonFont)
-        h.openingText("Landscape", x, y, False, buttonFont)
+        self.screen.blit(buttonFont.render("Landscape", True, (255, 255, 255)), (x, y))
 
         a, b, c, d = self.SD4
         x, y = h.CenterButtons("Fullscreen", a, b, c, d, buttonFont)
-        h.openingText("Fullscreen", x, y, False, buttonFont)
+        self.screen.blit(buttonFont.render("Fullscreen", True, (255, 255, 255)), (x, y))
 
         # FPS Labels
         a, b, c, d = self.FPS1
         x, y = h.CenterButtons("20", a, b, c, d, buttonFont)
-        h.openingText("20", x, y, False, buttonFont)
+        self.screen.blit(buttonFont.render("20", True, (255, 255, 255)), (x, y))
 
         a, b, c, d = self.FPS2
         x, y = h.CenterButtons("60", a, b, c, d, buttonFont)
-        h.openingText("60", x, y, False, buttonFont)
+        self.screen.blit(buttonFont.render("60", True, (255, 255, 255)), (x, y))
 
         a, b, c, d = self.FPS3
         x, y = h.CenterButtons("90", a, b, c, d, buttonFont)
-        h.openingText("90", x, y, False, buttonFont)
+        self.screen.blit(buttonFont.render("90", True, (255, 255, 255)), (x, y))
 
         a, b, c, d = self.FPS4
         x, y = h.CenterButtons("120", a, b, c, d, buttonFont)
-        h.openingText("120", x, y, False, buttonFont)
+        self.screen.blit(buttonFont.render("120", True, (255, 255, 255)), (x, y))
 
         a, b, c, d = self.FPS5
         x, y = h.CenterButtons("Uncapped", a, b, c, d, buttonFont)
-        h.openingText("Uncapped", x, y, False, buttonFont)
+        self.screen.blit(buttonFont.render("Uncapped", True, (255, 255, 255)), (x, y))
 
         pygame.display.flip()
 
     def setup(self):
-        self.text()
+        i = instructions.createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
+        h = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
 
-        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.exitButton), 2)
+        # printing exit button
+        a, b, _, _ = self.exitButton
+        self.screen.blit(pygame.font.SysFont("monospace", int(60*self.WIDTH/1536)).render("<", True, (255, 255, 255)), (a, b))
 
-        pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.SD1), 3)
-        pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.SD2), 3)
-        pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.SD3), 3)
-        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.SD4), 3)
+        # printing screen dimension buttons
+        pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.SD1), 7)
+        pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.SD2), 7)
+        pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.SD3), 7)
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.SD4), 7)
 
-        pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.FPS1), 3)
-        pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.FPS2), 3)
-        pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.FPS3), 3)
-        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.FPS4), 3)
-        pygame.draw.rect(self.screen, (34, 139, 34), pygame.Rect(self.FPS5), 3)
+        # printing fps buttons
+        pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.FPS1), 7)
+        pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.FPS2), 7)
+        pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.FPS3), 7)
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.FPS4), 7)
+        pygame.draw.rect(self.screen, (34, 139, 34), pygame.Rect(self.FPS5), 7)
 
+        # printing volume slider + current value
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.volumeSliderOutline))
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.volumeSlider))
+        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(str((self.currentVolume*100))[:3] + ' ', True, (255, 255, 255), (0, 0, 0)), self.volLocation)
 
+        # printing joystick slider
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.joystickSliderOutline))
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.joystickSlider))
-        
-        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.difficultyToggle))
+        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(str((self.currentjoystick*100))[:2] + ' ', True, (255, 255, 255), (0, 0, 0)), self.joystickLocation)
 
+        # printing fullscreen toggle (is filled in if fullscreen)
         if self.fullscreen:
-            # self.screen.blit(pygame.image.load('toggle.png'), pygame.Rect(self.fullscreenToggle))
-            pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.fullscreenToggle))
+            pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.fullscreenToggle), 7)
         else:
-            pygame.draw.rect(self.screen, (125, 125, 125), pygame.Rect(self.fullscreenToggle))
+            pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.fullscreenToggle))
+
+        # printing difficulty toggle (filled in for increased difficulty)
+        if self.difficulty:
+            pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.difficultyToggle), 7)
+        else:
+            pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.difficultyToggle))
+
+        # calling function to print titles and labels
+        self.text(i, h)
 
     def run(self):
+        # adding buttons, titles, labels
         self.setup()
+
+        # used to track if either slider is moved
         mouseDownVol = False
         mouseDownjoystick = False
 
@@ -155,6 +176,7 @@ class openSettings:
                         sys.exit()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
+                    # back button pressed, return to homescreen
                     if pygame.Rect(self.exitButton).collidepoint(pygame.mouse.get_pos()):
                         c = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
                         c.run(False)
@@ -180,7 +202,7 @@ class openSettings:
                         self.fullscreen = not self.fullscreen
                         s.run()
 
-                    # change difficulty
+                    # change final level difficulty
                     elif pygame.Rect(self.fullscreenToggle).collidepoint(pygame.mouse.get_pos()):
                         self.difficulty = not self.difficulty
 
@@ -194,7 +216,7 @@ class openSettings:
                         s = openSettings(squareDimensions, squareDimensions, False)
                         s.run()
 
-                    # vertical
+                    # vertical screen
                     elif pygame.Rect(self.SD2).collidepoint(pygame.mouse.get_pos()):
                         try:
                             w, h = pyautogui.size()
@@ -205,7 +227,7 @@ class openSettings:
                         s = openSettings(width, height, False)
                         s.run()
 
-                    # landscape
+                    # landscape screen
                     elif pygame.Rect(self.SD3).collidepoint(pygame.mouse.get_pos()):
                         try:
                             w, h = pyautogui.size()
@@ -216,7 +238,7 @@ class openSettings:
                         s = openSettings(width, height, False)
                         s.run()
 
-                    # fullscreen
+                    # fullscreen screen
                     elif pygame.Rect(self.SD4).collidepoint(pygame.mouse.get_pos()):
                         try:
                             w, h = pyautogui.size()
@@ -257,10 +279,12 @@ class openSettings:
                         currentX = pygame.mouse.get_pos()
                         mouseDownjoystick = True
 
+                # if either slider was being moved, and now is not
                 elif event.type == pygame.MOUSEBUTTONUP:
                     mouseDownVol = False
                     mouseDownjoystick = False
             
+                # if volume slider being moved
                 if mouseDownVol:
                     if pygame.mouse.get_pos != currentX:
                         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.volumeSlider))
@@ -284,13 +308,9 @@ class openSettings:
                         
                         self.currentVolume = str(round(self.currentVolume))
 
-                        x, _, _, _ = self.volumeSliderOutline
-                        _, volY, _, _ = self.volumeSlider
-                        volX = x - .1 * self.WIDTH
-                        volLocation = (volX, volY)
-
-                        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentVolume + ' ', True, (255, 255, 255), (0, 0, 0)), volLocation)
-                            
+                        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentVolume + ' ', True, (255, 255, 255), (0, 0, 0)), self.volLocation)
+                        
+                # if joystick slider being moved
                 if mouseDownjoystick:
                     if pygame.mouse.get_pos != currentX:
                         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.joystickSlider))
@@ -304,7 +324,6 @@ class openSettings:
                         if a < min:
                             a = min
                         
-
                         elif a > max:
                             a = max
 
@@ -334,6 +353,3 @@ if __name__ == "__main__":
 
     s = openSettings(WIDTH, HEIGHT, True)
     s.run()
-
-# add image for back button/toggle, add sliders/input for settings, connect changes in settings to other pages
-# scale text size
