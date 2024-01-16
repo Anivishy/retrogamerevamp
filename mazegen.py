@@ -107,6 +107,8 @@ ba_overlap = set()
 wall_lock = False
 sound_lock = set()
 
+player_protected = False
+protected_timer = 0
 
 joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 if len(joysticks) > 0:
@@ -130,7 +132,7 @@ for _ in range(15):
     ghosts.append(bmg.Ghost(window, 3, -int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
     ghosts.append(bmg.Ghost(window, 4, int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
     
-
+velocity = PLAYER_SPEED
 
 while True:
     # events
@@ -159,7 +161,7 @@ while True:
         elif event.type == pygame.JOYDEVICEREMOVED and joystick:
             joystick = None
 
-    velocity = PLAYER_SPEED
+    
     copysx = startx
     copysy = starty
     copypx = playerx
@@ -363,7 +365,48 @@ while True:
             last_walls = walls
             wall_lock = False
 
+    player_rect = pygame.Rect(
+        -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
+        -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, 
+        RADIUS*2, RADIUS*2)
 
+    if not player_protected:
+        for ghost in ghosts:
+            ghost_rect = pygame.Rect(
+                ghost.x * SQUARE_SIZE - startx * SQUARE_SIZE - ghost.width // 2,
+                ghost.y * SQUARE_SIZE - starty * SQUARE_SIZE - ghost.height // 2,
+                ghost.width, ghost.height
+            )
+            if ghost_rect.colliderect(player_rect):
+                if player_health.player_shield > 0:
+                    player_health.player_shield -= 10
+                    if player_health.player_shield < 0:
+                        player_health.player_health -= abs(player_health.player_shield)
+                        player_health.player_shield = 0
+                else:
+                    player_health.player_health -= 10 
+                player_protected = True
+                shield_regen_time = time.time()
+                break
+    
+
+    if player_protected:
+        shield_regen_time = time.time()
+        velocity = PLAYER_SPEED * 0.6
+        if not UNCAPPED_FPS:
+            protected_timer += 1
+            if protected_timer >= FPS * PLAYER_PROTECT:
+                player_protected = False
+                protected_timer = 0
+                velocity = PLAYER_SPEED
+                shield_regen_time = time.time()
+        else:
+            protected_timer += UCFD.delay
+            if protected_timer >= PLAYER_PROTECT:
+                player_protected = False
+                protected_timer = 0
+                velocity = PLAYER_SPEED
+                shield_regen_time = time.time()
 
     walls_to_check = set()
     for x in range(0, 2):
@@ -410,7 +453,12 @@ while True:
     # draw calls - a LOT of them
     window.fill((0, 0, 0))
 
-    pygame.draw.circle(window, (255, 255, 0), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
+    if not player_protected:
+
+        pygame.draw.circle(window, (255, 255, 0), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
+    else:
+        pygame.draw.circle(window, (255, 127, 80), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
+
 
     player_rect = pygame.Rect(
         -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
@@ -493,7 +541,7 @@ while True:
     else:
         shield_regen_timer = time.time()
     if (-1 * (shield_regen_timer - regen_time) > 10):
-        player_health.regen(1)
+        player_health.regen(1 )
     player_health.gen_healthbar(window, WIDTH)
     player_health.gen_shieldbar(window, WIDTH)
     player_score.display_score(window, WIDTH)
