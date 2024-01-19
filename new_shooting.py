@@ -34,8 +34,8 @@ class lazer_gun():
     
 class lazer_bullet:
     def __init__ (self, x, y, mousex, mousey):
-        self.x = x
-        self.y = y
+        self.x = x - 115
+        self.y = y - 80
         self.mousex = mousex
         self.mousey = mousey
         self.speed = 50
