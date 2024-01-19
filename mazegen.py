@@ -7,7 +7,7 @@ import health
 import pelletsandammo
 #import weapons
 import mousetargettracker
-import updatedshooting
+import new_shooting
 
 
 import asyncio
@@ -21,7 +21,7 @@ import colors
 pygame.init()
 player_health = health.healthbar()
 player_score = pelletsandammo.pellets()
-player_bullets = updatedshooting.player_lazer()
+#player_bullets = new_shooting.lazer_bullet()
 #player_weapon = weapons.weapons()
 start_time = time.time()
 shield_regen_timer = time.time()
@@ -29,6 +29,7 @@ cur_health = player_health.get_health()
 player_target = mousetargettracker.mouseTarget()
 last_key = ""
 regen_time = 10
+current_bullets = []
 #temp = 0 testing variable for shield regen
 
 # try:
@@ -179,26 +180,42 @@ while True:
         last_key = "left" 
         if not UNCAPPED_FPS:
             playerx -= velocity / FPS * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.x += velocity / FPS * SQUARE_SIZE
         else:
             playerx -= velocity * (delay_to - last) * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.x += velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_RIGHT] or keys[pygame.K_d] or (joystick and joystick.get_axis(0) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == 1):
         last_key = "right" 
         if not UNCAPPED_FPS:
             playerx += velocity / FPS * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.x -= velocity / FPS * SQUARE_SIZE
         else:
             playerx += velocity * (delay_to - last) * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.x -= velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_UP] or keys[pygame.K_w] or (joystick and joystick.get_axis(1) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == 1):
         last_key = "up" 
         if not UNCAPPED_FPS:
             playery -= velocity / FPS * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.y += velocity / FPS * SQUARE_SIZE
         else:
             playery -= velocity * (delay_to - last) * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.y += velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_DOWN] or keys[pygame.K_s] or (joystick and joystick.get_axis(1) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == -1):
         last_key = "down" 
         if not UNCAPPED_FPS:
             playery += velocity / FPS * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.x -= velocity / FPS * SQUARE_SIZE
         else:
             playery += velocity * (delay_to - last) * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.y -= velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_1]:
         defeated_bosses.add(1)
     elif keys[pygame.K_2]:
@@ -215,16 +232,43 @@ while True:
     if keys[pygame.K_SPACE]:
         breakpoint()
 
-    if keys[pygame.K_RSHIFT]: 
-        print("-------------------------------------------")
-        player_bullets.calculate_path(pygame.mouse.get_pos(), playerx, playery)
-        print("________________________________________________")
+    # if keys[pygame.K_RSHIFT]: wasd
+    #     player_bullets.calculate_path(pygame.mouse.get_pos(), playerx, playery)
 
-    active_paths = player_bullets.get_projectiles()
-    print(len(active_paths))
-    if len(active_paths) > 0:
-        #print("-------------------------------------------")
-        player_bullets.draw_lazers(window)
+    # if keys [pygame.K_RSHIFT]:
+    #     cur_time = time.time()
+    #     if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
+    #         start_time = cur_time
+    #         player_bullets.calculate_path(pygame.mouse.get_pos(), playerx - (startx * SQUARE_SIZE), playery - (starty * SQUARE_SIZE), WIDTH, HEIGHT)
+    #         print(pygame.mouse.get_pos())
+    #         player_score.use_ammo(1)
+
+    # active_paths = player_bullets.get_projectiles()
+    # if len(active_paths) > 0:
+    #     #print("-------------------------------------------")
+    #     player_bullets.draw_lazers(window, WIDTH, HEIGHT)
+    #     for i in active_paths:
+    #         if len(i) == 0:
+    #             active_paths.remove(i)
+
+    #current_bullets = []
+    mousex, mousey = pygame.mouse.get_pos()
+    if keys [pygame.K_RSHIFT]:
+        cur_time = time.time()
+        if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
+            start_time = cur_time
+            current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE), playery - (starty * SQUARE_SIZE), mousex, mousey))
+            player_score.use_ammo(1)
+
+    print(current_bullets)
+
+    for bullet in current_bullets:
+        bullet.shoot(window)
+        if bullet.check_ghost_col() or bullet.check_wall_col() or bullet.check_wall_col():
+            current_bullets.remove(bullet)
+            
+    
+
 
     #Old shooting code, ignore for now, do not delete
 
