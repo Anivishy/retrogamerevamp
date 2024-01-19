@@ -92,9 +92,6 @@ lasty = starty
 
 delay_to = time.time()
 last = delay_to - (1/60)
-
-
-
         
 #walls_to_remove = set()
 walls = gen_walls(0, 0) - walls_to_remove
@@ -110,6 +107,8 @@ ba_overlap = set()
 wall_lock = False
 sound_lock = set()
 
+player_protected = False
+protected_timer = 0
 
 joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 if len(joysticks) > 0:
@@ -118,7 +117,22 @@ else:
     joystick = None
 
 import big_maze_ghosts as bmg
-a_ghost = bmg.Ghost(window, 1)
+a_ghost = bmg.Ghost(window, 1, 0, 0)
+# a_ghost.ty = int(playery // SQUARE_SIZE)
+#a_ghost.astar(int((playerx + WIDTH // 2) // SQUARE_SIZE), int((playery + HEIGHT // 2) // SQUARE_SIZE))
+
+
+
+ghosts = []
+for _ in range(15):
+    #ghosts.append(bmg.Ghost(window, 1, -MAP_RADIUS + real_round((WIDTH / 2) / SQUARE_SIZE) - int(0.2 * MAP_RADIUS), -MAP_RADIUS + real_round((HEIGHT / 2) / SQUARE_SIZE) - int(0.2 * MAP_RADIUS)))
+    
+    ghosts.append(bmg.Ghost(window, 1, -int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), -int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
+    ghosts.append(bmg.Ghost(window, 2, int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), -int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
+    ghosts.append(bmg.Ghost(window, 3, -int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
+    ghosts.append(bmg.Ghost(window, 4, int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
+    
+velocity = PLAYER_SPEED
 
 while True:
     # events
@@ -139,19 +153,7 @@ while True:
             if event.key == pygame.K_DOWN:
                 direction = 4
             if event.key == pygame.K_SPACE:
-                w = (walls_around(playerx // SQUARE_SIZE, playery // SQUARE_SIZE))
-                print(walls.intersection(w))
-                print(playerx // SQUARE_SIZE, playery // SQUARE_SIZE)
-                bx, by = playerx // SQUARE_SIZE, playery // SQUARE_SIZE
-                if ((bx, by), (bx + 1, by)) not in w:
-                    print("up available")
-                if ((bx + 1, by), (bx + 1, by + 1)) not in w:
-                    print("right available")
-                if ((bx, by + 1), (bx + 1, by + 1)) not in w:
-                    print("down available")
-                if ((bx, by), (bx, by + 1)) not in w:
-                    print("left available")
-                        #breakpoint()
+                breakpoint()
             if event.key == pygame.K_q:
                 a_ghost.step()
         elif event.type == pygame.JOYDEVICEADDED and not joystick:
@@ -159,7 +161,7 @@ while True:
         elif event.type == pygame.JOYDEVICEREMOVED and joystick:
             joystick = None
 
-    velocity = PLAYER_SPEED
+    
     copysx = startx
     copysy = starty
     copypx = playerx
@@ -276,8 +278,8 @@ while True:
     #     cur_time = time.time()
     #     if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
     #         start_time = cur_time
-    #         asyncio.run(player_weapon.shoot(window, round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), 
-    #                             round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun", last_key))
+    #         asyncio.run(player_weapon.shoot(window, real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), 
+    #                             real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)), "laser_gun", last_key))
     #         player_score.use_ammo(1)
 
     # cur_proj = player_weapon.get_projectiles()
@@ -322,6 +324,7 @@ while True:
         lasty = int(starty)
 
         last_walls = walls
+        
 
     else:
         walls = last_walls
@@ -365,6 +368,10 @@ while True:
                 ACTIVE_BOSS = BossBR(window)
             last_walls = walls
 
+    if ACTIVE_BOSS:
+        if ACTIVE_BOSS.health <= 0:
+            defeated_bosses.add(ACTIVE_BOSS.type_)
+
     if playerx - WIDTH // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)) and playery - HEIGHT // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)):
         if 1 in defeated_bosses:
             ACTIVE_BOSS = None
@@ -402,7 +409,48 @@ while True:
             last_walls = walls
             wall_lock = False
 
+    player_rect = pygame.Rect(
+        -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
+        -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, 
+        RADIUS*2, RADIUS*2)
 
+    if not player_protected:
+        for ghost in ghosts:
+            ghost_rect = pygame.Rect(
+                ghost.x * SQUARE_SIZE - startx * SQUARE_SIZE - ghost.width // 2,
+                ghost.y * SQUARE_SIZE - starty * SQUARE_SIZE - ghost.height // 2,
+                ghost.width, ghost.height
+            )
+            if ghost_rect.colliderect(player_rect):
+                if player_health.player_shield > 0:
+                    player_health.player_shield -= 10
+                    if player_health.player_shield < 0:
+                        player_health.player_health -= abs(player_health.player_shield)
+                        player_health.player_shield = 0
+                else:
+                    player_health.player_health -= 10 
+                player_protected = True
+                shield_regen_time = time.time()
+                break
+    
+
+    if player_protected:
+        shield_regen_time = time.time()
+        velocity = PLAYER_SPEED * 0.6
+        if not UNCAPPED_FPS:
+            protected_timer += 1
+            if protected_timer >= FPS * PLAYER_PROTECT:
+                player_protected = False
+                protected_timer = 0
+                velocity = PLAYER_SPEED
+                shield_regen_time = time.time()
+        else:
+            protected_timer += UCFD.delay
+            if protected_timer >= PLAYER_PROTECT:
+                player_protected = False
+                protected_timer = 0
+                velocity = PLAYER_SPEED
+                shield_regen_time = time.time()
 
     walls_to_check = set()
     for x in range(0, 2):
@@ -449,7 +497,12 @@ while True:
     # draw calls - a LOT of them
     window.fill((0, 0, 0))
 
-    pygame.draw.circle(window, (255, 255, 0), (round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
+    if not player_protected:
+
+        pygame.draw.circle(window, (255, 255, 0), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
+    else:
+        pygame.draw.circle(window, (255, 127, 80), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
+
 
     player_rect = pygame.Rect(
         -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
@@ -515,6 +568,10 @@ while True:
                         ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
                         ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
 
+    
+    for ghost in ghosts:
+        ghost.update(startx, starty)
+    
     # draw player
     # yellow circle at center of screen
 
@@ -528,21 +585,20 @@ while True:
     else:
         shield_regen_timer = time.time()
     if (-1 * (shield_regen_timer - regen_time) > 10):
-        player_health.regen(1)
+        player_health.regen(1 )
     player_health.gen_healthbar(window, WIDTH)
     player_health.gen_shieldbar(window, WIDTH)
     player_score.display_score(window, WIDTH)
     player_score.display_ammo(window, WIDTH)    
     player_target.update_target(window, (0,0))
     
-    a_ghost.update(startx, starty)
 
     pygame.display.update()
     
     if UNCAPPED_FPS:
         frame_count += 1
         if frame_count % 1000 == 0:
-            #print(round(1/(time.time() - delay_to)))
+            #print(real_round(1/(time.time() - delay_to)))
             ...
         last = delay_to
         delay_to = time.time()
@@ -551,5 +607,5 @@ while True:
         frame_count = (frame_count + 1) % FPS
         clock.tick(FPS)
         if frame_count == 0:
-            #print(round(clock.get_fps()))
+            #print(real_round(clock.get_fps()))
             ...

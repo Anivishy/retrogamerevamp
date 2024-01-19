@@ -22,9 +22,8 @@ class createInstructions:
         pygame.display.set_caption("Instructions")
 
         self.exitButtonOutline = ((50/1536)*self.WIDTH, (70/1024)*self.HEIGHT, (50/1536)*self.WIDTH, (50/1024)*self.HEIGHT)
-        self.exitButton = ((55/1536)*self.WIDTH, (75/1024)*self.HEIGHT, (40/1536)*self.WIDTH, (40/1024)*self.HEIGHT)
 
-    def printText(self, text, y, title):
+    def printText(self, text, y, title, start):
         font = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
 
         if title:
@@ -55,7 +54,7 @@ class createInstructions:
                 if title:
                     pygame.time.wait(20) #20
 
-                else:
+                elif start:
                     pygame.time.wait(5) #5
 
             x2 = x
@@ -106,7 +105,7 @@ class createInstructions:
         titleFont = pygame.font.SysFont("monospace", 50)
         bodyFont = pygame.font.SysFont("monospace", 35)
 
-        self.printText("Instructions", (.1 * self.HEIGHT), True)
+        self.printText("Instructions", (.1 * self.HEIGHT), True, True)
 
         controls = "Use your up, down, left, and right arrows for movement. Press 'esc' to exit the game."
 
@@ -116,24 +115,24 @@ class createInstructions:
 
         zones = "This game consists of an intro level, similar to standard Pacman, followed by 4 different Zones, each with a boss to beat."
 
-        self.printText("Controls", (.2 * self.HEIGHT), True)
-        self.printText(controls, (.275 * self.HEIGHT), False)
+        self.printText("Controls", (.2 * self.HEIGHT), True, True)
+        self.printText(controls, (.275 * self.HEIGHT), False, True)
 
-        self.printText("Zones", (.4 * self.HEIGHT), True)
-        self.printText(zones, (.475 * self.HEIGHT), False)
+        self.printText("Zones", (.4 * self.HEIGHT), True, True)
+        self.printText(zones, (.475 * self.HEIGHT), False, True)
 
-        self.printText("Goal", (.6 * self.HEIGHT), True)
-        self.printText(goal, (.675 * self.HEIGHT), False)
+        self.printText("Goal", (.6 * self.HEIGHT), True, True)
+        self.printText(goal, (.675 * self.HEIGHT), False, True)
 
-        self.printText("Powerups", (.8 * self.HEIGHT), True)
-        self.printText(powerups, (.875 * self.HEIGHT), False)
+        self.printText("Powerups", (.8 * self.HEIGHT), True, True)
+        self.printText(powerups, (.875 * self.HEIGHT), False, True)
 
 
         pygame.display.flip()
 
     def run(self):
-        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.exitButtonOutline), 10)
-        pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.exitButton))
+        a, b, _, _ = self.exitButtonOutline
+        self.screen.blit(pygame.font.SysFont("monospace", int(60*self.WIDTH/1536)).render("<", True, (255, 255, 255)), (a, b))
         self.printInstructions()
 
         while True:

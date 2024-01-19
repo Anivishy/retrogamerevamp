@@ -126,8 +126,10 @@ def walls_around(point_x, point_y):
     walls = set()
     protected = create_protected(point_x, point_y)
 
-    for x in range(-3, WIDTH // SQUARE_SIZE + 3):
-        for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
+    scan = 2
+
+    for x in range(-scan, scan):
+        for y in range(-scan, scan):
             point = ((point_x + x), (point_y + y))
             rgen = random.Random((point_x + x) * SQUARE_SIZE + (point_y + y))
             threshold = rgen.randint(15, 35) / 100
@@ -140,10 +142,11 @@ def walls_around(point_x, point_y):
             if rgen.random() < threshold:
                 walls.add(tuple(sorted([point, (point[0], point[1] - 1)])))
 
+    
     walls -= boss_zones
     walls |= protected
-    for x in range(-3, 3):
-        for y in range(-3, 3):
+    for x in range(-scan, scan):
+        for y in range(-scan, scan):
             point = ((point_x + x), (point_y + y))
             rgen = random.Random((point_x + x) * SQUARE_SIZE + (point_y + y))
             # boilerplate extravaganza - you have been warned!

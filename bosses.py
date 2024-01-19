@@ -24,6 +24,9 @@ class BossTL: # top left
         self.cam_x = 0
         self.cam_y = 0
 
+        self.health = 100
+        self.type_ = 1
+
 
     def check_all_collisions(self):
         cp = set()
@@ -127,6 +130,9 @@ class BossTR: # top right
 
         self.cam_x = 0
         self.cam_y = 0
+
+        self.health = 100
+        self.type_ = 2
     
     def update_cam(self, left, right, top, bottom):
         self.cam_x = right * SQUARE_SIZE
@@ -229,6 +235,9 @@ class BossBL: # bottom left
         self.last_updated = time.time()
 
         self.marker = 0
+
+        self.health = 100
+        self.type_ = 3
 
     def update_cam(self, left, right, top, bottom):
         self.cam_x = left * SQUARE_SIZE
@@ -335,6 +344,7 @@ class BossBL: # bottom left
 class BossBR: # bottom right
     def __init__(self, screen):
         self.screen = screen
+        self.type_ = 4 
 
         self.x = WIDTH - SQUARE_SIZE * 2
         self.y = HEIGHT - SQUARE_SIZE * 2
@@ -347,6 +357,8 @@ class BossBR: # bottom right
 
         self.marker = 0
         self.spiral = 8
+
+        self.health = 100
 
         if BULLET_HELL_BOTTOM_RIGHT:
             self.spiral = FPS
