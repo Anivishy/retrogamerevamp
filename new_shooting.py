@@ -40,6 +40,7 @@ class lazer_bullet:
         self.mousey = mousey
         self.speed = 50
         self.angle = math.atan2(y - mousey, x - mousex)
+        self.angle_deg = self.angle * (180/math.pi)
         self.velx = math.cos(self.angle) * self.speed
         self.vely = math.sin(self.angle) * self.speed
 
@@ -48,8 +49,9 @@ class lazer_bullet:
         self.y -= int(self.vely / 4)
         self.lazer_gun_image = pygame.image.load(sanitize_path('projectileimgaes/lazerprojectile_right.png'))
         SCALE_SIZE = (75, 75)
-        self.lazer_gun_image= pygame.transform.scale(self.lazer_gun_image, SCALE_SIZE)
-
+        self.lazer_gun_image = pygame.transform.scale(self.lazer_gun_image, SCALE_SIZE)
+        self.lazer_gun_image = pygame.transform.rotate(self.lazer_gun_image, 0.5 * self.angle_deg)
+        print("Rotated image to angle: " + str(self.angle))
         #pygame.draw.circle(window, (255,255,255), (self.x, self.y), 5)
         window.blit(self.lazer_gun_image, (self.x, self.y))
         #print("NKLSDNFLKSDGN")

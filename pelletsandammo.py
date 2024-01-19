@@ -16,7 +16,7 @@ class pellets:
 
         self.score = 0
         self.ammo_add = 0
-        self.ammo = 0
+        self.ammo = 50
                 
         #Fonts
         self.font = pygame.font.Font('freesansbold.ttf', 32)
