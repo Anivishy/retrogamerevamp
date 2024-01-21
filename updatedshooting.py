@@ -10,17 +10,23 @@ base = os.path.dirname(os.path.abspath(__file__))
 def sanitize_path(path):
     return os.path.join(base, path)
 
-class Sprite(pygame.sprite.Sprite): 
-    def __init__(self, height, width, window): 
-        super().__init__() 
-  
-        self.laser_projectile = pygame.image.load(sanitize_path('projectileimgaes/lazerprojectile_right.png'))
-        self.SCALE_SIZE = (75, 75)
-        self.laser_projectile = pygame.transform.scale(self.laser_projectile, self.SCALE_SIZE)
-  
-        pygame.draw.rect(window, (255,255,255), pygame.Rect(0, 0, width, height)) 
-  
-        self.rect = self.laser_projectile.get_rect() 
+class lazer(pygame.sprite.Sprite): 
+    def __init__(self, window, x, y): 
+        pygame.sprite.Sprite.__init__(self)  
+        # laser_projectile = pygame.image.load(sanitize_path('projectileimgaes/lazerprojectile_right.png'))
+        # SCALE_SIZE = (75, 75)
+        # laser_projectile = pygame.transform.scale(laser_projectile, SCALE_SIZE)
+        # self.image = laser_projectile
+        self.image = pygame.Surface((50,50))
+        self.image.fill((255,255,255))
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        
+        # self.laser_projectile = pygame.image.load(sanitize_path('projectileimgaes/lazerprojectile_right.png'))
+        # self.SCALE_SIZE = (75, 75)
+        # self.laser_projectile = pygame.transform.scale(self.laser_projectile, self.SCALE_SIZE)
+        # pygame.draw.rect(window, (255,255,255), pygame.Rect(0, 0, width, height))   
+        # self.rect = self.laser_projectile.get_rect() 
 
 class player_lazer:
 
@@ -41,38 +47,43 @@ class player_lazer:
         # self.SCALE_SIZE = (75, 75)
         # self.laser_projectile_down = pygame.transform.scale(self.laser_projectile_down, self.SCALE_SIZE)
         self.paths = []
-        self.all_sprite_list = pygame.sprite.Group()
+        self.projectiles = pygame.sprite.Group()
+
 
 
     def projectile_collision(self):
         return True
 
-    def calculate_path(self, mouse_coords, playerx, playery):
+    def calculate_path(self, mouse_coords, playerx, playery, WIDTH, HEIGHT):
         temp = []
-        speed = 1
+        speed = 100
         cur = 0
+        x = 1
+        y = 1
         quadrant = self.calc_quadrant(mouse_coords, playerx, playery)
-        y_rate = (mouse_coords[1] - playery)
-        x_rate = (mouse_coords[0] - playerx)
-        start_point = (playerx, playery)
+        y_rate = (-1 * mouse_coords[1] + (HEIGHT/2)  - y)
+        x_rate = (mouse_coords[0]  + (WIDTH/2)- x)
+        slope = y_rate/x_rate
+        print("RATE:" + str(x_rate), str(y_rate))
+        start_point = (x, y)
         temp.append(start_point)
         while cur < speed:
             if quadrant == 1:
-               playerx += x_rate
-               playery += y_rate
-               temp.append((playerx, playery)) 
+               x += 50
+               y = x * slope
+               temp.append((x, y)) 
             if quadrant == 2:
-               playerx -= x_rate
-               playery += y_rate
-               temp.append((playerx, playery)) 
+               x -= 50
+               y = -1 * x * slope
+               temp.append((x, y)) 
             if quadrant == 3:
-               playerx -= x_rate
-               playery -= y_rate
-               temp.append((playerx, playery)) 
+               x -= 50
+               y = x * slope
+               temp.append((x, y)) 
             if quadrant == 4:
-               playerx += x_rate
-               playery -= y_rate
-               temp.append((playerx, playery)) 
+               x += 50
+               y = -1 * x * slope
+               temp.append((x, y)) 
             cur += 1
         self.paths.append(temp)
 
@@ -89,17 +100,25 @@ class player_lazer:
             else:
                 return 3  
             
-    def draw_lazers(self, window):
+    def draw_lazers(self, window, WIDTH, HEIGHT):
         for i in self.paths:
             try:
                 cur_coord = i.pop(0)
             except:
                 break
-            lazer = Sprite(20, 20, window)
-            lazer.rect.x = cur_coord[0]
-            lazer.rect.y = cur_coord[1]
-            self.all_sprite_list.add(lazer)
-            self.all_sprite_list.draw(window)
+            print(cur_coord)
+            cur_lazer = lazer(window, cur_coord[0] + (WIDTH/2), -1 * cur_coord[1] + (HEIGHT/2))
+            self.projectiles.add(cur_lazer)
+            self.projectiles.update()
+        self.projectiles.draw(window)
+        pygame.display.update()
+        #self.projectiles.empty()
+        #print(self.projectiles)
+            # lazer = Sprite(20, 20, window)
+            # lazer.rect.x = cur_coord[0]
+            # lazer.rect.y = cur_coord[1]
+            # #self.all_sprite_list.add(lazer)
+            # self.all_sprite_list.draw(window)
 
     def get_projectiles(self):
         return self.paths
