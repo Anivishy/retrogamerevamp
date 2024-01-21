@@ -122,6 +122,7 @@ a_ghost = bmg.Ghost(window, 1, 0, 0)
 #a_ghost.astar(int((playerx + WIDTH // 2) // SQUARE_SIZE), int((playery + HEIGHT // 2) // SQUARE_SIZE))
 
 
+targettime = time.time()
 
 ghosts = []
 for _ in range(15):
@@ -386,12 +387,12 @@ while True:
                 else:
                     player_health.player_health -= 10 
                 player_protected = True
-                shield_regen_time = time.time()
+                targettime = time.time()
                 break
     
 
     if player_protected:
-        shield_regen_time = time.time()
+        targettime = time.time()
         velocity = PLAYER_SPEED * 0.6
         if not UNCAPPED_FPS:
             protected_timer += 1
@@ -399,14 +400,14 @@ while True:
                 player_protected = False
                 protected_timer = 0
                 velocity = PLAYER_SPEED
-                shield_regen_time = time.time()
+                targettime = time.time()
         else:
             protected_timer += UCFD.delay
             if protected_timer >= PLAYER_PROTECT:
                 player_protected = False
                 protected_timer = 0
                 velocity = PLAYER_SPEED
-                shield_regen_time = time.time()
+                targettime = time.time()
 
     walls_to_check = set()
     for x in range(0, 2):
@@ -540,8 +541,14 @@ while True:
         regen_time = time.time()
     else:
         shield_regen_timer = time.time()
-    if (-1 * (shield_regen_timer - regen_time) > 10):
-        player_health.regen(1 )
+
+
+
+    if (time.time() - targettime > 10):
+        if FPS:
+            player_health.regen(1/FPS * (50 / 5))
+        else:
+            player_health.regen(UCFD.delay * (50 / 5))
     player_health.gen_healthbar(window, WIDTH)
     player_health.gen_shieldbar(window, WIDTH)
     player_score.display_score(window, WIDTH)
