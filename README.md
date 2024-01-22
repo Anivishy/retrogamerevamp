@@ -23,7 +23,26 @@ Upon running this you will be presented a screen including instructions, setting
 
 ## Architecture
 
-&nbsp;&nbsp;&nbsp;&nbsp; The program is divided into 3 main components that the user interacts with, **homescreen introlevel and mazegen**, we decided to do this in part to make it easier to divide the work, 
+&nbsp;&nbsp;&nbsp;&nbsp; The program is divided into 3 main components that the user interacts with, **homescreen introlevel and mazegen**, we decided to do this in part to make it easier to divide the work, but also to make it easier to combine the elements of the game in the end.
+
+
+### **Homescreen:**
+
+&nbsp;&nbsp;&nbsp;&nbsp;The homescreen is the first interaction that the user has with our game. Here, the user has options to view instructions, adjust settings, and start the game. We wanted to ensure that the home screen was themed around the design of the game to ensure a coherent and logical transition between this screen and the actual game. We also structured our game in clear and defined classes, developing centralized files which can be easily called into our homescreen file, allowing for seperate development of each aspect of our game, while providing an outlet for easy integration when bringing the whole game together. 
+
+### **Introlevel:**
+
+&nbsp;&nbsp;&nbsp;&nbsp;The introlevel file mostly acts as a standalone game to pay tribute to the classic game of Pacman. We utilized a lot of inheritance within this file, in order to create distinct ghost and pacman objects that could still easily interact with each other. Additionally, we made it so that the whole file can be encapsalated in a single class **run()** which allows for the file to be quickly accessed by homescreen. To transition from this file to the main game we call the mazegen class after the user defeats the introlevel and the end of level animation finishes playing.
+
+
+### **Mazegen:**
+
+&nbsp;&nbsp;&nbsp;&nbsp;The mazegen file serves as the central collection and implementation of many classes that make our main game. This is where our main game loop is run, where movements and key presses are tracked, interactions between the player and game objects are handled and where calls to helper classes are managed. In order to ensure a clear and easy to manage game streucutre, we seperated each game element or feature into its own class or collection. Furthermore, we ensured that elements and features that were logically connected to eachother were developed together in their own class, making the integration into the central mazegen file much easier. 
+
+### **Diagram:**
+
+![architecture](https://github.com/Anivishy/retrogamerevamp/assets/90056323/d812cdce-1640-4c97-bfd0-15737a899a26)
+
 
 ## **User Experience** 
 

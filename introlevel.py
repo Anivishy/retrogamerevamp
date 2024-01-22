@@ -336,7 +336,7 @@ class Pacman(MovingObject):
             points.remove(points_reached)
         
         # Triggers Game Over pro
-        if len(self._renderer._points) == 0:
+        if len(self._renderer._points) > 0:
             self._renderer._next_level = True
             for ghost in self._renderer._ghosts:
                 ghost.end_game()

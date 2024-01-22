@@ -8,8 +8,12 @@ class openSettings:
     def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
         pygame.init()
 
-        self.WIDTH = WIDTH
-        self.HEIGHT = HEIGHT
+        self.WIDTH = WIDTH # value to use in settings
+        self.HEIGHT = HEIGHT # value to use in settings
+        self.currentFPS = None  # FPS Value to use in game
+        self.currentVolume = 1.0 # Volume value to use in game
+        self.currentjoystick = 0.5 # Joystick Threshold value to use in game
+        self.difficulty = False # Botton Right, value to use in games
 
         if (FULLSCREEN):
             self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
@@ -46,16 +50,11 @@ class openSettings:
         self.volumeSlider = (self.volumeSliderStart, (.5275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
         self.volLocation = ((self.volumeSliderOutline[0] - .1 * self.WIDTH), self.volumeSliderOutline[1])
 
-        self.currentVolume = 1.0 # value to use in game
 
         self.joystickSliderOutline = ((.25)*self.WIDTH, (.625)*self.HEIGHT, (.6)*self.WIDTH, (.02)*self.HEIGHT)
         self.joystickSliderStart = .26*self.WIDTH + (.3)*self.WIDTH - .03*self.WIDTH
         self.joystickSlider = (self.joystickSliderStart, (.6275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
         self.joystickLocation = ((self.joystickSliderOutline[0] - .1 * self.WIDTH), self.joystickSliderOutline[1])
-
-        self.currentjoystick = 0.5 # value to use in game
-
-        self.difficulty = False
 
     def text(self, i, h):
 
@@ -249,23 +248,23 @@ class openSettings:
 
                     # set FPS to 20
                     elif pygame.Rect(self.FPS1).collidepoint(pygame.mouse.get_pos()):
-                        newFPS = 20
+                        self.currentFPS = 20
 
                     # set FPS to 60
                     elif pygame.Rect(self.FPS2).collidepoint(pygame.mouse.get_pos()):
-                        newFPS = 60
+                        self.currentFPS = 60
 
                     # set FPS to 90
                     elif pygame.Rect(self.FPS3).collidepoint(pygame.mouse.get_pos()):
-                        newFPS = 90
+                        self.currentFPS = 90
 
                     # set FPS to 120
                     elif pygame.Rect(self.FPS4).collidepoint(pygame.mouse.get_pos()):
-                        newFPS = 120
+                        self.currentFPS = 120
 
                     # set FPS to uncapped
                     elif pygame.Rect(self.FPS5).collidepoint(pygame.mouse.get_pos()):
-                        newFPS = None
+                        self.currentFPS = None
 
                     # volume slider moved
                     elif pygame.Rect(self.volumeSliderOutline).collidepoint(pygame.mouse.get_pos()):
