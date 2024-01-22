@@ -45,9 +45,10 @@ player_health = health.healthbar()
 
 
 
+from wall_generation import *
 
 
-print(f"Initializing: {WIDTH}x{HEIGHT}, square size: {SQUARE_SIZE}")
+print(f"Initializing: {WIDTH}x{HEIGHT}, square size: {SQUARE_SIZE}\nSeed: {seed}")
 
 window = pygame.display.set_mode((WIDTH, HEIGHT), (pygame.FULLSCREEN if FULLSCREEN else 0) | pygame.GL_DOUBLEBUFFER)
 
@@ -72,7 +73,6 @@ defeated_bosses = set()
 
 import time
 
-from wall_generation import *
 
 
 playerx = WIDTH // 2 + SQUARE_SIZE // 2
@@ -122,6 +122,7 @@ a_ghost = bmg.Ghost(window, 1, 0, 0)
 #a_ghost.astar(int((playerx + WIDTH // 2) // SQUARE_SIZE), int((playery + HEIGHT // 2) // SQUARE_SIZE))
 
 
+targettime = time.time()
 
 ghosts = []
 for _ in range(15):
@@ -161,6 +162,13 @@ while True:
         elif event.type == pygame.JOYDEVICEREMOVED and joystick:
             joystick = None
 
+        elif event.type == pygame.MOUSEBUTTONUP:
+            # shooting place
+            cur_time = time.time()
+            if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
+                start_time = cur_time
+                current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE), playery - (starty * SQUARE_SIZE), mousex, mousey))
+                player_score.use_ammo(1)
     
     copysx = startx
     copysy = starty
@@ -256,13 +264,14 @@ while True:
     #current_bullets = []
     mousex, mousey = pygame.mouse.get_pos()
     if keys [pygame.K_RSHIFT]:
+        # shooting place
         cur_time = time.time()
         if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
             start_time = cur_time
             current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE), playery - (starty * SQUARE_SIZE), mousex, mousey))
             player_score.use_ammo(1)
 
-    print(current_bullets)
+    #print(current_bullets)
 
     for bullet in current_bullets:
         bullet.shoot(window)
@@ -415,6 +424,7 @@ while True:
         -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, 
         RADIUS*2, RADIUS*2)
 
+    do_damage = False
     if not player_protected:
         for ghost in ghosts:
             ghost_rect = pygame.Rect(
@@ -423,20 +433,38 @@ while True:
                 ghost.width, ghost.height
             )
             if ghost_rect.colliderect(player_rect):
-                if player_health.player_shield > 0:
-                    player_health.player_shield -= 10
-                    if player_health.player_shield < 0:
-                        player_health.player_health -= abs(player_health.player_shield)
-                        player_health.player_shield = 0
-                else:
-                    player_health.player_health -= 10 
+                do_damage = True
                 player_protected = True
-                shield_regen_time = time.time()
                 break
     
+    if not player_protected and ACTIVE_BOSS:
+        for projectile in ACTIVE_BOSS.projectiles:
+            pos = projectile[0]
+            rect = pygame.Rect(
+                pos[0] - ACTIVE_BOSS.cam_x - PROJECTILE_RADIUS // 2,
+                pos[1] - ACTIVE_BOSS.cam_x - PROJECTILE_RADIUS // 2,
+                PROJECTILE_RADIUS, PROJECTILE_RADIUS
+            )
+            if rect.colliderect(player_rect):
+                ACTIVE_BOSS.projectiles.discard(projectile)
+                do_damage = True
+                player_protected = True
+                break
+
+    if do_damage:
+        if player_health.player_shield > 0:
+            player_health.player_shield -= 10
+            if player_health.player_shield < 0:
+                player_health.player_health -= abs(player_health.player_shield)
+                player_health.player_shield = 0
+        else:
+            player_health.player_health -= 10 
+        player_protected = True
+        targettime = time.time()
+        pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_hurt.wav"))
 
     if player_protected:
-        shield_regen_time = time.time()
+        targettime = time.time()
         velocity = PLAYER_SPEED * 0.6
         if not UNCAPPED_FPS:
             protected_timer += 1
@@ -444,14 +472,14 @@ while True:
                 player_protected = False
                 protected_timer = 0
                 velocity = PLAYER_SPEED
-                shield_regen_time = time.time()
+                targettime = time.time()
         else:
             protected_timer += UCFD.delay
             if protected_timer >= PLAYER_PROTECT:
                 player_protected = False
                 protected_timer = 0
                 velocity = PLAYER_SPEED
-                shield_regen_time = time.time()
+                targettime = time.time()
 
     walls_to_check = set()
     for x in range(0, 2):
@@ -585,8 +613,14 @@ while True:
         regen_time = time.time()
     else:
         shield_regen_timer = time.time()
-    if (-1 * (shield_regen_timer - regen_time) > 10):
-        player_health.regen(1 )
+
+
+
+    if (time.time() - targettime > 10):
+        if FPS:
+            player_health.regen(1/FPS * (50 / 5))
+        else:
+            player_health.regen(UCFD.delay * (50 / 5))
     player_health.gen_healthbar(window, WIDTH)
     player_health.gen_shieldbar(window, WIDTH)
     player_score.display_score(window, WIDTH)
