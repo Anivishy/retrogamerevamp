@@ -23,7 +23,10 @@ Upon running this you will be presented a screen including instructions, setting
 
 ## Architecture
 
-&nbsp;&nbsp;&nbsp;&nbsp; The program is divided into 3 main components that the user interacts with, **homescreen introlevel and mazegen**, we decided to do this in part to make it easier to divide the work, 
+&nbsp;&nbsp;&nbsp;&nbsp; The program is divided into 3 main components that the user interacts with, **homescreen introlevel and mazegen**, we decided to do this in part to make it easier to divide the work.
+
+**Homescreen:**
+The homescreen is the first interaction that the user has with our game. Here, the user has options to view instructions, adjust settings, and start the game. We wanted to ensure that the home screen was themed around the design of the game to ensure a coherent and logical transition between this screen and the actual game. We also structured our game in clear and defined classes, developing centralized files which can be easily called into our homescreen file, allowing for seperate development of each aspect of our game, while providing an outlet for easy integration when bringing the whole game together. 
 
 ## **User Experience** 
 
