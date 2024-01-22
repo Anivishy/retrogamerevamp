@@ -19,3 +19,5 @@ CB_COLOR_OVERRIDE = 0 # Δ
 # 1: protanopia
 # 2: deuteranopia
 # 3: tritanopia
+
+CONSTANT_SEED = False

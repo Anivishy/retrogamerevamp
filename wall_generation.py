@@ -2,6 +2,12 @@ from calculated_vars import *
 from user_settings import *
 import random
 
+import time
+if CONSTANT_SEED:
+    seed = 0
+else:
+    seed = int(time.time())
+
 boss_zones = set()
 for x in range(BOSS_AREA):
     for y in range(BOSS_AREA):
@@ -76,7 +82,7 @@ def gen_walls(from_x, from_y):
     for x in range(-3, WIDTH // SQUARE_SIZE + 3):
         for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
             point = ((from_x + x), (from_y + y))
-            rgen = random.Random((from_x + x) * SQUARE_SIZE + (from_y + y))
+            rgen = random.Random(seed + (from_x + x) * SQUARE_SIZE + (from_y + y))
             threshold = rgen.randint(15, 35) / 100
             if rgen.random() < threshold:
                 walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
@@ -92,7 +98,7 @@ def gen_walls(from_x, from_y):
     for x in range(-3, WIDTH // SQUARE_SIZE + 3):
         for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
             point = ((from_x + x), (from_y + y))
-            rgen = random.Random((from_x + x) * SQUARE_SIZE + (from_y + y))
+            rgen = random.Random(seed + (from_x + x) * SQUARE_SIZE + (from_y + y))
             # boilerplate extravaganza - you have been warned!
             x1 = point[0]
             y1 = point[1]
@@ -131,7 +137,7 @@ def walls_around(point_x, point_y):
     for x in range(-scan, scan):
         for y in range(-scan, scan):
             point = ((point_x + x), (point_y + y))
-            rgen = random.Random((point_x + x) * SQUARE_SIZE + (point_y + y))
+            rgen = random.Random(seed + (point_x + x) * SQUARE_SIZE + (point_y + y))
             threshold = rgen.randint(15, 35) / 100
             if rgen.random() < threshold:
                 walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
@@ -148,7 +154,7 @@ def walls_around(point_x, point_y):
     for x in range(-scan, scan):
         for y in range(-scan, scan):
             point = ((point_x + x), (point_y + y))
-            rgen = random.Random((point_x + x) * SQUARE_SIZE + (point_y + y))
+            rgen = random.Random(seed + (point_x + x) * SQUARE_SIZE + (point_y + y))
             # boilerplate extravaganza - you have been warned!
             x1 = point[0]
             y1 = point[1]
@@ -220,7 +226,7 @@ def preload_walls(fromx, fromy, tox, toy, walls):
         for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
             point = ((tox - 2), (toy + y))
             p.add(point)
-            rgen = random.Random((tox - 2) * SQUARE_SIZE + (toy + y))
+            rgen = random.Random(seed + (tox - 2) * SQUARE_SIZE + (toy + y))
             threshold = rgen.randint(15, 35) / 100
             if rgen.random() < threshold:
                 new_walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
@@ -237,7 +243,7 @@ def preload_walls(fromx, fromy, tox, toy, walls):
         for y in range(-3, HEIGHT // SQUARE_SIZE + 3):
             point = ((tox + WIDTH / SQUARE_SIZE + 2), (toy + y))
             p.add(point)
-            rgen = random.Random((tox + WIDTH / SQUARE_SIZE + 2) * SQUARE_SIZE + (toy + y))
+            rgen = random.Random(seed + (tox + WIDTH / SQUARE_SIZE + 2) * SQUARE_SIZE + (toy + y))
             threshold = rgen.randint(15, 35) / 100
             if rgen.random() < threshold:
                 new_walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
@@ -254,7 +260,7 @@ def preload_walls(fromx, fromy, tox, toy, walls):
         for x in range(-3, WIDTH // SQUARE_SIZE + 3):
             point = ((tox + x), (toy - 2))
             p.add(point)
-            rgen = random.Random((tox + x) * SQUARE_SIZE + (toy - 2))
+            rgen = random.Random(seed + (tox + x) * SQUARE_SIZE + (toy - 2))
             threshold = rgen.randint(15, 35) / 100
             if rgen.random() < threshold:
                 new_walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
@@ -271,7 +277,7 @@ def preload_walls(fromx, fromy, tox, toy, walls):
         for x in range(-3, WIDTH // SQUARE_SIZE + 3):
             point = ((tox + x), (toy + HEIGHT / SQUARE_SIZE + 2))
             p.add(point)
-            rgen = random.Random((tox + x) * SQUARE_SIZE + (toy + HEIGHT / 2 + 2))
+            rgen = random.Random(seed + (tox + x) * SQUARE_SIZE + (toy + HEIGHT / 2 + 2))
             threshold = rgen.randint(15, 35) / 100
             if rgen.random() < threshold:
                 new_walls.add(tuple(sorted([point, (point[0] + 1, point[1])])))
@@ -289,7 +295,7 @@ def preload_walls(fromx, fromy, tox, toy, walls):
         for y in range(int(byt) - 1, int(byb) + 1):
             #print(x, y)
             point = ((x), (y))
-            rgen = random.Random((x) * SQUARE_SIZE + (y))
+            rgen = random.Random(seed + (x) * SQUARE_SIZE + (y))
             # boilerplate extravaganza - you have been warned!
             x1 = point[0]
             y1 = point[1]
