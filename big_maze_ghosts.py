@@ -17,7 +17,7 @@ images = {}
 for color in ["forest", "lava", "ice", "shadow", "dead"]:
     mapped = {}
     for direction in ["up", "down", "left", "right"]:
-        mapped[direction] = pygame.transform.scale(pygame.image.load(sanitize_path("Images/procedural-ghosts/" + color + "-" + direction + ".png")), (int(SQUARE_SIZE * 0.6), int(SQUARE_SIZE * 0.6)))
+        mapped[direction] = pygame.transform.scale(pygame.image.load(sanitize_path("Images/procedural-ghosts/" + color + "-" + direction + ".png")), (int(SQUARE_SIZE * 0.5), int(SQUARE_SIZE * 0.5)))
     images[color] = mapped
 
 
@@ -148,13 +148,16 @@ class Ghost:
         else:
             if (self.lastx, self.lasty) in surrounding:
                 surrounding.remove((self.lastx, self.lasty))
+            tx = self.lastx
+            ty = self.lasty
             self.lastx = self.ctx
             self.lasty = self.cty
             try:
                 #...
                 self.ctx, self.cty = random.choice(surrounding)
             except: 
-                raise
+                self.ctx = tx
+                self.cty = ty
         if self.ctx > self.lastx:
             self.direction = 1
         elif self.cty > self.lasty:

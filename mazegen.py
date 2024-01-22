@@ -263,7 +263,7 @@ while True:
             current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE), playery - (starty * SQUARE_SIZE), mousex, mousey))
             player_score.use_ammo(1)
 
-    print(current_bullets)
+    #print(current_bullets)
 
     for bullet in current_bullets:
         bullet.shoot(window)
@@ -432,6 +432,7 @@ while True:
                     player_health.player_health -= 10 
                 player_protected = True
                 targettime = time.time()
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_hurt.wav"))
                 break
     
 
