@@ -415,6 +415,7 @@ while True:
         -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, 
         RADIUS*2, RADIUS*2)
 
+    do_damage = False
     if not player_protected:
         for ghost in ghosts:
             ghost_rect = pygame.Rect(
@@ -423,18 +424,35 @@ while True:
                 ghost.width, ghost.height
             )
             if ghost_rect.colliderect(player_rect):
-                if player_health.player_shield > 0:
-                    player_health.player_shield -= 10
-                    if player_health.player_shield < 0:
-                        player_health.player_health -= abs(player_health.player_shield)
-                        player_health.player_shield = 0
-                else:
-                    player_health.player_health -= 10 
+                do_damage = True
                 player_protected = True
-                targettime = time.time()
-                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_hurt.wav"))
                 break
     
+    if not player_protected and ACTIVE_BOSS:
+        for projectile in ACTIVE_BOSS.projectiles:
+            pos = projectile[0]
+            rect = pygame.Rect(
+                pos[0] - ACTIVE_BOSS.cam_x - PROJECTILE_RADIUS // 2,
+                pos[1] - ACTIVE_BOSS.cam_x - PROJECTILE_RADIUS // 2,
+                PROJECTILE_RADIUS, PROJECTILE_RADIUS
+            )
+            if rect.colliderect(player_rect):
+                ACTIVE_BOSS.projectiles.discard(projectile)
+                do_damage = True
+                player_protected = True
+                break
+
+    if do_damage:
+        if player_health.player_shield > 0:
+            player_health.player_shield -= 10
+            if player_health.player_shield < 0:
+                player_health.player_health -= abs(player_health.player_shield)
+                player_health.player_shield = 0
+        else:
+            player_health.player_health -= 10 
+        player_protected = True
+        targettime = time.time()
+        pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_hurt.wav"))
 
     if player_protected:
         targettime = time.time()

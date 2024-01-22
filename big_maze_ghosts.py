@@ -33,8 +33,8 @@ class Ghost:
 
         self.path = []
 
-        self.width = SQUARE_SIZE * 0.6
-        self.height = SQUARE_SIZE * 0.6
+        self.width = SQUARE_SIZE * 0.5
+        self.height = SQUARE_SIZE * 0.5
 
 
         self.ctx = x
