@@ -28,7 +28,7 @@ Upon running this you will be presented a screen including instructions, setting
 
 ### **Homescreen:**
 
-  The homescreen is the first interaction that the user has with our game. Here, the user has options to view instructions, adjust settings, and start the game. We wanted to ensure that the home screen was themed around the design of the game to ensure a coherent and logical transition between this screen and the actual game. We also structured our game in clear and defined classes, developing centralized files which can be easily called into our homescreen file, allowing for seperate development of each aspect of our game, while providing an outlet for easy integration when bringing the whole game together. 
+&nbsp;&nbsp;&nbsp;&nbsp;The homescreen is the first interaction that the user has with our game. Here, the user has options to view instructions, adjust settings, and start the game. We wanted to ensure that the home screen was themed around the design of the game to ensure a coherent and logical transition between this screen and the actual game. We also structured our game in clear and defined classes, developing centralized files which can be easily called into our homescreen file, allowing for seperate development of each aspect of our game, while providing an outlet for easy integration when bringing the whole game together. 
 
 ### **Introlevel:**
 
@@ -37,7 +37,7 @@ Upon running this you will be presented a screen including instructions, setting
 
 ### **Mazegen:**
 
-  The mazegen file serves as the central collection and implementation of many classes that make our main game. This is where our main game loop is run, where movements and key presses are tracked, interactions between the player and game objects are handled and where calls to helper classes are managed. In order to ensure a clear and easy to manage game streucutre, we seperated each game element or feature into its own class or collection. Furthermore, we ensured that elements and features that were logically connected to eachother were developed together in their own class, making the integration into the central mazegen file much easier. 
+&nbsp;&nbsp;&nbsp;&nbsp;The mazegen file serves as the central collection and implementation of many classes that make our main game. This is where our main game loop is run, where movements and key presses are tracked, interactions between the player and game objects are handled and where calls to helper classes are managed. In order to ensure a clear and easy to manage game streucutre, we seperated each game element or feature into its own class or collection. Furthermore, we ensured that elements and features that were logically connected to eachother were developed together in their own class, making the integration into the central mazegen file much easier. 
 
 ### **Diagram:**
 
