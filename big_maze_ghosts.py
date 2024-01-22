@@ -7,6 +7,20 @@ import colors
 
 import random
 
+import os
+base = os.path.dirname(os.path.abspath(__file__))
+
+def sanitize_path(path):
+    return os.path.join(base, path)
+
+images = {}
+for color in ["forest", "lava", "ice", "shadow", "dead"]:
+    mapped = {}
+    for direction in ["up", "down", "left", "right"]:
+        mapped[direction] = pygame.transform.scale(pygame.image.load(sanitize_path("Images/procedural-ghosts/" + color + "-" + direction + ".png")), (int(SQUARE_SIZE * 0.6), int(SQUARE_SIZE * 0.6)))
+    images[color] = mapped
+
+
 class Ghost:
     def __init__(self, screen, type_, x, y):
         self.screen = screen
@@ -19,8 +33,8 @@ class Ghost:
 
         self.path = []
 
-        self.width = 25
-        self.height = 25
+        self.width = SQUARE_SIZE * 0.6
+        self.height = SQUARE_SIZE * 0.6
 
 
         self.ctx = x
@@ -30,10 +44,7 @@ class Ghost:
         self.lasty = None
 
         self.color = [
-            colors.FOREST,
-            colors.LAVA,
-            colors.ICE,
-            colors.SHADOW
+            "forest", "lava", "ice", "shadow"
         ][type_ - 1]
 
         self.full_points = self.get_full_points()
@@ -48,6 +59,7 @@ class Ghost:
         self.health = 100
         self.dead = False
         self.dead_counter = 0
+        self.direction = 0
 
     def heuristic(self, x1, y1, x2, y2):
         return (abs(x1 - x2) + abs(y1 - y2))
@@ -143,6 +155,14 @@ class Ghost:
                 self.ctx, self.cty = random.choice(surrounding)
             except: 
                 raise
+        if self.ctx > self.lastx:
+            self.direction = 1
+        elif self.cty > self.lasty:
+            self.direction = 2
+        elif self.ctx < self.lastx:
+            self.direction = 3
+        elif self.cty < self.lasty:
+            self.direction = 4
 
     def update(self, startx, starty):
 
@@ -186,26 +206,31 @@ class Ghost:
                     self.dead_counter = 0
         
         
+
+        pointing = ["right", "down", "left", "up"][self.direction - 1]
             
         if not self.dead:
 
-            pygame.draw.rect(
-                self.screen, self.color, pygame.Rect(
-                    self.x * SQUARE_SIZE - startx * SQUARE_SIZE - self.width // 2,
-                    self.y * SQUARE_SIZE - starty * SQUARE_SIZE - self.height // 2,
-                    self.width, self.height
-                )
-            )
+
+            img = images[self.color][pointing]
+            
+
+            # pygame.draw.rect(
+            #     self.screen, self.color, pygame.Rect(
+            #         self.x * SQUARE_SIZE - startx * SQUARE_SIZE - self.width // 2,
+            #         self.y * SQUARE_SIZE - starty * SQUARE_SIZE - self.height // 2,
+            #         self.width, self.height
+            #     )
+            # )
 
         else:
-            pygame.draw.rect(
-                self.screen, (170, 170, 170), pygame.Rect(
-                    self.x * SQUARE_SIZE - startx * SQUARE_SIZE - self.width // 2,
-                    self.y * SQUARE_SIZE - starty * SQUARE_SIZE - self.height // 2,
-                    self.width, self.height
-                )
-            )
-
-
+            img = images["dead"][pointing]
         
-    
+        self.screen.blit(
+            img,
+            pygame.Rect(
+                self.x * SQUARE_SIZE - startx * SQUARE_SIZE - self.width // 2,
+                self.y * SQUARE_SIZE - starty * SQUARE_SIZE - self.height // 2,
+                self.width, self.height
+            )
+        )
