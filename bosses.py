@@ -8,6 +8,19 @@ import colors
 import math
 import time
 
+import os
+base = os.path.dirname(os.path.abspath(__file__))
+
+def sanitize_path(path):
+    return os.path.join(base, path)
+
+images = {}
+for color in ["forest", "lava", "ice", "shadow", "dead"]:
+    mapped = {}
+    for direction in ["up", "down", "left", "right"]:
+        mapped[direction] = pygame.transform.scale(pygame.image.load(sanitize_path("Images/procedural-ghosts/" + color + "-" + direction + ".png")), (int(SQUARE_SIZE * 0.75), int(SQUARE_SIZE * 0.75)))
+    images[color] = mapped
+
 class BossTL: # top left
     def __init__(self, screen):
         self.screen = screen
@@ -26,6 +39,8 @@ class BossTL: # top left
 
         self.health = 100
         self.type_ = 1
+
+        self.direction = 0
 
 
     def check_all_collisions(self):
@@ -99,15 +114,35 @@ class BossTL: # top left
             self.x += dx * ratio
             self.y += dy * ratio
 
+            if dx == 0:
+                if dy < 0:
+                    self.direction = 4
+                else:
+                    self.direction = 2
+            else:
+                discrim = abs(math.atan(dy/dx))
+                #print(discrim, dy)
+                if discrim > (math.pi / 6):
+                    if dy < 0:
+                        self.direction = 4
+                    else:
+                        self.direction = 2
+                else:
+                    if dx < 0:
+                        self.direction = 3
+                    else:
+                        self.direction = 1
+
         
         
         self.process_projectiles(frame)
         self.draw()
 
     def draw(self):
-        pygame.draw.rect(
-            self.screen,
-            colors.FOREST,
+        direction = ["right", "down", "left", "up"][self.direction - 1]
+        img = images["forest"][direction]
+        self.screen.blit(
+            img,
             pygame.Rect(
                 self.x,
                 self.y,
@@ -133,6 +168,8 @@ class BossTR: # top right
 
         self.health = 100
         self.type_ = 2
+
+        self.direction = 0
     
     def update_cam(self, left, right, top, bottom):
         self.cam_x = right * SQUARE_SIZE
@@ -205,15 +242,33 @@ class BossTR: # top right
             self.x += dx * ratio
             self.y += dy * ratio
 
-        
+            if dx == 0:
+                if dy < 0:
+                    self.direction = 4
+                else:
+                    self.direction = 2
+            else:
+                discrim = abs(math.atan(dy/dx))
+                #print(discrim, dy)
+                if discrim > (math.pi / 6):
+                    if dy < 0:
+                        self.direction = 4
+                    else:
+                        self.direction = 2
+                else:
+                    if dx < 0:
+                        self.direction = 3
+                    else:
+                        self.direction = 1
         
         self.process_projectiles(frame)
         self.draw()
 
     def draw(self):
-        pygame.draw.rect(
-            self.screen,
-            colors.LAVA,
+        direction = ["right", "down", "left", "up"][self.direction - 1]
+        img = images["lava"][direction]
+        self.screen.blit(
+            img,
             pygame.Rect(
                 self.x,
                 self.y,
@@ -238,6 +293,7 @@ class BossBL: # bottom left
 
         self.health = 100
         self.type_ = 3
+        self.direction = 0
 
     def update_cam(self, left, right, top, bottom):
         self.cam_x = left * SQUARE_SIZE
@@ -324,16 +380,34 @@ class BossBL: # bottom left
                 ratio = (self.speed * SQUARE_SIZE) / FPS / distance
             self.x += dx * ratio
             self.y += dy * ratio
-
+            if dx == 0:
+                if dy < 0:
+                    self.direction = 4
+                else:
+                    self.direction = 2
+            else:
+                discrim = abs(math.atan(dy/dx))
+                #print(discrim, dy)
+                if discrim > (math.pi / 6):
+                    if dy < 0:
+                        self.direction = 4
+                    else:
+                        self.direction = 2
+                else:
+                    if dx < 0:
+                        self.direction = 3
+                    else:
+                        self.direction = 1
         
         
         self.process_projectiles(frame)
         self.draw()
 
     def draw(self):
-        pygame.draw.rect(
-            self.screen,
-            colors.ICE,
+        direction = ["right", "down", "left", "up"][self.direction - 1]
+        img = images["ice"][direction]
+        self.screen.blit(
+            img,
             pygame.Rect(
                 self.x,
                 self.y,
@@ -359,6 +433,7 @@ class BossBR: # bottom right
         self.spiral = 8
 
         self.health = 100
+        self.direction = 0
 
         if BULLET_HELL_BOTTOM_RIGHT:
             self.spiral = FPS
@@ -430,16 +505,34 @@ class BossBR: # bottom right
                 ratio = (self.speed * SQUARE_SIZE) / FPS / distance
             self.x += dx * ratio
             self.y += dy * ratio
-
+            if dx == 0:
+                if dy < 0:
+                    self.direction = 4
+                else:
+                    self.direction = 2
+            else:
+                discrim = abs(math.atan(dy/dx))
+                #print(discrim, dy)
+                if discrim > (math.pi / 6):
+                    if dy < 0:
+                        self.direction = 4
+                    else:
+                        self.direction = 2
+                else:
+                    if dx < 0:
+                        self.direction = 3
+                    else:
+                        self.direction = 1
         
         
         self.process_projectiles(frame)
         self.draw()
 
     def draw(self):
-        pygame.draw.rect(
-            self.screen,
-            colors.SHADOW,
+        direction = ["right", "down", "left", "up"][self.direction - 1]
+        img = images["shadow"][direction]
+        self.screen.blit(
+            img,
             pygame.Rect(
                 self.x,
                 self.y,

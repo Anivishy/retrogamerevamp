@@ -21,6 +21,22 @@ To run the game first download the following libraries.
 After downloading the appropriate libraries to run the game run the file `homescreen.py`
 Upon running this you will be presented a screen including instructions, settings and a button to begin the game
 
+## Architecture
+
+&nbsp;&nbsp;&nbsp;&nbsp; The program is divided into 3 main components that the user interacts with, **homescreen introlevel and mazegen**, we decided to do this in part to make it easier to divide the work.
+
+### **Homescreen:**
+
+  The homescreen is the first interaction that the user has with our game. Here, the user has options to view instructions, adjust settings, and start the game. We wanted to ensure that the home screen was themed around the design of the game to ensure a coherent and logical transition between this screen and the actual game. We also structured our game in clear and defined classes, developing centralized files which can be easily called into our homescreen file, allowing for seperate development of each aspect of our game, while providing an outlet for easy integration when bringing the whole game together. 
+
+### **Introlevel**
+
+
+
+### **Mazegen**
+
+  The mazegen file serves as the central collection and implementation of many classes that make our main game. This is where our main game loop is run, where movements and key presses are tracked, interactions between the player and game objects are handled and where calls to helper classes are managed. In order to ensure a clear and easy to manage game streucutre, we seperated each game element or feature into its own class or collection. Furthermore, we ensured that elements and features that were logically connected to eachother were developed together in their own class, making the integration into the central mazegen file much easier. 
+
 ## **User Experience** 
 
 Overall, the game is meant to provide a fresh spin on a classic game, the combination of nostalgia and unique gameplay is what we hope would attract users to the game initially. 
@@ -42,3 +58,9 @@ Overall, the game is meant to provide a fresh spin on a classic game, the combin
 &nbsp;&nbsp;&nbsp;&nbsp;Upon completing the intro level, they will once again be transported to the main game, but the map they receive this playthrough will likely be far different than their previous games. The user should have no trouble with the movement mechanics, but with the new world to explore it will likely take them some time to navigate each quadrant of the maze successfully. 
 
 &nbsp;&nbsp;&nbsp;&nbsp;The boss fights in each section of the maze and should still prevent a challenge to the user, due to the boss’s strong tracking abilities, allowing a rewarding feeling for the user upon victory. Similar to a new user, the whole game should not take an excessively long time for the user to complete, allowing returning users to have a rewarding potentially nostalgic experience that will hopefully have them continuing to return. 
+
+## Retrospective
+Overall, the process of writing this game went smoothly. Due to the task tracker, we all had clarity on our responsibilities, what others are currently working on, and what items were pending. This eliminated any duplication of work, or confusion about what to work on. We did not have any significant issues with GitHub or syncing code, mainly because we each focused on a different portion of the code. This allowed all of us to keep our code up to date. With a clear idea of what needed to be worked on, and well-managed code and tasks, we were able to make effective use of class time, which is why we were able to get the game done within the given time. Finally, throughout the project our group had a consensus on what we wanted to create, and how to go about it. This was essential in that it allowed us to move forward with our project, without conflicting ideas/functions in different parts of the game. 
+
+Throughout our project, our main source of communication – our high point - was in our standups. During each standup, we shared what we had done since our last meeting, our plan for the day, and any other significant information. This allowed everyone to stay updated on what is currently being worked on, and what changes have been made, throughout the project. Outside of this, we asked questions of one another periodically, whenever we required help or found something important to update others on. This allowed us to take other’s input into account and incorporate details to accommodate their code. One low point in terms of communication was  _. 
+

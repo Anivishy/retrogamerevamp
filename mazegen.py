@@ -7,7 +7,7 @@ import health
 import pelletsandammo
 #import weapons
 import mousetargettracker
-import updatedshooting
+import new_shooting
 
 
 import asyncio
@@ -21,7 +21,7 @@ import colors
 pygame.init()
 player_health = health.healthbar()
 player_score = pelletsandammo.pellets()
-player_bullets = updatedshooting.player_lazer()
+#player_bullets = new_shooting.lazer_bullet()
 #player_weapon = weapons.weapons()
 start_time = time.time()
 shield_regen_timer = time.time()
@@ -29,6 +29,7 @@ cur_health = player_health.get_health()
 player_target = mousetargettracker.mouseTarget()
 last_key = ""
 regen_time = 10
+current_bullets = []
 #temp = 0 testing variable for shield regen
 
 # try:
@@ -44,9 +45,10 @@ player_health = health.healthbar()
 
 
 
+from wall_generation import *
 
 
-print(f"Initializing: {WIDTH}x{HEIGHT}, square size: {SQUARE_SIZE}")
+print(f"Initializing: {WIDTH}x{HEIGHT}, square size: {SQUARE_SIZE}\nSeed: {seed}")
 
 window = pygame.display.set_mode((WIDTH, HEIGHT), (pygame.FULLSCREEN if FULLSCREEN else 0) | pygame.GL_DOUBLEBUFFER)
 
@@ -71,7 +73,6 @@ defeated_bosses = set()
 
 import time
 
-from wall_generation import *
 
 
 playerx = WIDTH // 2 + SQUARE_SIZE // 2
@@ -91,7 +92,6 @@ lasty = starty
 
 delay_to = time.time()
 last = delay_to - (1/60)
-
         
 #walls_to_remove = set()
 walls = gen_walls(0, 0) - walls_to_remove
@@ -107,6 +107,8 @@ ba_overlap = set()
 wall_lock = False
 sound_lock = set()
 
+player_protected = False
+protected_timer = 0
 
 joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 if len(joysticks) > 0:
@@ -120,6 +122,7 @@ a_ghost = bmg.Ghost(window, 1, 0, 0)
 #a_ghost.astar(int((playerx + WIDTH // 2) // SQUARE_SIZE), int((playery + HEIGHT // 2) // SQUARE_SIZE))
 
 
+targettime = time.time()
 
 ghosts = []
 for _ in range(15):
@@ -130,7 +133,7 @@ for _ in range(15):
     ghosts.append(bmg.Ghost(window, 3, -int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
     ghosts.append(bmg.Ghost(window, 4, int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
     
-
+velocity = PLAYER_SPEED
 
 while True:
     # events
@@ -159,7 +162,14 @@ while True:
         elif event.type == pygame.JOYDEVICEREMOVED and joystick:
             joystick = None
 
-    velocity = PLAYER_SPEED
+        elif event.type == pygame.MOUSEBUTTONUP:
+            # shooting place
+            cur_time = time.time()
+            if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
+                start_time = cur_time
+                current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE), playery - (starty * SQUARE_SIZE), mousex, mousey))
+                player_score.use_ammo(1)
+    
     copysx = startx
     copysy = starty
     copypx = playerx
@@ -180,26 +190,42 @@ while True:
         last_key = "left" 
         if not UNCAPPED_FPS:
             playerx -= velocity / FPS * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.x += velocity / FPS * SQUARE_SIZE
         else:
             playerx -= velocity * (delay_to - last) * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.x += velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_RIGHT] or keys[pygame.K_d] or (joystick and joystick.get_axis(0) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == 1):
         last_key = "right" 
         if not UNCAPPED_FPS:
             playerx += velocity / FPS * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.x -= velocity / FPS * SQUARE_SIZE
         else:
             playerx += velocity * (delay_to - last) * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.x -= velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_UP] or keys[pygame.K_w] or (joystick and joystick.get_axis(1) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == 1):
         last_key = "up" 
         if not UNCAPPED_FPS:
             playery -= velocity / FPS * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.y += velocity / FPS * SQUARE_SIZE
         else:
             playery -= velocity * (delay_to - last) * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.y += velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_DOWN] or keys[pygame.K_s] or (joystick and joystick.get_axis(1) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == -1):
         last_key = "down" 
         if not UNCAPPED_FPS:
             playery += velocity / FPS * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.x -= velocity / FPS * SQUARE_SIZE
         else:
             playery += velocity * (delay_to - last) * SQUARE_SIZE
+            for bullet in current_bullets:
+                bullet.y -= velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_1]:
         defeated_bosses.add(1)
     elif keys[pygame.K_2]:
@@ -216,15 +242,45 @@ while True:
     if keys[pygame.K_SPACE]:
         breakpoint()
 
-    if keys[pygame.K_RSHIFT]: 
-        print("-------------------------------------------")
-        player_bullets.calculate_path(pygame.mouse.get_pos(), playerx, playery)
-        print("________________________________________________")
+    # if keys[pygame.K_RSHIFT]: wasd
+    #     player_bullets.calculate_path(pygame.mouse.get_pos(), playerx, playery)
 
-    active_paths = player_bullets.get_projectiles()
-    if len(active_paths) > 0:
-        #print("-------------------------------------------")
-        player_bullets.draw_lazers(window)
+    # if keys [pygame.K_RSHIFT]:
+    #     cur_time = time.time()
+    #     if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
+    #         start_time = cur_time
+    #         player_bullets.calculate_path(pygame.mouse.get_pos(), playerx - (startx * SQUARE_SIZE), playery - (starty * SQUARE_SIZE), WIDTH, HEIGHT)
+    #         print(pygame.mouse.get_pos())
+    #         player_score.use_ammo(1)
+
+    # active_paths = player_bullets.get_projectiles()
+    # if len(active_paths) > 0:
+    #     #print("-------------------------------------------")
+    #     player_bullets.draw_lazers(window, WIDTH, HEIGHT)
+    #     for i in active_paths:
+    #         if len(i) == 0:
+    #             active_paths.remove(i)
+
+    #current_bullets = []
+    mousex, mousey = pygame.mouse.get_pos()
+    if keys [pygame.K_RSHIFT]:
+        # shooting place
+        cur_time = time.time()
+        if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
+            start_time = cur_time
+            current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE), playery - (starty * SQUARE_SIZE), mousex, mousey))
+            player_score.use_ammo(1)
+
+    #print(current_bullets)
+
+    for bullet in current_bullets:
+        bullet.shoot(window)
+        if bullet.check_ghost_col(ghosts)[0] or bullet.check_wall_col() or bullet.check_wall_col():
+            ghosts.remove(bullet.check_ghost_col(ghosts)[1])
+            current_bullets.remove(bullet)
+            
+    
+
 
     #Old shooting code, ignore for now, do not delete
 
@@ -363,7 +419,67 @@ while True:
             last_walls = walls
             wall_lock = False
 
+    player_rect = pygame.Rect(
+        -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
+        -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, 
+        RADIUS*2, RADIUS*2)
 
+    do_damage = False
+    if not player_protected:
+        for ghost in ghosts:
+            ghost_rect = pygame.Rect(
+                ghost.x * SQUARE_SIZE - startx * SQUARE_SIZE - ghost.width // 2,
+                ghost.y * SQUARE_SIZE - starty * SQUARE_SIZE - ghost.height // 2,
+                ghost.width, ghost.height
+            )
+            if ghost_rect.colliderect(player_rect):
+                do_damage = True
+                player_protected = True
+                break
+    
+    if not player_protected and ACTIVE_BOSS:
+        for projectile in ACTIVE_BOSS.projectiles:
+            pos = projectile[0]
+            rect = pygame.Rect(
+                pos[0] - ACTIVE_BOSS.cam_x - PROJECTILE_RADIUS // 2,
+                pos[1] - ACTIVE_BOSS.cam_x - PROJECTILE_RADIUS // 2,
+                PROJECTILE_RADIUS, PROJECTILE_RADIUS
+            )
+            if rect.colliderect(player_rect):
+                ACTIVE_BOSS.projectiles.discard(projectile)
+                do_damage = True
+                player_protected = True
+                break
+
+    if do_damage:
+        if player_health.player_shield > 0:
+            player_health.player_shield -= 10
+            if player_health.player_shield < 0:
+                player_health.player_health -= abs(player_health.player_shield)
+                player_health.player_shield = 0
+        else:
+            player_health.player_health -= 10 
+        player_protected = True
+        targettime = time.time()
+        pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_hurt.wav"))
+
+    if player_protected:
+        targettime = time.time()
+        velocity = PLAYER_SPEED * 0.6
+        if not UNCAPPED_FPS:
+            protected_timer += 1
+            if protected_timer >= FPS * PLAYER_PROTECT:
+                player_protected = False
+                protected_timer = 0
+                velocity = PLAYER_SPEED
+                targettime = time.time()
+        else:
+            protected_timer += UCFD.delay
+            if protected_timer >= PLAYER_PROTECT:
+                player_protected = False
+                protected_timer = 0
+                velocity = PLAYER_SPEED
+                targettime = time.time()
 
     walls_to_check = set()
     for x in range(0, 2):
@@ -410,7 +526,12 @@ while True:
     # draw calls - a LOT of them
     window.fill((0, 0, 0))
 
-    pygame.draw.circle(window, (255, 255, 0), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
+    if not player_protected:
+
+        pygame.draw.circle(window, (255, 255, 0), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
+    else:
+        pygame.draw.circle(window, (255, 127, 80), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
+
 
     player_rect = pygame.Rect(
         -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
@@ -492,8 +613,14 @@ while True:
         regen_time = time.time()
     else:
         shield_regen_timer = time.time()
-    if (-1 * (shield_regen_timer - regen_time) > 10):
-        player_health.regen(1)
+
+
+
+    if (time.time() - targettime > 10):
+        if FPS:
+            player_health.regen(1/FPS * (50 / 5))
+        else:
+            player_health.regen(UCFD.delay * (50 / 5))
     player_health.gen_healthbar(window, WIDTH)
     player_health.gen_shieldbar(window, WIDTH)
     player_score.display_score(window, WIDTH)

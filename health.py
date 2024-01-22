@@ -43,7 +43,7 @@ class healthbar:
         self.gen_health_percent(window, WIDTH)
 
     def gen_health_percent(self, window, WIDTH):
-        health = self.font.render(str(self.player_health) + " |", True, self.COLOR) 
+        health = self.font.render(str(round(self.player_health)) + " |", True, self.COLOR) 
         healthRect = health.get_rect()
         if self.player_health == 100:
             healthRect.center = (WIDTH - 150, 140)
@@ -57,7 +57,7 @@ class healthbar:
         self.gen_shieldbar_percent(window, WIDTH)
 
     def gen_shieldbar_percent(self, window, WIDTH):
-        health = self.font.render("| " + str(self.player_shield), True, self.BLUE) 
+        health = self.font.render("| " + str(round(self.player_shield)), True, self.BLUE) 
         healthRect = health.get_rect()
         if self.player_health == 100:
             healthRect.center = (WIDTH - 80, 140)
