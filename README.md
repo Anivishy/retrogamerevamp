@@ -69,12 +69,17 @@ Overall, the game is meant to provide a fresh spin on a classic game, the combin
 ## Retrospective
 ### Overall Process:
 Overall, the process of writing this game went smoothly. Due to the task tracker, we all had clarity on our responsibilities, what others are currently working on, and what items were pending. This eliminated any duplication of work, or confusion about what to work on. 
+
 We did not have any significant issues with GitHub or syncing code, mainly because we each focused on a different portion of the code. This allowed all of us to keep our code up to date. 
+
 With a clear idea of what needed to be worked on, and well-managed code and tasks, we were able to make effective use of class time, which is why we were able to get the game done within the given time. 
-Finally, throughout the project our group had a consensus on what we wanted to create, and how to go about it. This was essential in that it allowed us to move forward with our project, without conflicting ideas/functions in different parts of the game. 
+
+Finally, throughout the project our group had a consensus on what we wanted to create, and how to go about it. 
+This was essential in that it allowed us to move forward with our project, without conflicting ideas/functions in different parts of the game. 
 
 ### Communication: 
 Throughout our project, our main source of communication – our high point - was in our standups. During each standup, we shared what we had done since our last meeting, our plan for the day, and any other significant information. This allowed everyone to stay updated on what is currently being worked on, and what changes have been made, throughout the project. 
+
 Outside of this, we asked questions of one another periodically, whenever we required help or found something important to update others on. This allowed us to take other’s input into account and incorporate details to accommodate their code. 
 
 One low point in terms of communication was that, when encountering challenges, we had a tendency to resolve it on our own, rather than asking others if they know of a solution. In the future, we may be more intentional in asking others for help when stuck, as asking for help from others who may have a solution allows for a quicker resolution of issues. 
