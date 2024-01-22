@@ -32,7 +32,7 @@ Upon running this you will be presented a screen including instructions, setting
 
 ### **Introlevel:**
 
-&nbsp;&nbsp;&nbsp;&nbsp;The introlevel file mostly acts as a standalone game to pay tribute to the classic game of Pacman. We utilized a lot of inheritance within this file, in order to create distinct ghost and pacman objects that could still easily interact with each other. Additionally, we made it so that the whole file can be encapsalated in a single class **run()** which allows for the file to be quickly accessed by homescreen. To transition from this file to the main game we call the mazegen class after the user defeats the introlevel, and the end of level animation finishes playing.
+&nbsp;&nbsp;&nbsp;&nbsp;The introlevel file mostly acts as a standalone game to pay tribute to the classic game of Pacman. We utilized a lot of inheritance within this file, in order to create distinct ghost and pacman objects that could still easily interact with each other. Additionally, we made it so that the whole file can be encapsalated in a single class **run()** which allows for the file to be quickly accessed by homescreen. To transition from this file to the main game we call the mazegen class after the user defeats the introlevel and the end of level animation finishes playing.
 
 
 ### **Mazegen:**
