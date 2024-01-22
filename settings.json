@@ -1,17 +1,1 @@
-{
-    "WIDTH": 1600,
-    "HEIGHT": 900,
-    "FULLSCREEN": false,
-
-    "SFX_VOLUME": 1.0,
-    "MUSIC_VOLUME": 1.0, 
-    "FPS": null,
-
-    "JOYSTICK_THRESHOLD": 0.5,
-    "BULLET_HELL_BOTTOM_RIGHT": false,
-
-    "CB_COLOR_OVERRIDE": 0,
-
-    "CONSTANT_SEED": false
-
-}
+{"WIDTH": 1600, "HEIGHT": 900, "FULLSCREEN": false, "SFX_VOLUME": 0.38, "MUSIC_VOLUME": 1.0, "FPS": null, "JOYSTICK_THRESHOLD": 0.5, "BULLET_HELL_BOTTOM_RIGHT": false, "CB_COLOR_OVERRIDE": 0, "CONSTANT_SEED": false}

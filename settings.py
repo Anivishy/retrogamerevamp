@@ -4,16 +4,18 @@ import homescreen
 import instructions
 import pyautogui
 
+import user_settings
+
 class openSettings:
     def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
         pygame.init()
 
-        self.WIDTH = WIDTH # value to use in settings
-        self.HEIGHT = HEIGHT # value to use in settings
-        self.currentFPS = None  # FPS Value to use in game
-        self.currentVolume = 1.0 # Volume value to use in game
-        self.currentjoystick = 0.5 # Joystick Threshold value to use in game
-        self.difficulty = False # Botton Right, value to use in games
+        self.WIDTH = user_settings.WIDTH # value to use in settings
+        self.HEIGHT = user_settings.HEIGHT # value to use in settings
+        self.currentFPS = user_settings.FPS  # FPS Value to use in game
+        self.currentVolume = int(user_settings.SFX_VOLUME * 100) # Volume value to use in game
+        self.currentjoystick = int(user_settings.JOYSTICK_THRESHOLD * 100) # Joystick Threshold value to use in game
+        self.difficulty = user_settings.BULLET_HELL_BOTTOM_RIGHT # Botton Right, value to use in games
 
         if (FULLSCREEN):
             self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
@@ -132,12 +134,12 @@ class openSettings:
         # printing volume slider + current value
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.volumeSliderOutline))
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.volumeSlider))
-        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(str((self.currentVolume*100))[:3] + ' ', True, (255, 255, 255), (0, 0, 0)), self.volLocation)
+        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(str((self.currentVolume)) + ' ', True, (255, 255, 255), (0, 0, 0)), self.volLocation)
 
         # printing joystick slider
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.joystickSliderOutline))
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.joystickSlider))
-        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(str((self.currentjoystick*100))[:2] + ' ', True, (255, 255, 255), (0, 0, 0)), self.joystickLocation)
+        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(str((self.currentjoystick)) + ' ', True, (255, 255, 255), (0, 0, 0)), self.joystickLocation)
 
         # printing fullscreen toggle (is filled in if fullscreen)
         if self.fullscreen:
@@ -163,20 +165,37 @@ class openSettings:
         mouseDownjoystick = False
 
         while True:
+            retearly = False
             for event in pygame.event.get():
 
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    retearly = True; break
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
+                       retearly = True; break
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     # back button pressed, return to homescreen
                     if pygame.Rect(self.exitButton).collidepoint(pygame.mouse.get_pos()):
+                        user_settings.SETTINGS_JSON = {
+                                "WIDTH": self.WIDTH,
+                                "HEIGHT": self.HEIGHT,
+                                "FULLSCREEN": self.fullscreen,
+
+                                "SFX_VOLUME": int(self.currentVolume) / 100, 
+                                "MUSIC_VOLUME": user_settings.MUSIC_VOLUME,
+                                "FPS": self.currentFPS,
+
+                                "JOYSTICK_THRESHOLD": int(self.currentjoystick) / 100,
+                                "BULLET_HELL_BOTTOM_RIGHT": self.difficulty,
+
+                                "CB_COLOR_OVERRIDE": user_settings.CB_COLOR_OVERRIDE,
+
+                                "CONSTANT_SEED": user_settings.CONSTANT_SEED
+                            }
+                        user_settings.save_vars()
+                        user_settings.reload_vars()
                         c = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
                         c.run(False)
 
@@ -306,7 +325,6 @@ class openSettings:
                         self.currentVolume = ((a - min) / (max-min)) * 100
                         
                         self.currentVolume = str(round(self.currentVolume))
-
                         self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentVolume + ' ', True, (255, 255, 255), (0, 0, 0)), self.volLocation)
                         
                 # if joystick slider being moved
@@ -342,6 +360,25 @@ class openSettings:
                             
 
                 pygame.display.flip()
+            if retearly: break
+        user_settings.SETTINGS_JSON = {
+            "WIDTH": self.WIDTH,
+            "HEIGHT": self.HEIGHT,
+            "FULLSCREEN": self.fullscreen,
+
+            "SFX_VOLUME": int(self.currentVolume) / 100, 
+            "MUSIC_VOLUME": user_settings.MUSIC_VOLUME,
+            "FPS": self.currentFPS,
+
+            "JOYSTICK_THRESHOLD": int(self.currentjoystick) / 100,
+            "BULLET_HELL_BOTTOM_RIGHT": self.difficulty,
+
+            "CB_COLOR_OVERRIDE": user_settings.CB_COLOR_OVERRIDE,
+
+            "CONSTANT_SEED": user_settings.CONSTANT_SEED
+        }
+        user_settings.save_vars()
+        user_settings.reload_vars()
 
 if __name__ == "__main__":
     try:
@@ -350,5 +387,5 @@ if __name__ == "__main__":
         WIDTH = 800
         HEIGHT = 600
 
-    s = openSettings(WIDTH, HEIGHT, True)
+    s = openSettings(WIDTH, HEIGHT, user_settings.FULLSCREEN)
     s.run()
