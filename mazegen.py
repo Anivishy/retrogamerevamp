@@ -266,7 +266,8 @@ while True:
 
     for bullet in current_bullets:
         bullet.shoot(window)
-        if bullet.check_ghost_col() or bullet.check_wall_col() or bullet.check_wall_col():
+        if bullet.check_ghost_col(ghosts)[0] or bullet.check_wall_col() or bullet.check_wall_col():
+            ghosts.remove(bullet.check_ghost_col(ghosts)[1])
             current_bullets.remove(bullet)
             
     

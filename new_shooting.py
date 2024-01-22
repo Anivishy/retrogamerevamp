@@ -57,8 +57,10 @@ class lazer_bullet:
         #print("NKLSDNFLKSDGN")
         pygame.display.update()
 
-    def check_ghost_col(self):
-        pass
+    def check_ghost_col(self, ghosts):
+        for ghost in ghosts:
+            if math.abs(self.x - ghost.x) == 10 and math.abs(self.y - ghost.y) == 10:
+                return (True, ghosts)
 
     def check_wall_col(self):
         pass
