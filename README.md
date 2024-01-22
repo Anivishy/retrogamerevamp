@@ -23,7 +23,8 @@ Upon running this you will be presented a screen including instructions, setting
 
 ## Architecture
 
-&nbsp;&nbsp;&nbsp;&nbsp; The program is divided into 3 main components that the user interacts with, **homescreen introlevel and mazegen**, we decided to do this in part to make it easier to divide the work.
+&nbsp;&nbsp;&nbsp;&nbsp; The program is divided into 3 main components that the user interacts with, **homescreen introlevel and mazegen**, we decided to do this in part to make it easier to divide the work, but also to make it easier to combine the elements of the game in the end.
+
 
 ### **Homescreen:**
 
