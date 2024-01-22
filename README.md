@@ -79,7 +79,7 @@ Outside of this, we asked questions of one another periodically, whenever we req
 
 One low point in terms of communication was that, when encountering challenges, we had a tendency to resolve it on our own, rather than asking others if they know of a solution. In the future, we may be more intentional in asking others for help when stuck, as asking for help from others who may have a solution allows for a quicker resolution of issues. 
 
-# Surprises: 
+### Surprises: 
 
 # Takeaways:
 Next time, we may try to _.
