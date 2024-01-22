@@ -45,9 +45,10 @@ player_health = health.healthbar()
 
 
 
+from wall_generation import *
 
 
-print(f"Initializing: {WIDTH}x{HEIGHT}, square size: {SQUARE_SIZE}")
+print(f"Initializing: {WIDTH}x{HEIGHT}, square size: {SQUARE_SIZE}\nSeed: {seed}")
 
 window = pygame.display.set_mode((WIDTH, HEIGHT), (pygame.FULLSCREEN if FULLSCREEN else 0) | pygame.GL_DOUBLEBUFFER)
 
@@ -72,7 +73,6 @@ defeated_bosses = set()
 
 import time
 
-from wall_generation import *
 
 
 playerx = WIDTH // 2 + SQUARE_SIZE // 2
@@ -162,6 +162,13 @@ while True:
         elif event.type == pygame.JOYDEVICEREMOVED and joystick:
             joystick = None
 
+        elif event.type == pygame.MOUSEBUTTONUP:
+            # shooting place
+            cur_time = time.time()
+            if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
+                start_time = cur_time
+                current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE), playery - (starty * SQUARE_SIZE), mousex, mousey))
+                player_score.use_ammo(1)
     
     copysx = startx
     copysy = starty
@@ -257,6 +264,7 @@ while True:
     #current_bullets = []
     mousex, mousey = pygame.mouse.get_pos()
     if keys [pygame.K_RSHIFT]:
+        # shooting place
         cur_time = time.time()
         if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
             start_time = cur_time

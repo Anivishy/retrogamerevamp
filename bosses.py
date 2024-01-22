@@ -122,7 +122,7 @@ class BossTL: # top left
             else:
                 discrim = abs(math.atan(dy/dx))
                 #print(discrim, dy)
-                if discrim > (math.pi / 4):
+                if discrim > (math.pi / 6):
                     if dy < 0:
                         self.direction = 4
                     else:
@@ -250,7 +250,7 @@ class BossTR: # top right
             else:
                 discrim = abs(math.atan(dy/dx))
                 #print(discrim, dy)
-                if discrim > (math.pi / 4):
+                if discrim > (math.pi / 6):
                     if dy < 0:
                         self.direction = 4
                     else:
@@ -388,7 +388,7 @@ class BossBL: # bottom left
             else:
                 discrim = abs(math.atan(dy/dx))
                 #print(discrim, dy)
-                if discrim > (math.pi / 4):
+                if discrim > (math.pi / 6):
                     if dy < 0:
                         self.direction = 4
                     else:
@@ -513,7 +513,7 @@ class BossBR: # bottom right
             else:
                 discrim = abs(math.atan(dy/dx))
                 #print(discrim, dy)
-                if discrim > (math.pi / 4):
+                if discrim > (math.pi / 6):
                     if dy < 0:
                         self.direction = 4
                     else:
