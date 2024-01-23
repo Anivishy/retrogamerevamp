@@ -45,7 +45,7 @@ class lazer_bullet():
         # self.y = y - 80
         self.mousex = mousex
         self.mousey = mousey
-        self.speed = 1
+        self.speed = 7.5
         self.angle = math.atan2(y - mousey, x - mousex)
         self.angle_deg = self.angle * (180/math.pi)
 
@@ -89,10 +89,10 @@ class lazer_bullet():
         #     5,
         #     5
         # ))
-        pygame.draw.line(window, (0, 255, 0), (self.sx, self.sy), (self.mousex, self.mousey))
+        #pygame.draw.line(window, (0, 255, 0), (self.sx, self.sy), (self.mousex, self.mousey))
         window.blit(self.lazer_gun_image, self.lazer_gun_image_rect)
         
-        pygame.draw.circle(window, (0, 0, 255), (self.x, self.y), 5)
+        #pygame.draw.circle(window, (0, 0, 255), (self.x, self.y), 5)
         #window.blit(self.lazer_gun_image_rect, (self.x, self.y))
         #print("NKLSDNFLKSDGN")
 
