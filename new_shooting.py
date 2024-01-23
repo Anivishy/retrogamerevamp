@@ -35,9 +35,11 @@ class lazer_gun():
         return angle
     
 class lazer_bullet():
-    def __init__ (self, x, y, mousex, mousey):
-        self.x = x - 115
-        self.y = y - 80
+    def __init__ (self, x, y, mousex, mousey, height, width):
+        self.x = x - (width / 14.91304347826087)
+        self.y = y - (height / 11.25)
+        # self.x = x - 115
+        # self.y = y - 80
         self.mousex = mousex
         self.mousey = mousey
         self.speed = 1

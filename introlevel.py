@@ -143,8 +143,9 @@ class Renderer:
                     self.paused = not self.paused
                 if event.key == pygame.K_r:
                     if self._game_over:
-                        new_game = Game()
-                        new_game.start_game()
+                        #new_game = Game()
+                        #new_game.start_game()
+                        run()
         
             if event.type == self._open_mouth:
                 if self._pacman is None:
@@ -329,14 +330,13 @@ class Pacman(MovingObject):
             collision = collision_rect.colliderect(point.get_shape())
             if collision and point in objects:
                 objects.remove(point)
-                # Change score in future
                 points_reached = point
         
         if points_reached:
             points.remove(points_reached)
         
         # Triggers Game Over pro
-        if len(self._renderer._points) > 0:
+        if len(self._renderer._points) == 0:
             self._renderer._next_level = True
             for ghost in self._renderer._ghosts:
                 ghost.end_game()
@@ -361,6 +361,7 @@ class Pacman(MovingObject):
                     ghost.fleeing = True
                     ghost.back_to_spawn(ghost)
                 else:
+                    # If there are still lives left subtract 1 and reset pacman, otherwise game over and display game over message
                     if self._renderer._lives > 0:
                         self._renderer._lives -= 1
                         self._renderer.text = self._renderer.font.render(f"Lives Remaining: {self._renderer._lives}", True, (255, 255, 255))
@@ -743,8 +744,11 @@ class Game:
         new_renderer.tick(60)
 
 
+# Allows easy way to run this file
+
 def run():
     new_game = Game()
     new_game.new_game()
 
+# Commented out to avoid confusion when running
 run()
