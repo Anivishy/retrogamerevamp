@@ -40,7 +40,7 @@ class lazer_bullet():
         # self.y = y - 80
         self.mousex = mousex
         self.mousey = mousey
-        self.speed = 50
+        self.speed = 10
         self.angle = math.atan2(y - mousey, x - mousex)
         self.angle_deg = self.angle * (180/math.pi)
         self.velx = math.cos(self.angle) * self.speed
@@ -52,7 +52,10 @@ class lazer_bullet():
         self.lazer_gun_image = pygame.image.load(sanitize_path('projectileimgaes/lazerprojectile_right.png'))
         SCALE_SIZE = (75, 75)
         self.lazer_gun_image = pygame.transform.scale(self.lazer_gun_image, SCALE_SIZE)
-        self.lazer_gun_image = pygame.transform.rotate(self.lazer_gun_image, 0.5 * self.angle_deg)
+
+        deg = math.degrees(math.atan2(-self.vely, self.velx)) + 180
+
+        self.lazer_gun_image = pygame.transform.rotate(self.lazer_gun_image, deg)
         self.lazer_gun_image_rect = self.lazer_gun_image.get_rect()
         self.lazer_gun_image_rect.center = (self.x, self.y)
         #print("Rotated image to angle: " + str(self.angle))
@@ -60,7 +63,6 @@ class lazer_bullet():
         window.blit(self.lazer_gun_image, self.lazer_gun_image_rect)
         #window.blit(self.lazer_gun_image_rect, (self.x, self.y))
         #print("NKLSDNFLKSDGN")
-        pygame.display.update()
 
     def check_ghost_col(self):
         # for ghost in ghosts:

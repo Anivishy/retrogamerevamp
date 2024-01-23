@@ -277,21 +277,7 @@ while True:
 
     #print(current_bullets)
 
-    for bullet in current_bullets:
-        bullet.shoot(window)
-        for ghost in ghosts:
-            # for wall in walls:
-            #     if pygame.Rect.collidepoint(wall, (bullet.x, bullet.y)):
-            #        current_bullets.remove(bullet) S
-            ghost_rect = pygame.Rect(
-                ghost.x * SQUARE_SIZE - startx * SQUARE_SIZE - ghost.width // 2,
-                ghost.y * SQUARE_SIZE - starty * SQUARE_SIZE - ghost.height // 2,
-                ghost.width, ghost.height
-            )
-            if pygame.Rect.collidepoint(ghost_rect, (bullet.x, bullet.y)):
-                ghosts.remove(ghost)
-                current_bullets.remove(bullet)
-                print(len(current_bullets))
+    
             
     
 
@@ -539,6 +525,22 @@ while True:
 
     # draw calls - a LOT of them
     window.fill((0, 0, 0))
+
+    for bullet in current_bullets:
+        bullet.shoot(window)
+        for ghost in ghosts:
+            # for wall in walls:
+            #     if pygame.Rect.collidepoint(wall, (bullet.x, bullet.y)):
+            #        current_bullets.remove(bullet) S
+            ghost_rect = pygame.Rect(
+                ghost.x * SQUARE_SIZE - startx * SQUARE_SIZE - ghost.width // 2,
+                ghost.y * SQUARE_SIZE - starty * SQUARE_SIZE - ghost.height // 2,
+                ghost.width, ghost.height
+            )
+            if pygame.Rect.collidepoint(ghost_rect, (bullet.x, bullet.y)):
+                ghosts.remove(ghost)
+                current_bullets.remove(bullet)
+                print(len(current_bullets))
 
     if not player_protected:
 
