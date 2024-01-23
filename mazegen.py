@@ -528,6 +528,7 @@ while True:
 
     for bullet in current_bullets:
         bullet.shoot(window)
+        leave = False
         for ghost in ghosts:
             # for wall in walls:
             #     if pygame.Rect.collidepoint(wall, (bullet.x, bullet.y)):
@@ -541,6 +542,11 @@ while True:
                 ghosts.remove(ghost)
                 current_bullets.remove(bullet)
                 print(len(current_bullets))
+                leave = True
+                break
+        if leave: break
+        if bullet.check_wall_col():
+            break
 
     if not player_protected:
 

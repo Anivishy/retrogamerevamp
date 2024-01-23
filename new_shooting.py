@@ -11,6 +11,8 @@ base = os.path.dirname(os.path.abspath(__file__))
 def sanitize_path(path):
     return os.path.join(base, path)
 
+import wall_generation
+
 class lazer_gun():
 
 
@@ -38,16 +40,19 @@ class lazer_bullet():
         self.y = y - 80
         self.mousex = mousex
         self.mousey = mousey
-        self.speed = 10
+        self.speed = 1
         self.angle = math.atan2(y - mousey, x - mousex)
         self.angle_deg = self.angle * (180/math.pi)
-        self.velx = math.cos(self.angle) * self.speed
-        self.vely = math.sin(self.angle) * self.speed
+
+
+        deg = (math.atan2(-y + mousey, -x + mousex)) + (math.pi)
+        self.velx = math.cos(deg) * self.speed
+        self.vely = math.sin(deg) * self.speed
 
     def shoot(self, window):
-        self.x -= int(self.velx / 4)
-        self.y -= int(self.vely / 4)
-        self.lazer_gun_image = pygame.image.load(sanitize_path('projectileimgaes/lazerprojectile_right.png'))
+        self.x -= (self.velx / 4)
+        self.y -= (self.vely / 4)
+        self.lazer_gun_image = pygame.image.load(sanitize_path('projectileimgaes/lazerprojectile_right_cropped.png'))
         SCALE_SIZE = (75, 75)
         self.lazer_gun_image = pygame.transform.scale(self.lazer_gun_image, SCALE_SIZE)
 
@@ -69,6 +74,8 @@ class lazer_bullet():
         pass
 
     def check_wall_col(self):
+        rect = self.lazer_gun_image_rect
+        print(rect)
         pass
 
     def check_boss_col(self):
