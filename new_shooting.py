@@ -32,7 +32,7 @@ class lazer_gun():
 
         return angle
     
-class lazer_bullet:
+class lazer_bullet():
     def __init__ (self, x, y, mousex, mousey):
         self.x = x - 115
         self.y = y - 80
@@ -51,16 +51,20 @@ class lazer_bullet:
         SCALE_SIZE = (75, 75)
         self.lazer_gun_image = pygame.transform.scale(self.lazer_gun_image, SCALE_SIZE)
         self.lazer_gun_image = pygame.transform.rotate(self.lazer_gun_image, 0.5 * self.angle_deg)
-        print("Rotated image to angle: " + str(self.angle))
+        self.lazer_gun_image_rect = self.lazer_gun_image.get_rect()
+        self.lazer_gun_image_rect.center = (self.x, self.y)
+        #print("Rotated image to angle: " + str(self.angle))
         #pygame.draw.circle(window, (255,255,255), (self.x, self.y), 5)
-        window.blit(self.lazer_gun_image, (self.x, self.y))
+        window.blit(self.lazer_gun_image, self.lazer_gun_image_rect)
+        #window.blit(self.lazer_gun_image_rect, (self.x, self.y))
         #print("NKLSDNFLKSDGN")
         pygame.display.update()
 
-    def check_ghost_col(self, ghosts):
-        for ghost in ghosts:
-            if math.abs(self.x - ghost.x) == 10 and math.abs(self.y - ghost.y) == 10:
-                return (True, ghosts)
+    def check_ghost_col(self):
+        # for ghost in ghosts:
+        #     if abs(self.x - ghost.x) == 10 and abs(self.y - ghost.y) == 10:
+        #         return (True, ghosts)
+        pass
 
     def check_wall_col(self):
         pass
