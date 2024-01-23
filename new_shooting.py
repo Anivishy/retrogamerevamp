@@ -36,8 +36,11 @@ class lazer_gun():
     
 class lazer_bullet():
     def __init__ (self, x, y, mousex, mousey, height, width):
-        self.x = x - (width / 14.91304347826087)
-        self.y = y - (height / 11.25)
+        self.x = x 
+        self.y = y 
+
+        self.sx = self.x
+        self.sy = self.y
         # self.x = x - 115
         # self.y = y - 80
         self.mousex = mousex
@@ -48,12 +51,17 @@ class lazer_bullet():
 
 
         deg = (math.atan2(-y + mousey, -x + mousex)) + (math.pi)
-        self.velx = math.cos(deg) * self.speed
-        self.vely = math.sin(deg) * self.speed
 
-    def shoot(self, window):
-        self.x -= (self.velx / 4)
-        self.y -= (self.vely / 4)
+        distance = ((y - mousey) ** 2 + (x - mousex) ** 2) ** 0.5
+        self.velx = self.speed * ((x - mousex) / distance)
+        self.vely = self.speed * ((y - mousey) / distance)
+
+
+
+
+        # self.velx = math.cos(deg) * self.speed
+        # self.vely = math.sin(deg) * self.speed
+
         self.lazer_gun_image = pygame.image.load(sanitize_path('projectileimgaes/lazerprojectile_right_cropped.png'))
         SCALE_SIZE = (75, 75)
         self.lazer_gun_image = pygame.transform.scale(self.lazer_gun_image, SCALE_SIZE)
@@ -61,11 +69,30 @@ class lazer_bullet():
         deg = math.degrees(math.atan2(-self.vely, self.velx)) + 180
 
         self.lazer_gun_image = pygame.transform.rotate(self.lazer_gun_image, deg)
+
+    def shoot(self, window):
+        self.x -= (self.velx / 4)
+        self.y -= (self.vely / 4)
+        
+        
         self.lazer_gun_image_rect = self.lazer_gun_image.get_rect()
         self.lazer_gun_image_rect.center = (self.x, self.y)
         #print("Rotated image to angle: " + str(self.angle))
         #pygame.draw.circle(window, (255,255,255), (self.x, self.y), 5)
+        # pygame.draw.rect(window, (0, 0, 255), pygame.Rect(
+        #     self.sx, self.sy,
+        #     5,
+        #     5
+        # ))
+        # pygame.draw.rect(window, (255, 0, 0), pygame.Rect(
+        #     self.mousex, self.mousey,
+        #     5,
+        #     5
+        # ))
+        pygame.draw.line(window, (0, 255, 0), (self.sx, self.sy), (self.mousex, self.mousey))
         window.blit(self.lazer_gun_image, self.lazer_gun_image_rect)
+        
+        pygame.draw.circle(window, (0, 0, 255), (self.x, self.y), 5)
         #window.blit(self.lazer_gun_image_rect, (self.x, self.y))
         #print("NKLSDNFLKSDGN")
 
@@ -77,7 +104,8 @@ class lazer_bullet():
 
     def check_wall_col(self):
         rect = self.lazer_gun_image_rect
-        print(rect)
+        #print(self.velx, self.vely)
+        #print(rect)
         pass
 
     def check_boss_col(self):
