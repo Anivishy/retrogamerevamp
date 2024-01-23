@@ -7,8 +7,6 @@ MUSIC_VOLUME = 1.0 # Δ i don't think we'll need this
 
 FPS = 60 # Δ set to None for uncapped FPS - use at your own risk!
 
-if FPS and not(20 <= FPS):
-    raise ValueError("The minimum FPS cap must be set to at least 20")
 
 JOYSTICK_THRESHOLD = 0.5 # Δ maybe?
 
@@ -21,3 +19,26 @@ CB_COLOR_OVERRIDE = 0 # Δ
 # 3: tritanopia
 
 CONSTANT_SEED = False
+
+# -----
+# everything above this line is just a placeholder
+# the real settings are found in settings.json
+
+import os
+base = os.path.dirname(os.path.abspath(__file__))
+import json
+with open(os.path.join(base, "settings.json")) as f:
+    SETTINGS_JSON = json.load(f)
+
+def reload_vars():
+    for key, value in SETTINGS_JSON.items():
+        exec(f"global {key}\n{key} = {value}")
+
+def save_vars():
+    with open(os.path.join(base, "settings.json"), "w") as f:
+        json.dump(SETTINGS_JSON, f)
+
+reload_vars()
+
+if FPS and not(20 <= FPS):
+    raise ValueError("The minimum FPS cap must be set to at least 20")

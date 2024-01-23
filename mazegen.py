@@ -135,6 +135,10 @@ for _ in range(15):
     
 velocity = PLAYER_SPEED
 
+calc_fps = 0
+calc_time = 0
+calc_counter = 0
+
 while True:
     # events
     direction = 0

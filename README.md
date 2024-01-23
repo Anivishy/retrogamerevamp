@@ -23,19 +23,26 @@ Upon running this you will be presented a screen including instructions, setting
 
 ## Architecture
 
-&nbsp;&nbsp;&nbsp;&nbsp; The program is divided into 3 main components that the user interacts with, **homescreen introlevel and mazegen**, we decided to do this in part to make it easier to divide the work.
+&nbsp;&nbsp;&nbsp;&nbsp; The program is divided into 3 main components that the user interacts with, **homescreen introlevel and mazegen**, we decided to do this in part to make it easier to divide the work, but also to make it easier to combine the elements of the game in the end.
+
 
 ### **Homescreen:**
 
-  The homescreen is the first interaction that the user has with our game. Here, the user has options to view instructions, adjust settings, and start the game. We wanted to ensure that the home screen was themed around the design of the game to ensure a coherent and logical transition between this screen and the actual game. We also structured our game in clear and defined classes, developing centralized files which can be easily called into our homescreen file, allowing for seperate development of each aspect of our game, while providing an outlet for easy integration when bringing the whole game together. 
+&nbsp;&nbsp;&nbsp;&nbsp;The homescreen is the first interaction that the user has with our game. Here, the user has options to view instructions, adjust settings, and start the game. We wanted to ensure that the home screen was themed around the design of the game to ensure a coherent and logical transition between this screen and the actual game. We also structured our game in clear and defined classes, developing centralized files which can be easily called into our homescreen file, allowing for seperate development of each aspect of our game, while providing an outlet for easy integration when bringing the whole game together. 
 
-### **Introlevel**
+### **Introlevel:**
+
+&nbsp;&nbsp;&nbsp;&nbsp;The introlevel file mostly acts as a standalone game to pay tribute to the classic game of Pacman. We utilized a lot of inheritance within this file, in order to create distinct ghost and pacman objects that could still easily interact with each other. Additionally, we made it so that the whole file can be encapsalated in a single class **run()** which allows for the file to be quickly accessed by homescreen. To transition from this file to the main game we call the mazegen class after the user defeats the introlevel and the end of level animation finishes playing.
 
 
+### **Mazegen:**
 
-### **Mazegen**
+&nbsp;&nbsp;&nbsp;&nbsp;The mazegen file serves as the central collection and implementation of many classes that make our main game. This is where our main game loop is run, where movements and key presses are tracked, interactions between the player and game objects are handled and where calls to helper classes are managed. In order to ensure a clear and easy to manage game streucutre, we seperated each game element or feature into its own class or collection. Furthermore, we ensured that elements and features that were logically connected to eachother were developed together in their own class, making the integration into the central mazegen file much easier. 
 
-  The mazegen file serves as the central collection and implementation of many classes that make our main game. This is where our main game loop is run, where movements and key presses are tracked, interactions between the player and game objects are handled and where calls to helper classes are managed. In order to ensure a clear and easy to manage game streucutre, we seperated each game element or feature into its own class or collection. Furthermore, we ensured that elements and features that were logically connected to eachother were developed together in their own class, making the integration into the central mazegen file much easier. 
+### **Diagram:**
+
+![architecture](https://github.com/Anivishy/retrogamerevamp/assets/90056323/d812cdce-1640-4c97-bfd0-15737a899a26)
+
 
 ## **User Experience** 
 
@@ -60,7 +67,24 @@ Overall, the game is meant to provide a fresh spin on a classic game, the combin
 &nbsp;&nbsp;&nbsp;&nbsp;The boss fights in each section of the maze and should still prevent a challenge to the user, due to the boss’s strong tracking abilities, allowing a rewarding feeling for the user upon victory. Similar to a new user, the whole game should not take an excessively long time for the user to complete, allowing returning users to have a rewarding potentially nostalgic experience that will hopefully have them continuing to return. 
 
 ## Retrospective
-Overall, the process of writing this game went smoothly. Due to the task tracker, we all had clarity on our responsibilities, what others are currently working on, and what items were pending. This eliminated any duplication of work, or confusion about what to work on. We did not have any significant issues with GitHub or syncing code, mainly because we each focused on a different portion of the code. This allowed all of us to keep our code up to date. With a clear idea of what needed to be worked on, and well-managed code and tasks, we were able to make effective use of class time, which is why we were able to get the game done within the given time. Finally, throughout the project our group had a consensus on what we wanted to create, and how to go about it. This was essential in that it allowed us to move forward with our project, without conflicting ideas/functions in different parts of the game. 
+### Overall Process:
+Overall, the process of writing this game went smoothly. Due to the task tracker, we all had clarity on our responsibilities, what others are currently working on, and what items were pending. This eliminated any duplication of work, or confusion about what to work on. 
 
-Throughout our project, our main source of communication – our high point - was in our standups. During each standup, we shared what we had done since our last meeting, our plan for the day, and any other significant information. This allowed everyone to stay updated on what is currently being worked on, and what changes have been made, throughout the project. Outside of this, we asked questions of one another periodically, whenever we required help or found something important to update others on. This allowed us to take other’s input into account and incorporate details to accommodate their code. One low point in terms of communication was  _. 
+We did not have any significant issues with GitHub or syncing code, mainly because we each focused on a different portion of the code. This allowed all of us to keep our code up to date. 
 
+With a clear idea of what needed to be worked on, and well-managed code and tasks, we were able to make effective use of class time, which is why we were able to get the game done within the given time. 
+
+Finally, throughout the project our group had a consensus on what we wanted to create, and how to go about it. 
+This was essential in that it allowed us to move forward with our project, without conflicting ideas/functions in different parts of the game. 
+
+### Communication: 
+Throughout our project, our main source of communication – our high point - was in our standups. During each standup, we shared what we had done since our last meeting, our plan for the day, and any other significant information. This allowed everyone to stay updated on what is currently being worked on, and what changes have been made, throughout the project. 
+
+Outside of this, we asked questions of one another periodically, whenever we required help or found something important to update others on. This allowed us to take other’s input into account and incorporate details to accommodate their code. 
+
+One low point in terms of communication was that, when encountering challenges, we had a tendency to resolve it on our own, rather than asking others if they know of a solution. In the future, we may be more intentional in asking others for help when stuck, as asking for help from others who may have a solution allows for a quicker resolution of issues. 
+
+### Surprises: 
+
+### Takeaways:
+Next time, we may try to _.
