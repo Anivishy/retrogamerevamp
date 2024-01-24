@@ -198,42 +198,50 @@ while True:
         last_key = "left" 
         if not UNCAPPED_FPS:
             playerx -= velocity / FPS * SQUARE_SIZE
-            for bullet in current_bullets:
-                bullet.x += velocity / FPS * SQUARE_SIZE
+            if BORDER_X > playerx > -BORDER_X:
+                for bullet in current_bullets:
+                    bullet.x += velocity / FPS * SQUARE_SIZE
         else:
             playerx -= velocity * (delay_to - last) * SQUARE_SIZE
-            for bullet in current_bullets:
-                bullet.x += velocity * (delay_to - last) * SQUARE_SIZE
+            if BORDER_X > playerx > -BORDER_X:
+                for bullet in current_bullets:
+                    bullet.x += velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_RIGHT] or keys[pygame.K_d] or (joystick and joystick.get_axis(0) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == 1):
         last_key = "right" 
         if not UNCAPPED_FPS:
             playerx += velocity / FPS * SQUARE_SIZE
-            for bullet in current_bullets:
-                bullet.x -= velocity / FPS * SQUARE_SIZE
+            if BORDER_X > playerx > -BORDER_X:
+                for bullet in current_bullets:
+                    bullet.x -= velocity / FPS * SQUARE_SIZE
         else:
             playerx += velocity * (delay_to - last) * SQUARE_SIZE
-            for bullet in current_bullets:
-                bullet.x -= velocity * (delay_to - last) * SQUARE_SIZE
+            if BORDER_X > playerx > -BORDER_X:
+                for bullet in current_bullets:
+                    bullet.x -= velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_UP] or keys[pygame.K_w] or (joystick and joystick.get_axis(1) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == 1):
         last_key = "up" 
         if not UNCAPPED_FPS:
             playery -= velocity / FPS * SQUARE_SIZE
-            for bullet in current_bullets:
-                bullet.y += velocity / FPS * SQUARE_SIZE
+            if BORDER_Y > playery > -BORDER_Y:
+                for bullet in current_bullets:
+                    bullet.y += velocity / FPS * SQUARE_SIZE
         else:
             playery -= velocity * (delay_to - last) * SQUARE_SIZE
-            for bullet in current_bullets:
-                bullet.y += velocity * (delay_to - last) * SQUARE_SIZE
+            if BORDER_Y > playery > -BORDER_Y:    
+                for bullet in current_bullets:
+                    bullet.y += velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_DOWN] or keys[pygame.K_s] or (joystick and joystick.get_axis(1) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == -1):
         last_key = "down" 
         if not UNCAPPED_FPS:
             playery += velocity / FPS * SQUARE_SIZE
-            for bullet in current_bullets:
-                bullet.x -= velocity / FPS * SQUARE_SIZE
+            if BORDER_Y > playery > -BORDER_Y:        
+                for bullet in current_bullets:
+                    bullet.x -= velocity / FPS * SQUARE_SIZE
         else:
             playery += velocity * (delay_to - last) * SQUARE_SIZE
-            for bullet in current_bullets:
-                bullet.y -= velocity * (delay_to - last) * SQUARE_SIZE
+            if BORDER_Y > playery > -BORDER_Y:
+                for bullet in current_bullets:
+                    bullet.y -= velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_1]:
         defeated_bosses.add(1)
     elif keys[pygame.K_2]:
@@ -331,6 +339,7 @@ while True:
     else:
         starty = cy
 
+    
 
     if int(startx) != lastx or int(starty) != lasty:
         walls = gen_walls(int(startx), int(starty)) - walls_to_remove
@@ -530,6 +539,13 @@ while True:
             for bullet in current_bullets:
                 bullet.x, bullet.y = bullet_poscopy[bullet]
             break 
+
+    dsx = startx - copysx
+    dsy = starty - copysy
+    #if last_key == "up":
+    # for bullet in current_bullets:
+    # bullet.y += -dsy
+    # bullet.x -= dsx
 
     # draw calls - a LOT of them
     window.fill((0, 0, 0))
