@@ -125,7 +125,7 @@ a_ghost = bmg.Ghost(window, 1, 0, 0)
 targettime = time.time()
 
 ghosts = []
-for _ in range(15):
+for _ in range(12):
     #ghosts.append(bmg.Ghost(window, 1, -MAP_RADIUS + real_round((WIDTH / 2) / SQUARE_SIZE) - int(0.2 * MAP_RADIUS), -MAP_RADIUS + real_round((HEIGHT / 2) / SQUARE_SIZE) - int(0.2 * MAP_RADIUS)))
     
     ghosts.append(bmg.Ghost(window, 1, -int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), -int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
@@ -198,50 +198,49 @@ while True:
         last_key = "left" 
         if not UNCAPPED_FPS:
             playerx -= velocity / FPS * SQUARE_SIZE
-            if BORDER_X > playerx > -BORDER_X:
-                for bullet in current_bullets:
-                    bullet.x += velocity / FPS * SQUARE_SIZE
+            # if BORDER_X * SQUARE_SIZE + WIDTH // 2 + SQUARE_SIZE // 2 > playerx > -BORDER_X * SQUARE_SIZE + WIDTH // 2 + SQUARE_SIZE // 2:
+            #     for bullet in current_bullets:
+            #         bullet.x += velocity / FPS * SQUARE_SIZE
+            #         #bullet.x += velocity / FPS
         else:
             playerx -= velocity * (delay_to - last) * SQUARE_SIZE
-            if BORDER_X > playerx > -BORDER_X:
-                for bullet in current_bullets:
-                    bullet.x += velocity * (delay_to - last) * SQUARE_SIZE
+            # if BORDER_X * SQUARE_SIZE + WIDTH // 2 + SQUARE_SIZE // 2 > playerx > -BORDER_X * SQUARE_SIZE + WIDTH // 2 + SQUARE_SIZE // 2:
+            #     for bullet in current_bullets:
+            #         bullet.x += velocity * (delay_to - last) * SQUARE_SIZE
+                    
     elif keys[pygame.K_RIGHT] or keys[pygame.K_d] or (joystick and joystick.get_axis(0) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == 1):
         last_key = "right" 
         if not UNCAPPED_FPS:
             playerx += velocity / FPS * SQUARE_SIZE
-            if BORDER_X > playerx > -BORDER_X:
-                for bullet in current_bullets:
-                    bullet.x -= velocity / FPS * SQUARE_SIZE
+            # if BORDER_X * SQUARE_SIZE + WIDTH // 2 + SQUARE_SIZE // 2 > playerx > -BORDER_X * SQUARE_SIZE + WIDTH // 2 + SQUARE_SIZE // 2:
+            #     for bullet in current_bullets:
+            #         bullet.x += velocity / FPS * SQUARE_SIZE
         else:
             playerx += velocity * (delay_to - last) * SQUARE_SIZE
-            if BORDER_X > playerx > -BORDER_X:
-                for bullet in current_bullets:
-                    bullet.x -= velocity * (delay_to - last) * SQUARE_SIZE
+            # if BORDER_X * SQUARE_SIZE + WIDTH // 2 + SQUARE_SIZE // 2 > playerx > -BORDER_X * SQUARE_SIZE + WIDTH // 2 + SQUARE_SIZE // 2:
+            #     for bullet in current_bullets:
+            #         bullet.x += velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_UP] or keys[pygame.K_w] or (joystick and joystick.get_axis(1) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == 1):
         last_key = "up" 
         if not UNCAPPED_FPS:
             playery -= velocity / FPS * SQUARE_SIZE
-            if BORDER_Y > playery > -BORDER_Y:
-                for bullet in current_bullets:
-                    bullet.y += velocity / FPS * SQUARE_SIZE
+            # if BORDER_X * SQUARE_SIZE - WIDTH // 2 + SQUARE_SIZE // 2 > playerx > -BORDER_X * SQUARE_SIZE + WIDTH // 2 + SQUARE_SIZE // 2:        
+            #     for bullet in current_bullets:
+            #         bullet.y += velocity / FPS * SQUARE_SIZE
         else:
             playery -= velocity * (delay_to - last) * SQUARE_SIZE
-            if BORDER_Y > playery > -BORDER_Y:    
-                for bullet in current_bullets:
-                    bullet.y += velocity * (delay_to - last) * SQUARE_SIZE
+            # for bullet in current_bullets:
+            #     bullet.y += velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_DOWN] or keys[pygame.K_s] or (joystick and joystick.get_axis(1) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == -1):
         last_key = "down" 
         if not UNCAPPED_FPS:
             playery += velocity / FPS * SQUARE_SIZE
-            if BORDER_Y > playery > -BORDER_Y:        
-                for bullet in current_bullets:
-                    bullet.x -= velocity / FPS * SQUARE_SIZE
+            # for bullet in current_bullets:
+            #     bullet.x -= velocity / FPS * SQUARE_SIZE
         else:
             playery += velocity * (delay_to - last) * SQUARE_SIZE
-            if BORDER_Y > playery > -BORDER_Y:
-                for bullet in current_bullets:
-                    bullet.y -= velocity * (delay_to - last) * SQUARE_SIZE
+            # for bullet in current_bullets:
+            #     bullet.y -= velocity * (delay_to - last) * SQUARE_SIZE
     elif keys[pygame.K_1]:
         defeated_bosses.add(1)
     elif keys[pygame.K_2]:
@@ -542,10 +541,37 @@ while True:
 
     dsx = startx - copysx
     dsy = starty - copysy
-    #if last_key == "up":
-    # for bullet in current_bullets:
-    # bullet.y += -dsy
-    # bullet.x -= dsx
+
+    if dsx > 0:
+        if FPS:
+            for bullet in current_bullets:
+                bullet.x -= velocity / FPS * SQUARE_SIZE
+        else:
+            for bullet in current_bullets:
+                bullet.x -= velocity * (delay_to - last) * SQUARE_SIZE
+    elif dsx < 0:
+        if FPS:
+            for bullet in current_bullets:
+                bullet.x += velocity / FPS * SQUARE_SIZE
+        else:
+            for bullet in current_bullets:
+                bullet.x += velocity * (delay_to - last) * SQUARE_SIZE
+    if dsy > 0:
+        if FPS:
+            for bullet in current_bullets:
+                bullet.y -= velocity / FPS * SQUARE_SIZE
+        else:
+            for bullet in current_bullets:
+                bullet.y -= velocity * (delay_to - last) * SQUARE_SIZE
+    elif dsy < 0:
+        if FPS:
+            for bullet in current_bullets:
+                bullet.y += velocity / FPS * SQUARE_SIZE
+        else:
+            for bullet in current_bullets:
+                bullet.y += velocity * (delay_to - last) * SQUARE_SIZE
+    
+
 
     # draw calls - a LOT of them
     window.fill((0, 0, 0))
@@ -580,7 +606,7 @@ while True:
                         square_length,
                         square_length
                     )
-
+                # tmp
                 indicator = (conx + x, cony + y)
                 if rect.colliderect(player_rect):
                     # at this point,
