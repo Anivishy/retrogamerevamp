@@ -526,27 +526,9 @@ while True:
     # draw calls - a LOT of them
     window.fill((0, 0, 0))
 
-    for bullet in current_bullets:
-        bullet.shoot(window)
-        leave = False
-        for ghost in ghosts:
-            # for wall in walls:
-            #     if pygame.Rect.collidepoint(wall, (bullet.x, bullet.y)):
-            #        current_bullets.remove(bullet) S
-            ghost_rect = pygame.Rect(
-                ghost.x * SQUARE_SIZE - startx * SQUARE_SIZE - ghost.width // 2,
-                ghost.y * SQUARE_SIZE - starty * SQUARE_SIZE - ghost.height // 2,
-                ghost.width, ghost.height
-            )
-            if pygame.Rect.collidepoint(ghost_rect, (bullet.x, bullet.y)):
-                ghosts.remove(ghost)
-                current_bullets.remove(bullet)
-                print(len(current_bullets))
-                leave = True
-                break
-        if leave: break
-        if bullet.check_wall_col():
-            break
+    
+
+    
 
     if not player_protected:
 
@@ -649,7 +631,28 @@ while True:
     player_score.display_ammo(window, WIDTH)    
     player_target.update_target(window, (0,0))
     
-
+    for bullet in current_bullets:
+        bullet.shoot(window)
+        leave = False
+        for ghost in ghosts:
+            # for wall in walls:
+            #     if pygame.Rect.collidepoint(wall, (bullet.x, bullet.y)):
+            #        current_bullets.remove(bullet) S
+            ghost_rect = pygame.Rect(
+                ghost.x * SQUARE_SIZE - startx * SQUARE_SIZE - ghost.width // 2,
+                ghost.y * SQUARE_SIZE - starty * SQUARE_SIZE - ghost.height // 2,
+                ghost.width, ghost.height
+            )
+            if pygame.Rect.collidepoint(ghost_rect, (bullet.x, bullet.y)):
+                ghosts.remove(ghost)
+                current_bullets.remove(bullet)
+                print(len(current_bullets))
+                leave = True
+                break
+        if leave: break
+        if bullet.check_wall_col(window, startx, starty):
+            current_bullets.remove(bullet)
+            break
     pygame.display.update()
     
     if UNCAPPED_FPS:

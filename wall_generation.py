@@ -52,24 +52,24 @@ def create_protected(from_x, from_y):
     protected = set()
     if abs(from_x) >= int(BORDER_X) - 1:
         if from_x < 0:
-            for y in range(from_y - 1, from_y + (HEIGHT // SQUARE_SIZE) + 2):
+            for y in range(int(from_y - 1), int(from_y + (HEIGHT // SQUARE_SIZE) + 2)):
                 protected.add(
                     ((int(-BORDER_X), y), (int(-BORDER_X), y + 1))
                 )
         else:
-            for y in range(from_y - 1, from_y + (HEIGHT // SQUARE_SIZE) + 2):
+            for y in range(int(from_y - 1), int(from_y + int(HEIGHT // SQUARE_SIZE) + 2)):
                 protected.add(
                     ((int(BORDER_X) + WIDTH // SQUARE_SIZE + 1, y), (int(BORDER_X) + WIDTH // SQUARE_SIZE + 1, y + 1))
                 )
 
     if abs(from_y) >= int(BORDER_Y) - 2:
         if from_y < 0:
-            for x in range(from_x - 1, from_x + (WIDTH // SQUARE_SIZE) + 2):
+            for x in range(int(from_x - 1), int(from_x + int(WIDTH // SQUARE_SIZE) + 2)):
                 protected.add(
                     ((x, int(-BORDER_Y)), (x + 1, int(-BORDER_Y)))
                 )
         else:
-            for x in range(from_x - 1, from_x + (WIDTH // SQUARE_SIZE) + 2):
+            for x in range(int(from_x - 1), int(from_x + int(WIDTH // SQUARE_SIZE) + 2)):
                 protected.add(
                     ((x, int(BORDER_Y) + HEIGHT // SQUARE_SIZE + 1), (x + 1, int(BORDER_Y) + HEIGHT // SQUARE_SIZE + 1))
                 )
@@ -151,8 +151,8 @@ def walls_around(point_x, point_y):
     
     walls -= boss_zones
     walls |= protected
-    for x in range(-scan, scan):
-        for y in range(-scan, scan):
+    for x in range(-scan, scan + 1):
+        for y in range(-scan, scan + 1):
             point = ((point_x + x), (point_y + y))
             rgen = random.Random(seed + (point_x + x) * SQUARE_SIZE + (point_y + y))
             # boilerplate extravaganza - you have been warned!
