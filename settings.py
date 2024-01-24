@@ -17,6 +17,13 @@ class openSettings:
         self.currentjoystick = int(user_settings.JOYSTICK_THRESHOLD * 100) # Joystick Threshold value to use in game
         self.difficulty = user_settings.BULLET_HELL_BOTTOM_RIGHT # Botton Right, value to use in games
 
+        self.defaultWidth = WIDTH
+        self.defaultHeight = HEIGHT
+        try:
+            self.defaultWidth, self.defaultHeight = pyautogui.size()
+        except:
+            self.defaultWidth, self.defaultHeight = 800, 600
+
         if (FULLSCREEN):
             self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
             self.fullscreen = True
@@ -52,11 +59,12 @@ class openSettings:
         self.volumeSlider = (self.volumeSliderStart, (.5275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
         self.volLocation = ((self.volumeSliderOutline[0] - .1 * self.WIDTH), self.volumeSliderOutline[1])
 
-
         self.joystickSliderOutline = ((.25)*self.WIDTH, (.625)*self.HEIGHT, (.6)*self.WIDTH, (.02)*self.HEIGHT)
         self.joystickSliderStart = .26*self.WIDTH + (.3)*self.WIDTH - .03*self.WIDTH
         self.joystickSlider = (self.joystickSliderStart, (.6275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
         self.joystickLocation = ((self.joystickSliderOutline[0] - .1 * self.WIDTH), self.joystickSliderOutline[1])
+
+        self.updateNow = ((.125)*self.WIDTH, (.25)*self.HEIGHT, (.615)*self.WIDTH, (.195)*self.HEIGHT)
 
     def text(self, i, h):
 
@@ -156,6 +164,26 @@ class openSettings:
         # calling function to print titles and labels
         self.text(i, h)
 
+    def update(self):
+        user_settings.SETTINGS_JSON = {
+                "WIDTH": self.WIDTH,
+                "HEIGHT": self.HEIGHT,
+                "FULLSCREEN": self.fullscreen,
+
+                "SFX_VOLUME": int(self.currentVolume) / 100,
+                "MUSIC_VOLUME": user_settings.MUSIC_VOLUME,
+                "FPS": self.currentFPS,
+
+                "JOYSTICK_THRESHOLD": int(self.currentjoystick) / 100,
+                "BULLET_HELL_BOTTOM_RIGHT": self.difficulty,
+
+                "CB_COLOR_OVERRIDE": user_settings.CB_COLOR_OVERRIDE,
+
+                "CONSTANT_SEED": user_settings.CONSTANT_SEED
+            }
+        user_settings.save_vars()
+        user_settings.reload_vars()
+
     def run(self):
         # adding buttons, titles, labels
         self.setup()
@@ -178,24 +206,7 @@ class openSettings:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     # back button pressed, return to homescreen
                     if pygame.Rect(self.exitButton).collidepoint(pygame.mouse.get_pos()):
-                        user_settings.SETTINGS_JSON = {
-                                "WIDTH": self.WIDTH,
-                                "HEIGHT": self.HEIGHT,
-                                "FULLSCREEN": self.fullscreen,
-
-                                "SFX_VOLUME": int(self.currentVolume) / 100, 
-                                "MUSIC_VOLUME": user_settings.MUSIC_VOLUME,
-                                "FPS": self.currentFPS,
-
-                                "JOYSTICK_THRESHOLD": int(self.currentjoystick) / 100,
-                                "BULLET_HELL_BOTTOM_RIGHT": self.difficulty,
-
-                                "CB_COLOR_OVERRIDE": user_settings.CB_COLOR_OVERRIDE,
-
-                                "CONSTANT_SEED": user_settings.CONSTANT_SEED
-                            }
-                        user_settings.save_vars()
-                        user_settings.reload_vars()
+                        self.update()
                         c = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
                         c.run(False)
 
@@ -218,51 +229,47 @@ class openSettings:
                             s = openSettings(w, h, True)
 
                         self.fullscreen = not self.fullscreen
+                        self.update()
                         s.run()
 
                     # change final level difficulty
                     elif pygame.Rect(self.fullscreenToggle).collidepoint(pygame.mouse.get_pos()):
                         self.difficulty = not self.difficulty
+                        self.update()
 
                     # square screen
                     elif pygame.Rect(self.SD1).collidepoint(pygame.mouse.get_pos()):
-                        try:
-                            _, h = pyautogui.size()
-                        except:
-                            h = 600
-                        squareDimensions = h - (.1*h)
-                        s = openSettings(squareDimensions, squareDimensions, False)
+                        self.HEIGHT = self.defaultHeight - (.1*self.defaultHeight)
+                        self.WIDTH = self.HEIGHT
+                        self.update()
+                        s = openSettings(self.WIDTH, self.HEIGHT, False)
                         s.run()
 
                     # vertical screen
                     elif pygame.Rect(self.SD2).collidepoint(pygame.mouse.get_pos()):
-                        try:
-                            w, h = pyautogui.size()
-                        except:
-                            w, h = 800, 600
-                        height = h - (.1*h)
-                        width = height * (2/3)
-                        s = openSettings(width, height, False)
+                        self.HEIGHT = self.defaultHeight - (.1*self.defaultHeight)
+                        self.WIDTH = self.HEIGHT * (2/3)
+                        self.update()
+                        s = openSettings(self.WIDTH, self.HEIGHT, False)
                         s.run()
 
                     # landscape screen
                     elif pygame.Rect(self.SD3).collidepoint(pygame.mouse.get_pos()):
-                        try:
-                            w, h = pyautogui.size()
-                        except:
-                            w, h = 800, 600
-                        height = h - (.1*h)
-                        width = w - (.1*w)
-                        s = openSettings(width, height, False)
+                        self.HEIGHT = self.defaultHeight - (.1*self.defaultHeight)
+                        self.WIDTH = self.defaultWidth - (.1*self.defaultWidth)
+                        self.update()
+                        s = openSettings(self.WIDTH, self.HEIGHT, False)
                         s.run()
 
                     # fullscreen screen
                     elif pygame.Rect(self.SD4).collidepoint(pygame.mouse.get_pos()):
+                        self.fullscreen = True
                         try:
-                            w, h = pyautogui.size()
+                            self.WIDTH, self.HEIGHT = pyautogui.size()
                         except:
-                            w, h = 800, 600
-                        s = openSettings(w, h, True)
+                            self.WIDTH, self.HEIGHT = 800, 600
+                        self.update()
+                        s = openSettings(self.WIDTH, self.HEIGHT, True)
                         s.run()
 
                     # set FPS to 20
@@ -366,7 +373,7 @@ class openSettings:
             "HEIGHT": self.HEIGHT,
             "FULLSCREEN": self.fullscreen,
 
-            "SFX_VOLUME": int(self.currentVolume) / 100, 
+            "SFX_VOLUME": int(self.currentVolume) / 100,
             "MUSIC_VOLUME": user_settings.MUSIC_VOLUME,
             "FPS": self.currentFPS,
 
