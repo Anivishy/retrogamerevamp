@@ -139,6 +139,8 @@ calc_fps = 0
 calc_time = 0
 calc_counter = 0
 
+pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
+
 while True:
     # events
     direction = 0
@@ -187,7 +189,9 @@ while True:
 
     cur_health = player_health.get_health()
 
-
+    bullet_poscopy = {}
+    for bullet in current_bullets:
+        bullet_poscopy[bullet] = (bullet.x, bullet.y)
     
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT] or keys[pygame.K_a] or (joystick and joystick.get_axis(0) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == -1):
@@ -513,6 +517,8 @@ while True:
             playery = copypy
             startx = copysx
             starty = copysy
+            for bullet in current_bullets:
+                bullet.x, bullet.y = bullet_poscopy[bullet]
             break
 
         cornerdistance = (cdx - width / 2) ** 2 + (cdy - height / 2) ** 2
@@ -521,6 +527,8 @@ while True:
             playery = copypy
             startx = copysx
             starty = copysy
+            for bullet in current_bullets:
+                bullet.x, bullet.y = bullet_poscopy[bullet]
             break 
 
     # draw calls - a LOT of them
@@ -635,18 +643,15 @@ while True:
         bullet.shoot(window)
         leave = False
         for ghost in ghosts:
-            # for wall in walls:
-            #     if pygame.Rect.collidepoint(wall, (bullet.x, bullet.y)):
-            #        current_bullets.remove(bullet) S
             ghost_rect = pygame.Rect(
                 ghost.x * SQUARE_SIZE - startx * SQUARE_SIZE - ghost.width // 2,
                 ghost.y * SQUARE_SIZE - starty * SQUARE_SIZE - ghost.height // 2,
                 ghost.width, ghost.height
             )
             if pygame.Rect.collidepoint(ghost_rect, (bullet.x, bullet.y)):
-                ghosts.remove(ghost)
+                #ghosts.remove(ghost)
+                ghost.health -= 50
                 current_bullets.remove(bullet)
-                print(len(current_bullets))
                 leave = True
                 break
         if leave: break

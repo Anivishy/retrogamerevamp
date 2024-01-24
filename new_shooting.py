@@ -46,7 +46,7 @@ class lazer_bullet():
         # self.y = y - 80
         self.mousex = mousex
         self.mousey = mousey
-        self.speed = 10
+        self.speed = 25
         self.angle = math.atan2(y - mousey, x - mousex)
         self.angle_deg = self.angle * (180/math.pi)
 
@@ -123,8 +123,6 @@ class lazer_bullet():
             else:
                 r = pygame.Rect((p1[0] * SQUARE_SIZE - playerx * SQUARE_SIZE - SQUARE_SIZE // 2) - WALL_WIDTH // 2, (p1[1] * SQUARE_SIZE - playery * SQUARE_SIZE) - SQUARE_SIZE // 2, WALL_WIDTH, SQUARE_SIZE)
 
-            pygame.draw.rect(window, (255, 0, 0), rect, 2)
-            pygame.draw.rect(window, (255, 0, 0), r)
             if pygame.Rect.collidepoint(r, (self.x, self.y)):
                 return True
 
