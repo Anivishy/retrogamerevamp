@@ -4,7 +4,7 @@ import random
 
 import time
 if CONSTANT_SEED:
-    seed = 0
+    seed = 1706076342
 else:
     seed = int(time.time())
 
@@ -134,8 +134,8 @@ def walls_around(point_x, point_y):
 
     scan = 2
 
-    for x in range(-scan, scan):
-        for y in range(-scan, scan):
+    for x in range(-scan, scan + 1):
+        for y in range(-scan, scan + 1):
             point = ((point_x + x), (point_y + y))
             rgen = random.Random(seed + (point_x + x) * SQUARE_SIZE + (point_y + y))
             threshold = rgen.randint(15, 35) / 100
@@ -151,8 +151,8 @@ def walls_around(point_x, point_y):
     
     walls -= boss_zones
     walls |= protected
-    for x in range(-scan, scan + 1):
-        for y in range(-scan, scan + 1):
+    for x in range(-scan, scan + 2):
+        for y in range(-scan, scan + 2):
             point = ((point_x + x), (point_y + y))
             rgen = random.Random(seed + (point_x + x) * SQUARE_SIZE + (point_y + y))
             # boilerplate extravaganza - you have been warned!
