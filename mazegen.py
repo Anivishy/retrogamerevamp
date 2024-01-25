@@ -16,6 +16,14 @@ import colors
 
 from wall_generation import *
 
+
+
+p1 = pygame.transform.scale(pygame.image.load(sanitize_path('Images/player-1.png')), (RADIUS * 2, RADIUS * 2))
+p2 = pygame.transform.scale(pygame.image.load(sanitize_path('Images/player-2.png')), (RADIUS * 2, RADIUS * 2))
+p1_hurt = pygame.transform.scale(pygame.image.load(sanitize_path('Images/player-hurt-1.png')), (RADIUS * 2, RADIUS * 2))
+p2_hurt = pygame.transform.scale(pygame.image.load(sanitize_path('Images/player-hurt-2.png')), (RADIUS * 2, RADIUS * 2))
+
+
 def main():
     import time
 
@@ -33,6 +41,9 @@ def main():
     last_key = ""
     regen_time = 10
     current_bullets = []
+
+    swap_time = time.time()
+    swap = True
     #temp = 0 testing variable for shield regen
 
     # try:
@@ -142,10 +153,9 @@ def main():
     calc_counter = 0
 
     pygame.mouse.set_visible(False)
-
+    direction = 1
     while True:
         # events
-        direction = 0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -153,13 +163,13 @@ def main():
             
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    direction = 1
                 if event.key == pygame.K_RIGHT:
-                    direction = 2
-                if event.key == pygame.K_UP:
-                    direction = 3
+                    direction = 1
                 if event.key == pygame.K_DOWN:
+                    direction = 2
+                if event.key == pygame.K_LEFT:
+                    direction = 3
+                if event.key == pygame.K_UP:
                     direction = 4
                 if event.key == pygame.K_SPACE:
                     breakpoint()
@@ -210,7 +220,7 @@ def main():
                 # if BORDER_X * SQUARE_SIZE + WIDTH // 2 + SQUARE_SIZE // 2 > playerx > -BORDER_X * SQUARE_SIZE + WIDTH // 2 + SQUARE_SIZE // 2:
                 #     for bullet in current_bullets:
                 #         bullet.x += velocity * (delay_to - last) * SQUARE_SIZE
-                        
+            direction = 3
         elif keys[pygame.K_RIGHT] or keys[pygame.K_d] or (joystick and joystick.get_axis(0) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == 1):
             last_key = "right" 
             if not UNCAPPED_FPS:
@@ -223,6 +233,7 @@ def main():
                 # if BORDER_X * SQUARE_SIZE + WIDTH // 2 + SQUARE_SIZE // 2 > playerx > -BORDER_X * SQUARE_SIZE + WIDTH // 2 + SQUARE_SIZE // 2:
                 #     for bullet in current_bullets:
                 #         bullet.x += velocity * (delay_to - last) * SQUARE_SIZE
+            direction = 1
         elif keys[pygame.K_UP] or keys[pygame.K_w] or (joystick and joystick.get_axis(1) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == 1):
             last_key = "up" 
             if not UNCAPPED_FPS:
@@ -234,6 +245,7 @@ def main():
                 playery -= velocity * (delay_to - last) * SQUARE_SIZE
                 # for bullet in current_bullets:
                 #     bullet.y += velocity * (delay_to - last) * SQUARE_SIZE
+            direction = 4
         elif keys[pygame.K_DOWN] or keys[pygame.K_s] or (joystick and joystick.get_axis(1) >= JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[1] == -1):
             last_key = "down" 
             if not UNCAPPED_FPS:
@@ -244,21 +256,10 @@ def main():
                 playery += velocity * (delay_to - last) * SQUARE_SIZE
                 # for bullet in current_bullets:
                 #     bullet.y -= velocity * (delay_to - last) * SQUARE_SIZE
-        elif keys[pygame.K_1]:
-            defeated_bosses.add(1)
-        elif keys[pygame.K_2]:
-            defeated_bosses.add(2)
-        elif keys[pygame.K_3]:
-            defeated_bosses.add(3)
-        elif keys[pygame.K_4]:
-            defeated_bosses.add(4)
-
-
+            direction = 2
         if keys[pygame.K_ESCAPE]:
             pygame.quit()
             exit()
-        if keys[pygame.K_SPACE]:
-            breakpoint()
 
         # if keys[pygame.K_RSHIFT]: wasd
         #     player_bullets.calculate_path(pygame.mouse.get_pos(), playerx, playery)
@@ -292,7 +293,6 @@ def main():
 
         #print(current_bullets)
 
-        
                 
         
 
@@ -352,47 +352,47 @@ def main():
             last_walls = walls
             
 
-    else:
-        walls = last_walls
-    
-    walls -= walls_to_remove
-    
-    if playerx - WIDTH // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADX else 0)) and playery - HEIGHT // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADY else 0)):
-        if 1 not in defeated_bosses:
-            if not wall_lock:
-                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_spawn.wav"))
-                ba_overlap = boss_walls.intersection(walls)
-                walls |= boss_walls
-                wall_lock = True
-                ACTIVE_BOSS = BossTL(window, WIDTH)
-            last_walls = walls
-    if playerx - WIDTH // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADX else 0)) + SQUARE_SIZE and playery - HEIGHT // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADY else 0)):
-        if 2 not in defeated_bosses:
-            if not wall_lock:
-                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_spawn.wav"))
-                ba_overlap = boss_walls.intersection(walls)
-                walls |= boss_walls
-                wall_lock = True
-                ACTIVE_BOSS = BossTR(window)
-            last_walls = walls
-    if playerx - WIDTH // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADX else 0)) and playery - HEIGHT // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADY else 0)) + SQUARE_SIZE:
-        if 3 not in defeated_bosses:
-            if not wall_lock:
-                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_spawn.wav"))
-                ba_overlap = boss_walls.intersection(walls)
-                walls |= boss_walls
-                wall_lock = True
-                ACTIVE_BOSS = BossBL(window)
-            last_walls = walls
-    if playerx - WIDTH // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADX else 0)) + SQUARE_SIZE and playery - HEIGHT // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADY else 0)) + SQUARE_SIZE:
-        if 4 not in defeated_bosses:
-            if not wall_lock:
-                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_spawn.wav"))
-                ba_overlap = boss_walls.intersection(walls)
-                walls |= boss_walls
-                wall_lock = True
-                ACTIVE_BOSS = BossBR(window)
-            last_walls = walls
+        else:
+            walls = last_walls
+        
+        walls -= walls_to_remove
+        
+        if playerx - WIDTH // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADX else 0)) and playery - HEIGHT // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADY else 0)):
+            if 1 not in defeated_bosses:
+                if not wall_lock:
+                    pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_spawn.wav"))
+                    ba_overlap = boss_walls.intersection(walls)
+                    walls |= boss_walls
+                    wall_lock = True
+                    ACTIVE_BOSS = BossTL(window, WIDTH)
+                last_walls = walls
+        if playerx - WIDTH // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADX else 0)) + SQUARE_SIZE and playery - HEIGHT // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADY else 0)):
+            if 2 not in defeated_bosses:
+                if not wall_lock:
+                    pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_spawn.wav"))
+                    ba_overlap = boss_walls.intersection(walls)
+                    walls |= boss_walls
+                    wall_lock = True
+                    ACTIVE_BOSS = BossTR(window)
+                last_walls = walls
+        if playerx - WIDTH // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADX else 0)) and playery - HEIGHT // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADY else 0)) + SQUARE_SIZE:
+            if 3 not in defeated_bosses:
+                if not wall_lock:
+                    pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_spawn.wav"))
+                    ba_overlap = boss_walls.intersection(walls)
+                    walls |= boss_walls
+                    wall_lock = True
+                    ACTIVE_BOSS = BossBL(window)
+                last_walls = walls
+        if playerx - WIDTH // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADX else 0)) + SQUARE_SIZE and playery - HEIGHT // 2 > (BOUND - (BOSS_AREA * SQUARE_SIZE) + (SQUARE_SIZE // 2 if PADY else 0)) + SQUARE_SIZE:
+            if 4 not in defeated_bosses:
+                if not wall_lock:
+                    pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_spawn.wav"))
+                    ba_overlap = boss_walls.intersection(walls)
+                    walls |= boss_walls
+                    wall_lock = True
+                    ACTIVE_BOSS = BossBR(window)
+                last_walls = walls
 
         if ACTIVE_BOSS:
             if ACTIVE_BOSS.health <= 0:
@@ -439,7 +439,7 @@ def main():
             -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
             -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, 
             RADIUS*2, RADIUS*2)
-
+        
         do_damage = False
         if not player_protected:
             for ghost in ghosts:
@@ -598,21 +598,32 @@ def main():
         window.fill((0, 0, 0))
 
         
-
         
 
         if not player_protected:
 
-            pygame.draw.circle(window, (255, 255, 0), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
+            if swap:
+                img = p1
+            else: 
+                img = p2
+            #pygame.draw.circle(window, (255, 255, 0), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
         else:
-            pygame.draw.circle(window, (255, 127, 80), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
+            #pygame.draw.circle(window, (255, 127, 80), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
+            if swap:
+                img = p1_hurt
+            else: 
+                img = p2_hurt
 
+        if time.time() - swap_time > 0.15:
+            swap = not swap
+            swap_time = time.time()
 
         player_rect = pygame.Rect(
             -startx * SQUARE_SIZE + playerx - SQUARE_SIZE // 2 - RADIUS, 
             -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, 
             RADIUS*2, RADIUS*2)
         
+        window.blit(pygame.transform.rotate(img, -90*(direction - 1)), player_rect)
         conx = min(max(playerx, -BORDER_X * SQUARE_SIZE + WIDTH // 2), BORDER_X * SQUARE_SIZE + WIDTH // 2) // SQUARE_SIZE
         cony = min(max(playery, -BORDER_Y * SQUARE_SIZE + HEIGHT // 2), BORDER_Y * SQUARE_SIZE + HEIGHT // 2) // SQUARE_SIZE
         
