@@ -175,6 +175,7 @@ while True:
                 start_time = cur_time
                 current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, mousex, mousey, HEIGHT, WIDTH))
                 player_score.use_ammo(1)
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_bullet.wav"))
     
     copysx = startx
     copysy = starty
@@ -285,6 +286,7 @@ while True:
             start_time = cur_time
             current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE), playery - (starty * SQUARE_SIZE), mousex, mousey))
             player_score.use_ammo(1)
+            pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_bullet.wav"))
 
     #print(current_bullets)
 
@@ -343,7 +345,7 @@ while True:
     if int(startx) != lastx or int(starty) != lasty:
         walls = gen_walls(int(startx), int(starty)) - walls_to_remove
         lastx = int(startx)
-        lasty = int(starty)
+        lasty  = int(starty)
 
         last_walls = walls
         
@@ -698,24 +700,21 @@ while True:
                 #ghosts.remove(ghost)
                 ghost.health -= 100
                 current_bullets.remove(bullet)
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/ghost_hit.wav"))
                 leave = True
                 break
-        print("C")
         if leave: continue
-        print("B")
         if ACTIVE_BOSS:
-            print("A")
             boss = ACTIVE_BOSS
             boss_rect = pygame.Rect(
                 boss.x,
                 boss.y,
                 boss.width, boss.height
             )
-            pygame.draw.rect(window, (255, 0, 0), boss_rect, 5)
-            print(boss_rect)
             if pygame.Rect.collidepoint(boss_rect, (bullet.x, bullet.y)):
                 boss.health -= 10
                 current_bullets.remove(bullet)
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/boss_hit.wav"))
                 continue
 
         if bullet.check_wall_col(window, startx, starty, use_boss=(ACTIVE_BOSS is not None)):
