@@ -121,7 +121,8 @@ class createHomescreen:
 
     def run(self, start):
         self.setup(start)
-
+        pygame.mouse.set_visible(True)
+        out = False
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -143,7 +144,11 @@ class createHomescreen:
                     elif pygame.Rect(self.beginButtonOutline).collidepoint(pygame.mouse.get_pos()):
                         import introlevel # fix this!!
                         introlevel.run()
+                        # import mazegen
+                        # mazegen.main()
 
+                        out = True
+                        break
                     # instruction button clicked
                     elif pygame.Rect(self.instructionButtonOutline).collidepoint(pygame.mouse.get_pos()):
                         i = instructions.createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
@@ -153,15 +158,21 @@ class createHomescreen:
                     elif pygame.Rect(self.settingButtonOutline).collidepoint(pygame.mouse.get_pos()):
                         s = settings.openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
-            
+            if out: break
             pygame.display.flip()
 
-if __name__ == "__main__":
-    try:
-        WIDTH, HEIGHT = pyautogui.size()
-    except:
-        WIDTH = 800
-        HEIGHT = 600
 
-    c = createHomescreen(WIDTH, HEIGHT, True)
-    c.run(True)
+import user_settings
+
+if __name__ == "__main__":
+    # try:
+    #     WIDTH, HEIGHT = pyautogui.size()
+    # except:
+    #     WIDTH = 800
+    #     HEIGHT = 600
+    while True:
+        WIDTH = user_settings.WIDTH
+        HEIGHT = user_settings.HEIGHT
+
+        c = createHomescreen(WIDTH, HEIGHT, user_settings.FULLSCREEN)
+        c.run(True)

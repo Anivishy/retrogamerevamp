@@ -141,7 +141,7 @@ def main():
     calc_time = 0
     calc_counter = 0
 
-    pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
+    pygame.mouse.set_visible(False)
 
     while True:
         # events

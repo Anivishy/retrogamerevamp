@@ -39,7 +39,7 @@ class Renderer:
         self.destroy_wall = False
         self.pause = pygame.image.load(sanitize_path('Images/pause.png')).convert()
         self._wall_event = pygame.USEREVENT + 5
-                        
+        self.exit_out = False
 
     def tick(self, fps):
         # Alternates between open and closed mouth for Pacman
@@ -66,6 +66,8 @@ class Renderer:
             self._clock.tick(fps)
             self._screen.fill((0, 0, 0))
             self._handle_events()
+            if self.exit_out:
+                break
            
     
     def new_object(self, object):
@@ -184,7 +186,9 @@ class Renderer:
 
                 if len(self.walls) == 0:
                     #Add code to transition to mazegen here
-                    pass
+                    import mazegen
+                    mazegen.main()
+                    self.exit_out = True
         
         key_pressed = pygame.key.get_pressed()
 
@@ -751,4 +755,5 @@ def run():
     new_game.new_game()
 
 # Commented out to avoid confusion when running
-run()
+if __name__ == "__main__":
+    run()
