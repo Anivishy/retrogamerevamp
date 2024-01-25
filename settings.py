@@ -166,8 +166,8 @@ class openSettings:
 
     def update(self):
         user_settings.SETTINGS_JSON = {
-                "WIDTH": self.WIDTH,
-                "HEIGHT": self.HEIGHT,
+                "WIDTH": int(self.WIDTH),
+                "HEIGHT": int(self.HEIGHT),
                 "FULLSCREEN": self.fullscreen,
 
                 "SFX_VOLUME": int(self.currentVolume) / 100,
@@ -369,8 +369,8 @@ class openSettings:
                 pygame.display.flip()
             if retearly: break
         user_settings.SETTINGS_JSON = {
-            "WIDTH": self.WIDTH,
-            "HEIGHT": self.HEIGHT,
+            "WIDTH": int(self.WIDTH),
+            "HEIGHT": int(self.HEIGHT),
             "FULLSCREEN": self.fullscreen,
 
             "SFX_VOLUME": int(self.currentVolume) / 100,

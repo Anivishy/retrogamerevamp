@@ -139,7 +139,7 @@ class Renderer:
             if event.type == pygame.QUIT:
                 self._game_over == True
                 pygame.quit()
-            
+                import sys; sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
