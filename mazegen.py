@@ -722,7 +722,7 @@ def main():
                     ghost.y * SQUARE_SIZE - starty * SQUARE_SIZE - ghost.height // 2,
                     ghost.width, ghost.height
                 )
-                if pygame.Rect.collidepoint(ghost_rect, (bullet.x, bullet.y)):
+                if pygame.Rect.collidepoint(ghost_rect, (bullet.x, bullet.y)) and not ghost.dead:
                     #ghosts.remove(ghost)
                     ghost.health -= 100
                     current_bullets.remove(bullet)
