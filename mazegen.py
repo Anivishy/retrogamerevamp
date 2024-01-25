@@ -173,7 +173,7 @@ def main():
             elif event.type == pygame.MOUSEBUTTONUP:
                 # shooting place
                 cur_time = time.time()
-                if player_score.get_ammo() > 0 and (cur_time - start_time > .25):
+                if player_score.get_ammo() > 0 and (cur_time - start_time > .75):
                     start_time = cur_time
                     current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, mousex, mousey, HEIGHT, WIDTH))
                     player_score.use_ammo(1)
@@ -284,7 +284,7 @@ def main():
         if keys [pygame.K_RSHIFT]:
             # shooting place
             cur_time = time.time()
-            if player_score.get_ammo() > 0 and (cur_time - start_time > .25):
+            if player_score.get_ammo() > 0 and (cur_time - start_time > .75):
                 start_time = cur_time
                 current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE), playery - (starty * SQUARE_SIZE), mousex, mousey))
                 player_score.use_ammo(1)
