@@ -459,7 +459,10 @@ while True:
                 PROJECTILE_RADIUS, PROJECTILE_RADIUS
             )
             if rect.colliderect(player_rect):
-                ACTIVE_BOSS.projectiles.discard(projectile)
+                if isinstance(ACTIVE_BOSS.projectiles, set):
+                    ACTIVE_BOSS.projectiles.discard(projectile)
+                else:
+                    ACTIVE_BOSS.projectiles.remove(projectile)
                 do_damage = True
                 player_protected = True
                 break
@@ -697,10 +700,27 @@ while True:
                 current_bullets.remove(bullet)
                 leave = True
                 break
-        if leave: break
+        print("C")
+        if leave: continue
+        print("B")
+        if ACTIVE_BOSS:
+            print("A")
+            boss = ACTIVE_BOSS
+            boss_rect = pygame.Rect(
+                boss.x,
+                boss.y,
+                boss.width, boss.height
+            )
+            pygame.draw.rect(window, (255, 0, 0), boss_rect, 5)
+            print(boss_rect)
+            if pygame.Rect.collidepoint(boss_rect, (bullet.x, bullet.y)):
+                boss.health -= 10
+                current_bullets.remove(bullet)
+                continue
+
         if bullet.check_wall_col(window, startx, starty, use_boss=(ACTIVE_BOSS is not None)):
             current_bullets.remove(bullet)
-            break
+
     pygame.display.update()
     
     if UNCAPPED_FPS:
