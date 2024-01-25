@@ -112,7 +112,7 @@ class lazer_bullet():
             t.width, t.height
         )
         #print(rect.x // SQUARE_SIZE, rect.y // SQUARE_SIZE)
-        w = {}
+        w = set()
         if use_boss: w = wall_generation.boss_walls
         for wall in wall_generation.walls_around((rect.x) // SQUARE_SIZE + 1 + int(playerx), (rect.y) // SQUARE_SIZE + 1 + int(playery)) | w:
             p1, p2 = wall
