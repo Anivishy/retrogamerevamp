@@ -469,6 +469,11 @@ def main():
                     player_protected = True
                     break
 
+        if player_health.player_health <= 0:
+            import game_over
+            game_over.GameOver(WIDTH, HEIGHT, FULLSCREEN, real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)))
+            return
+
         if do_damage:
             if player_health.player_shield > 0:
                 player_health.player_shield -= 10
@@ -736,3 +741,6 @@ def main():
             if frame_count == 0:
                 #print(real_round(clock.get_fps()))
                 ...
+
+if __name__ == "__main__":
+    main()

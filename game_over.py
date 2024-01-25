@@ -9,7 +9,7 @@ class GameOver:
         for _ in range(90):
             self.process_input()
             self.screen.fill((0, 0, 0))
-            pygame.draw.circle(self.screen, (255, 255, 0), (px, py), RADIUS)
+            pygame.draw.circle(self.screen, (255, 0, 0), (px, py), RADIUS)
             pygame.display.update()
             clock.tick(60)
 
@@ -18,13 +18,13 @@ class GameOver:
             for _ in range(30):
                 self.process_input()
                 self.screen.fill((0, 0, 0))
-            #    pygame.draw.circle(self.screen, (255, 255, 0), (px, py), RADIUS)
+            #    pygame.draw.circle(self.screen, (255, 0, 0), (px, py), RADIUS)
                 pygame.display.update()
                 clock.tick(60)
             for _ in range(30):
                 self.process_input()
                 self.screen.fill((0, 0, 0))
-                pygame.draw.circle(self.screen, (255, 255, 0), (px, py), RADIUS)
+                pygame.draw.circle(self.screen, (255, 0, 0), (px, py), RADIUS)
                 pygame.display.update()
                 clock.tick(60)
 
@@ -32,7 +32,7 @@ class GameOver:
         for _ in range(120):
             self.process_input()
             self.screen.fill((0, 0, 0))
-            #pygame.draw.circle(self.screen, (255, 255, 0), (px, py), RADIUS)
+            #pygame.draw.circle(self.screen, (255, 0, 0), (px, py), RADIUS)
             pygame.display.update()
             clock.tick(60)
 
@@ -41,4 +41,3 @@ class GameOver:
             if event.type == pygame.QUIT:
                 import sys; sys.exit()
 
-GameOver(1600, 900, False, 1600/2, 900/2)
