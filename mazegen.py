@@ -439,6 +439,7 @@ while True:
     do_damage = False
     if not player_protected:
         for ghost in ghosts:
+            if ghost.dead: continue
             ghost_rect = pygame.Rect(
                 ghost.x * SQUARE_SIZE - startx * SQUARE_SIZE - ghost.width // 2,
                 ghost.y * SQUARE_SIZE - starty * SQUARE_SIZE - ghost.height // 2,
@@ -692,12 +693,12 @@ while True:
             )
             if pygame.Rect.collidepoint(ghost_rect, (bullet.x, bullet.y)):
                 #ghosts.remove(ghost)
-                ghost.health -= 50
+                ghost.health -= 100
                 current_bullets.remove(bullet)
                 leave = True
                 break
         if leave: break
-        if bullet.check_wall_col(window, startx, starty):
+        if bullet.check_wall_col(window, startx, starty, use_boss=(ACTIVE_BOSS is not None)):
             current_bullets.remove(bullet)
             break
     pygame.display.update()

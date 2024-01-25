@@ -103,7 +103,7 @@ class lazer_bullet():
         #         return (True, ghosts)
         pass
 
-    def check_wall_col(self, window, playerx, playery):
+    def check_wall_col(self, window, playerx, playery, use_boss=False):
         t = self.lazer_gun_image_rect
         #print(self.velx, self.vely)
         #print(self.x - playerx * SQUARE_SIZE, self.y - playery * SQUARE_SIZE)
@@ -112,7 +112,9 @@ class lazer_bullet():
             t.width, t.height
         )
         #print(rect.x // SQUARE_SIZE, rect.y // SQUARE_SIZE)
-        for wall in wall_generation.walls_around((rect.x) // SQUARE_SIZE + 1 + int(playerx), (rect.y) // SQUARE_SIZE + 1 + int(playery)):
+        w = {}
+        if use_boss: w = wall_generation.boss_walls
+        for wall in wall_generation.walls_around((rect.x) // SQUARE_SIZE + 1 + int(playerx), (rect.y) // SQUARE_SIZE + 1 + int(playery)) | w:
             p1, p2 = wall
             p1 = list(p1)
             p2 = list(p2)
