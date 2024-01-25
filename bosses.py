@@ -22,11 +22,13 @@ for color in ["forest", "lava", "ice", "shadow", "dead"]:
     images[color] = mapped
 
 class BossTL: # top left
-    def __init__(self, screen):
+    def __init__(self, screen, width):
         self.screen = screen
 
         self.x = SQUARE_SIZE * 2
         self.y = SQUARE_SIZE * 2
+
+        self.screen_width = width
 
         self.width = self.height = SQUARE_SIZE * 0.75
         self.speed = BOSS_SPEED
@@ -41,6 +43,8 @@ class BossTL: # top left
         self.type_ = 1
 
         self.direction = 0
+
+        self.health = 100
 
 
     def check_all_collisions(self):
@@ -137,6 +141,7 @@ class BossTL: # top left
         
         self.process_projectiles(frame)
         self.draw()
+        #BossTL.gen_bossbar_percent(self.screen, self.screen_width)
 
     def draw(self):
         direction = ["right", "down", "left", "up"][self.direction - 1]
@@ -149,6 +154,20 @@ class BossTL: # top left
                 self.width, self.height
             )
         )
+
+    def gen_bossbar(self, window, WIDTH):
+        pygame.draw.rect(window, (255, 0, 0), [WIDTH - 350, 60, 302, 52], 2)
+        pygame.draw.rect(window, (255, 0, 0), [WIDTH - 350, 60, 300 * (self.player_shield/50), 50])
+        self.gen_shieldbar_percent(window, WIDTH)
+
+    def gen_bossbar_percent(self, window, WIDTH):
+        health = self.font.render("| " + str(round(self.player_shield)), True, (255, 0, 0)) 
+        healthRect = health.get_rect()
+        if self.player_health == 100:
+            healthRect.center = (WIDTH - 80, 140)
+        else:
+            healthRect.center = (WIDTH - 70, 140)
+        window.blit(health, healthRect)
 
 class BossTR: # top right
     def __init__(self, screen):
