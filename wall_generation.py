@@ -134,8 +134,8 @@ def walls_around(point_x, point_y):
 
     scan = 2
 
-    for x in range(-scan, scan + 1):
-        for y in range(-scan, scan + 1):
+    for x in range(-scan - 1, scan):
+        for y in range(-scan - 1, scan):
             point = ((point_x + x), (point_y + y))
             rgen = random.Random(seed + (point_x + x) * SQUARE_SIZE + (point_y + y))
             threshold = rgen.randint(15, 35) / 100
