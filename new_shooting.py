@@ -12,6 +12,7 @@ def sanitize_path(path):
     return os.path.join(base, path)
 
 import wall_generation
+from calculated_vars import *
 
 class lazer_gun():
 
@@ -45,7 +46,7 @@ class lazer_bullet():
         # self.y = y - 80
         self.mousex = mousex
         self.mousey = mousey
-        self.speed = 7.5
+        self.speed = 25
         self.angle = math.atan2(y - mousey, x - mousex)
         self.angle_deg = self.angle * (180/math.pi)
 
@@ -102,11 +103,30 @@ class lazer_bullet():
         #         return (True, ghosts)
         pass
 
-    def check_wall_col(self):
-        rect = self.lazer_gun_image_rect
+    def check_wall_col(self, window, playerx, playery, use_boss=False):
+        t = self.lazer_gun_image_rect
         #print(self.velx, self.vely)
-        #print(rect)
-        pass
+        #print(self.x - playerx * SQUARE_SIZE, self.y - playery * SQUARE_SIZE)
+        rect = pygame.Rect(
+            t.x, t.y,
+            t.width, t.height
+        )
+        #print(rect.x // SQUARE_SIZE, rect.y // SQUARE_SIZE)
+        w = set()
+        if use_boss: w = wall_generation.boss_walls
+        for wall in wall_generation.walls_around((rect.x) // SQUARE_SIZE + 1 + int(playerx), (rect.y) // SQUARE_SIZE + 1 + int(playery)) | w:
+            p1, p2 = wall
+            p1 = list(p1)
+            p2 = list(p2)
+            
+
+            if p1[1] == p2[1]:
+                r = pygame.Rect((p1[0] * SQUARE_SIZE - playerx * SQUARE_SIZE - SQUARE_SIZE // 2), (p1[1] * SQUARE_SIZE - playery * SQUARE_SIZE) - WALL_WIDTH // 2 - SQUARE_SIZE // 2, SQUARE_SIZE, WALL_WIDTH)
+            else:
+                r = pygame.Rect((p1[0] * SQUARE_SIZE - playerx * SQUARE_SIZE - SQUARE_SIZE // 2) - WALL_WIDTH // 2, (p1[1] * SQUARE_SIZE - playery * SQUARE_SIZE) - SQUARE_SIZE // 2, WALL_WIDTH, SQUARE_SIZE)
+
+            if pygame.Rect.collidepoint(r, (self.x, self.y)):
+                return True
 
     def check_boss_col(self):
         pass

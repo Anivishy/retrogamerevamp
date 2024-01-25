@@ -739,7 +739,7 @@ class Game:
             new_renderer.new_ghost(ghost)
 
         # Create pacman, and initilize game
-        pacman = Pacman(new_renderer, 288, 480, SIZE - 4)
+        pacman = Pacman(new_renderer, 288, 480, SIZE - 10)
         new_renderer.new_pacman(pacman)
         new_renderer.tick(60)
 

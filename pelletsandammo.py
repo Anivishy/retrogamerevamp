@@ -3,6 +3,7 @@ import random
 import os
 import pyautogui
 
+pygame.init()
 base = os.path.dirname(os.path.abspath(__file__))
 
 def sanitize_path(path):
@@ -49,6 +50,7 @@ class pellets:
         self.score += 1
         self.ammo_add += 1
         if self.ammo_add % 5 == 0:
+            pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/new_bullet.wav"))
             self.add_ammo(1)
             self.ammo_add = 0
             

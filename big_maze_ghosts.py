@@ -169,7 +169,7 @@ class Ghost:
 
     def update(self, startx, starty):
 
-        if self.health < 0:
+        if self.health <= 0:
             self.dead = True
         if not self.dead:
             
