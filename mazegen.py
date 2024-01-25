@@ -19,6 +19,8 @@ from wall_generation import *
 def main():
     import time
 
+    wincheck = False
+
     pygame.init()
     player_health = health.healthbar()
     player_score = pelletsandammo.pellets()
@@ -473,6 +475,14 @@ def main():
             import game_over
             game_over.GameOver(WIDTH, HEIGHT, FULLSCREEN, real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)))
             return
+        
+        if len(defeated_bosses) == 4:
+            if wincheck:
+                import win
+                win.Win(window, real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)))
+                return
+            else:
+                wincheck = True
 
         if do_damage:
             if player_health.player_shield > 0:
