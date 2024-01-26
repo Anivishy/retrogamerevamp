@@ -29,6 +29,10 @@ def main():
 
     wincheck = False
 
+    font = pygame.font.Font('freesansbold.ttf', 32)
+
+    fps_text = None
+
     pygame.init()
     player_health = health.healthbar()
     player_score = pelletsandammo.pellets()
@@ -718,6 +722,34 @@ def main():
         player_score.display_score(window, WIDTH)
         player_score.display_ammo(window, WIDTH)    
         player_target.update_target(window, (0,0))
+
+        if UNCAPPED_FPS:
+            frame_count += 1
+            if frame_count % 100 == 0:
+                calc_fps = str(real_round(1/(time.time() - delay_to)))
+                fps_text = font.render("FPS: " + calc_fps, True, (255, 255, 255))
+                
+
+            last = delay_to
+            delay_to = time.time()
+            UCFD.delay = delay_to - last
+        else:
+            frame_count = (frame_count + 1) % FPS
+            clock.tick(FPS)
+            if frame_count == 0:
+                calc_fps = str(real_round(clock.get_fps()))
+                fps_text = font.render("FPS: " + calc_fps, True, (255, 255, 255))
+                
+        
+        if fps_text:
+            r = fps_text.get_rect()
+            w, h = r.width, r.height
+            window.blit(fps_text, pygame.Rect(
+                10, 10,
+                w, h
+            ))
+
+        
         
         for bullet in current_bullets:
             bullet.shoot(window)
@@ -754,20 +786,8 @@ def main():
 
         pygame.display.update()
         
-        if UNCAPPED_FPS:
-            frame_count += 1
-            if frame_count % 1000 == 0:
-                #print(real_round(1/(time.time() - delay_to)))
-                ...
-            last = delay_to
-            delay_to = time.time()
-            UCFD.delay = delay_to - last
-        else:
-            frame_count = (frame_count + 1) % FPS
-            clock.tick(FPS)
-            if frame_count == 0:
-                #print(real_round(clock.get_fps()))
-                ...
+        
+
 
 if __name__ == "__main__":
     main()

@@ -46,7 +46,7 @@ class lazer_bullet():
         # self.y = y - 80
         self.mousex = mousex
         self.mousey = mousey
-        self.speed = 25
+        self.speed = 5
         self.angle = math.atan2(y - mousey, x - mousex)
         self.angle_deg = self.angle * (180/math.pi)
 
@@ -72,8 +72,17 @@ class lazer_bullet():
         self.lazer_gun_image = pygame.transform.rotate(self.lazer_gun_image, deg)
 
     def shoot(self, window):
-        self.x -= (self.velx / 4)
-        self.y -= (self.vely / 4)
+
+        if FPS:
+            self.x -= (self.velx) / FPS * SQUARE_SIZE
+            self.y -= (self.vely) / FPS * SQUARE_SIZE
+            
+        else:
+            self.x -= (self.velx) * UCFD.delay * SQUARE_SIZE
+            self.y -= (self.vely) * UCFD.delay * SQUARE_SIZE
+            
+        # self.x -= (self.velx / 4)
+        # self.y -= (self.vely / 4)
         
         
         self.lazer_gun_image_rect = self.lazer_gun_image.get_rect()

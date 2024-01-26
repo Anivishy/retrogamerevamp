@@ -255,8 +255,10 @@ class openSettings:
 
                     # landscape screen
                     elif pygame.Rect(self.SD3).collidepoint(pygame.mouse.get_pos()):
-                        self.HEIGHT = self.defaultHeight - (.1*self.defaultHeight)
-                        self.WIDTH = self.defaultWidth - (.1*self.defaultWidth)
+                        # self.HEIGHT = self.defaultHeight - (.1*self.defaultHeight)
+                        # self.WIDTH = self.defaultWidth - (.1*self.defaultWidth)
+                        self.HEIGHT = 900
+                        self.WIDTH = 1600
                         self.update()
                         s = openSettings(self.WIDTH, self.HEIGHT, False)
                         s.run()
