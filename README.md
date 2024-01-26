@@ -10,6 +10,8 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;In the main game users can experience 4 distinct biomes with unique ghosts and boss fights available in each, and since the maze is procedurally generated, no two playthroughs will ever quite be the same.
 
+&nbsp;&nbsp;&nbsp;&nbsp;As the user, you will first be met a recreation of the first level of the original pacman game
+
 ### **Running the Game:**
 
 To run the game first download the following libraries.
