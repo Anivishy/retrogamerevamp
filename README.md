@@ -43,7 +43,7 @@ Upon running this you will be presented a screen including instructions, setting
 
   - **Pelletsandammo:** The pellets and ammo file contains all the code pertaining to score tracking, when a player picks up pellets, as well as handling ammo, which is gained for every 5 pellets that the player picks up. The display and UI aspect for both of these elements is also taken care of in this file. The file also contians helper methods which can be called in the main game loop to increment and decrement the player's score and ammo with specific interactions, such as when the players shoots or when the player collects a pellet. 
 
-  - **Mousetargettracker:**
+  - **Mousetargettracker:** The mouse target tracker is simply a file which handles the crossair that player usues to aim their shots in the game. This file was created for the purpose of keeping the main game loop clean and organized. the file take care of loading in and re-rendering the crossair as the user moves their mouse pointer, only requiring a call to the class' draw function to acheive this
 
   - **UpdatedShooting:**
 
