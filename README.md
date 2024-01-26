@@ -41,6 +41,10 @@ Upon running this you will be presented a screen including instructions, setting
 
   - **Health:** The health file contains code focused around genertaing the palyer's health and sheild bar, which are grouped together due to their similar nature and their interaction with eachother. The class handles everything to do with these values, including calculations for regeneration, and tracking both values. There are also helper functions to take care of healing and taking damage, which can simply be called within the game loop in the mazegen file whenever specific interactions occour. This makes handling damage and healing much easier and consice.
 
+  - **Pelletsandammo:**
+
+  - **Mousetargettracker:**
+
 ### **Diagram:**
 
 ![architecture](https://github.com/Anivishy/retrogamerevamp/assets/90056323/d812cdce-1640-4c97-bfd0-15737a899a26)
