@@ -41,7 +41,7 @@ Upon running this you will be presented a screen including instructions, setting
 
   - **Health:** The health file contains code focused around genertaing the palyer's health and sheild bar, which are grouped together due to their similar nature and their interaction with eachother. The class handles everything to do with these values, including calculations for regeneration, and tracking both values. There are also helper functions to take care of healing and taking damage, which can simply be called within the game loop in the mazegen file whenever specific interactions occour. This makes handling damage and healing much easier and consice.
 
-  - **Pelletsandammo:**
+  - **Pelletsandammo:** The pellets and ammo file contains all the code pertaining to score tracking, when a player picks up pellets, as well as handling ammo, which is gained for every 5 pellets that the player picks up. The display and UI aspect for both of these elements is also taken care of in this file. The file also contians helper methods which can be called in the main game loop to increment and decrement the player's score and ammo with specific interactions, such as when the players shoots or when the player collects a pellet. 
 
   - **Mousetargettracker:**
 
