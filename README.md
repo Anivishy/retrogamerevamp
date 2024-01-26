@@ -45,6 +45,10 @@ Upon running this you will be presented a screen including instructions, setting
 
   - **Mousetargettracker:**
 
+  - **UpdatedShooting:**
+
+  - **WallGeneration:**
+
 ### **Diagram:**
 
 ![architecture](https://github.com/Anivishy/retrogamerevamp/assets/90056323/d812cdce-1640-4c97-bfd0-15737a899a26)
