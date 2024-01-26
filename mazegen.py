@@ -702,11 +702,11 @@ def main():
 
 
 
-        if (time.time() - targettime > 10):
+        if (time.time() - targettime > REGEN_DELAY):
             if FPS:
-                player_health.regen(1/FPS * (50 / 5))
+                player_health.regen(1/FPS * (50 / 10))
             else:
-                player_health.regen(UCFD.delay * (50 / 5))
+                player_health.regen(UCFD.delay * (50 / 10))
         player_health.gen_healthbar(window, WIDTH)
         player_health.gen_shieldbar(window, WIDTH)
         player_score.display_score(window, WIDTH)

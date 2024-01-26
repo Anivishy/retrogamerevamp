@@ -28,7 +28,7 @@ BOUND = MAP_RADIUS * SQUARE_SIZE
 PADX = PADY = False
 
 GHOST_RESPAWN = 10.0 
-PLAYER_PROTECT = 5.0
+PLAYER_PROTECT = 3.0
 
 BORDER_X = (BOUND - WIDTH / 2 + WALL_WIDTH / 2) / SQUARE_SIZE
 if int((BOUND - WIDTH / 2) / SQUARE_SIZE) == (BOUND - WIDTH / 2) / SQUARE_SIZE:
@@ -67,3 +67,5 @@ def real_round(d):
     r = d % 1
     if r >= 0.5: return int(math.ceil(d))
     else: return int(math.floor(d))
+
+REGEN_DELAY = 7.5

@@ -12,7 +12,7 @@ class Win:
 
         pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/win.wav"))
         
-        pygame.draw.circle(self.screen, (0, 255, 0), (px, py), RADIUS)
+        pygame.draw.circle(self.screen, (0, 255, 0), (px, py), RADIUS+2)
         
         pygame.display.update()
         for _ in range(115):
