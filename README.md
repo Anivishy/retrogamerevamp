@@ -45,9 +45,9 @@ Upon running this you will be presented a screen including instructions, setting
 
   - **Mousetargettracker:** The mouse target tracker is simply a file which handles the crossair that player usues to aim their shots in the game. This file was created for the purpose of keeping the main game loop clean and organized. the file take care of loading in and re-rendering the crossair as the user moves their mouse pointer, only requiring a call to the class' draw function to acheive this
 
-  - **UpdatedShooting:**
+  - **UpdatedShooting:** This is the third itteration of the shooting logic for the player. This file consists of functions to calculate and render the bullets shot by the player. Each bullet is created as its own object, with a x and y velocity calculated based on the angled between the player's current coordinates and the coordinates of the player's mouse (where the crossair is located.) The bullet object is called and created in the main game loop everytime the player shoots, where these objects are added to a list. This file also contains a funcction to update and re-render the bullet as it moves, which is once again called on every bullet object in the list of current bullets in the main game loop. 
 
-  - **WallGeneration:**
+  - **WallGeneration:** 
 
 ### **Diagram:**
 
