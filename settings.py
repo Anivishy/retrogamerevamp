@@ -29,7 +29,7 @@ class openSettings:
             self.fullscreen = True
 
         else:
-            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), 0)
             self.fullscreen = False
 
         self.screen.fill((0, 0, 0))
@@ -217,8 +217,8 @@ class openSettings:
                                 w, h = pyautogui.size()
                             except:
                                 w, h = 800, 600
-                            height = h - (.025*h)
-                            width = w - (.025*w)
+                            height = self.defaultHeight - (.025*self.defaultHeight)
+                            width = self.defaultWidth - (.025*self.defaultWidth)
                             s = openSettings(width, height, False)
 
                         else:
@@ -239,7 +239,7 @@ class openSettings:
 
                     # square screen
                     elif pygame.Rect(self.SD1).collidepoint(pygame.mouse.get_pos()):
-                        self.HEIGHT = self.defaultHeight - (.1*self.defaultHeight)
+                        self.HEIGHT = self.defaultHeight - (.3*self.defaultHeight)
                         self.WIDTH = self.HEIGHT
                         self.update()
                         s = openSettings(self.WIDTH, self.HEIGHT, False)
@@ -247,7 +247,7 @@ class openSettings:
 
                     # vertical screen
                     elif pygame.Rect(self.SD2).collidepoint(pygame.mouse.get_pos()):
-                        self.HEIGHT = self.defaultHeight - (.1*self.defaultHeight)
+                        self.HEIGHT = self.defaultHeight - (.3*self.defaultHeight)
                         self.WIDTH = self.HEIGHT * (2/3)
                         self.update()
                         s = openSettings(self.WIDTH, self.HEIGHT, False)
@@ -266,10 +266,7 @@ class openSettings:
                     # fullscreen screen
                     elif pygame.Rect(self.SD4).collidepoint(pygame.mouse.get_pos()):
                         self.fullscreen = True
-                        try:
-                            self.WIDTH, self.HEIGHT = pyautogui.size()
-                        except:
-                            self.WIDTH, self.HEIGHT = 800, 600
+                        self.WIDTH, self.HEIGHT = self.defaultWidth, self.defaultHeight
                         self.update()
                         s = openSettings(self.WIDTH, self.HEIGHT, True)
                         s.run()
