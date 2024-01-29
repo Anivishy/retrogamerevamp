@@ -10,6 +10,8 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;In the main game users can experience 4 distinct biomes with unique ghosts and boss fights available in each, and since the maze is procedurally generated, no two playthroughs will ever quite be the same.
 
+&nbsp;&nbsp;&nbsp;&nbsp;As the user, you will first be met a recreation of the first level of the original pacman game
+
 ### **Running the Game:**
 
 To run the game first download the following libraries.
@@ -39,7 +41,15 @@ Upon running this you will be presented a screen including instructions, setting
 
 &nbsp;&nbsp;&nbsp;&nbsp;The mazegen file serves as the central collection and implementation of many classes that make our main game. This is where our main game loop is run, where movements and key presses are tracked, interactions between the player and game objects are handled and where calls to helper classes are managed. In order to ensure a clear and easy to manage game streucutre, we seperated each game element or feature into its own class or collection. Furthermore, we ensured that elements and features that were logically connected to eachother were developed together in their own class, making the integration into the central mazegen file much easier. 
 
-  - **Health: **The health file contains code focused around genertaing the palyer's health and sheild bar, which are grouped together due to their similar nature and their interaction with eachother. The class handles everything to do with these values, including calculations for regeneration, and tracking both values. There are also helper functions to take care of healing and taking damage, which can simply be called within the game loop in the mazegen file whenever specific interactions occour. This makes handling damage and healing much easier and consice.
+  - **Health:** The health file contains code focused around genertaing the palyer's health and sheild bar, which are grouped together due to their similar nature and their interaction with eachother. The class handles everything to do with these values, including calculations for regeneration, and tracking both values. There are also helper functions to take care of healing and taking damage, which can simply be called within the game loop in the mazegen file whenever specific interactions occour. This makes handling damage and healing much easier and consice.
+
+  - **Pelletsandammo:** The pellets and ammo file contains all the code pertaining to score tracking, when a player picks up pellets, as well as handling ammo, which is gained for every 5 pellets that the player picks up. The display and UI aspect for both of these elements is also taken care of in this file. The file also contians helper methods which can be called in the main game loop to increment and decrement the player's score and ammo with specific interactions, such as when the players shoots or when the player collects a pellet. 
+
+  - **Mousetargettracker:** The mouse target tracker is simply a file which handles the crossair that player usues to aim their shots in the game. This file was created for the purpose of keeping the main game loop clean and organized. the file take care of loading in and re-rendering the crossair as the user moves their mouse pointer, only requiring a call to the class' draw function to acheive this
+
+  - **UpdatedShooting:** This is the third itteration of the shooting logic for the player. This file consists of functions to calculate and render the bullets shot by the player. Each bullet is created as its own object, with a x and y velocity calculated based on the angled between the player's current coordinates and the coordinates of the player's mouse (where the crossair is located.) The bullet object is called and created in the main game loop everytime the player shoots, where these objects are added to a list. This file also contains a funcction to update and re-render the bullet as it moves, which is once again called on every bullet object in the list of current bullets in the main game loop. 
+
+  - **WallGeneration:** 
 
 ### **Diagram:**
 
