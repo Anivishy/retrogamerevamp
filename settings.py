@@ -56,19 +56,18 @@ class openSettings:
         self.difficultyToggle = (.47*self.WIDTH, .875*self.HEIGHT, .06*self.WIDTH, .045* self.HEIGHT)
 
         self.volumeSliderOutline = ((.25)*self.WIDTH, (.525)*self.HEIGHT, (.6)*self.WIDTH, (.02)*self.HEIGHT)
-        self.volumeSliderStart = .26*self.WIDTH + (.6)*self.WIDTH - .03*self.WIDTH
+        self.volumeSliderStart = .28*self.WIDTH + ((.57)*self.WIDTH * (self.currentVolume/100) - (.02)*self.WIDTH)
         self.volumeSlider = (self.volumeSliderStart, (.5275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
         self.volLocation = ((self.volumeSliderOutline[0] - .1 * self.WIDTH), self.volumeSliderOutline[1])
 
         self.joystickSliderOutline = ((.25)*self.WIDTH, (.625)*self.HEIGHT, (.6)*self.WIDTH, (.02)*self.HEIGHT)
-        self.joystickSliderStart = .26*self.WIDTH + (.3)*self.WIDTH - .03*self.WIDTH
+        self.joystickSliderStart = .28*self.WIDTH + ((.57)*self.WIDTH * (self.currentjoystick/100) - (.02)*self.WIDTH)
         self.joystickSlider = (self.joystickSliderStart, (.6275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
         self.joystickLocation = ((self.joystickSliderOutline[0] - .1 * self.WIDTH), self.joystickSliderOutline[1])
         
         self.nextButton = ((.75)*self.WIDTH, (.9)*self.HEIGHT, (.2)*self.WIDTH, (.06)*self.HEIGHT)
 
     def text(self, i, h):
-
         i.printText("Settings", (.1 * self.HEIGHT), True, self.start, self.screen)
         i.printText("Screen Dimensions", (.2 * self.HEIGHT), False, self.start, self.screen)
         i.printText("Fullscreen", (.35 * self.HEIGHT), False, self.start, self.screen)
@@ -355,7 +354,7 @@ class openSettings:
                         self.currentVolume = ((a - min) / (max-min)) * 100
                         
                         self.currentVolume = str(round(self.currentVolume))
-                        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentVolume + ' ', True, (255, 255, 255), (0, 0, 0)), self.volLocation)
+                        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentVolume + '  ', True, (255, 255, 255), (0, 0, 0)), self.volLocation)
                         
                 # if joystick slider being moved
                 if mouseDownjoystick:
@@ -386,7 +385,7 @@ class openSettings:
                         joystickX = x - .1 * self.WIDTH
                         joystickLocation = (joystickX, joystickY)
 
-                        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentjoystick + ' ', True, (255, 255, 255), (0, 0, 0)), joystickLocation)
+                        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentjoystick + '  ', True, (255, 255, 255), (0, 0, 0)), joystickLocation)
                             
                 pygame.display.update()
             if retearly: break
