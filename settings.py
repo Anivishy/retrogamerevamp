@@ -3,6 +3,7 @@ import sys
 import homescreen
 import instructions
 import pyautogui
+import settings2
 
 import user_settings
 
@@ -29,7 +30,7 @@ class openSettings:
             self.fullscreen = True
 
         else:
-            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
             self.fullscreen = False
 
         self.screen.fill((0, 0, 0))
@@ -48,7 +49,7 @@ class openSettings:
         self.FPS4 = ((.5875)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
         self.FPS5 = ((.7375)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
 
-        self.start = True
+        self.start = False
 
         self.fullscreenToggle = (.47*self.WIDTH, .4*self.HEIGHT, .06*self.WIDTH, .045* self.HEIGHT)
 
@@ -63,18 +64,18 @@ class openSettings:
         self.joystickSliderStart = .26*self.WIDTH + (.3)*self.WIDTH - .03*self.WIDTH
         self.joystickSlider = (self.joystickSliderStart, (.6275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
         self.joystickLocation = ((self.joystickSliderOutline[0] - .1 * self.WIDTH), self.joystickSliderOutline[1])
-
-        self.updateNow = ((.125)*self.WIDTH, (.25)*self.HEIGHT, (.615)*self.WIDTH, (.195)*self.HEIGHT)
+        
+        self.nextButton = ((.75)*self.WIDTH, (.9)*self.HEIGHT, (.2)*self.WIDTH, (.06)*self.HEIGHT)
 
     def text(self, i, h):
 
-        i.printText("Settings", (.1 * self.HEIGHT), True, False)
-        i.printText("Screen Dimensions", (.2 * self.HEIGHT), False, False)
-        i.printText("Fullscreen", (.35 * self.HEIGHT), False, False)
-        i.printText("Volume", (.475 * self.HEIGHT), False, False)
-        i.printText("Joystick Threshold", (.575 * self.HEIGHT), False, False)
-        i.printText("FPS", (.675 * self.HEIGHT), False, False)
-        i.printText("Increase Final Level Difficulty?", (.825 * self.HEIGHT), False, False)
+        i.printText("Settings", (.1 * self.HEIGHT), True, self.start, self.screen)
+        i.printText("Screen Dimensions", (.2 * self.HEIGHT), False, self.start, self.screen)
+        i.printText("Fullscreen", (.35 * self.HEIGHT), False, self.start, self.screen)
+        i.printText("Volume", (.475 * self.HEIGHT), False, self.start, self.screen)
+        i.printText("Joystick Threshold", (.575 * self.HEIGHT), False, self.start, self.screen)
+        i.printText("FPS", (.675 * self.HEIGHT), False, self.start, self.screen)
+        i.printText("Increase Final Level Difficulty?", (.825 * self.HEIGHT), False, self.start, self.screen)
 
         buttonFont = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
 
@@ -115,6 +116,11 @@ class openSettings:
         a, b, c, d = self.FPS5
         x, y = h.CenterButtons("Uncapped", a, b, c, d, buttonFont)
         self.screen.blit(buttonFont.render("Uncapped", True, (255, 255, 255)), (x, y))
+        
+        # next page label 
+        a, b, c, d = self.nextButton
+        x, y = h.CenterButtons("More Settings \u2193", a, b, c, d, buttonFont)
+        self.screen.blit(buttonFont.render("More Settings \u2193", True, (255, 255, 255)), (x, y))
 
         pygame.display.flip()
 
@@ -125,6 +131,9 @@ class openSettings:
         # printing exit button
         a, b, _, _ = self.exitButton
         self.screen.blit(pygame.font.SysFont("monospace", int(60*self.WIDTH/1536)).render("<", True, (255, 255, 255)), (a, b))
+
+        # printing more settings button
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.nextButton), 5)
 
         # printing screen dimension buttons
         pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.SD1), 7)
@@ -197,11 +206,21 @@ class openSettings:
             for event in pygame.event.get():
 
                 if event.type == pygame.QUIT:
-                    retearly = True; break
+                    import sys; sys.exit()
+
+                elif event.type == pygame.VIDEORESIZE:
+                    s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                    s.run()
+
+                elif event.type == pygame.VIDEOEXPOSE:
+                    s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                    s.run()
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                       retearly = True; break
+                        self.update()
+                        c = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        c.run(False)
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     # back button pressed, return to homescreen
@@ -209,6 +228,12 @@ class openSettings:
                         self.update()
                         c = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
                         c.run(False)
+                        
+                    # more settings button pressed, go to settings 2
+                    if pygame.Rect(self.nextButton).collidepoint(pygame.mouse.get_pos()):
+                        self.update()
+                        s2 = settings2.openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        s2.run()
 
                     # fullscreen
                     elif pygame.Rect(self.fullscreenToggle).collidepoint(pygame.mouse.get_pos()):
@@ -217,8 +242,8 @@ class openSettings:
                                 w, h = pyautogui.size()
                             except:
                                 w, h = 800, 600
-                            height = h - (.025*h)
-                            width = w - (.025*w)
+                            height = self.defaultHeight - (.025*self.defaultHeight)
+                            width = self.defaultWidth - (.025*self.defaultWidth)
                             s = openSettings(width, height, False)
 
                         else:
@@ -233,43 +258,41 @@ class openSettings:
                         s.run()
 
                     # change final level difficulty
-                    elif pygame.Rect(self.fullscreenToggle).collidepoint(pygame.mouse.get_pos()):
+                    elif pygame.Rect(self.difficultyToggle).collidepoint(pygame.mouse.get_pos()):
                         self.difficulty = not self.difficulty
                         self.update()
 
                     # square screen
                     elif pygame.Rect(self.SD1).collidepoint(pygame.mouse.get_pos()):
-                        self.HEIGHT = self.defaultHeight - (.1*self.defaultHeight)
+                        self.HEIGHT = self.defaultHeight - (.3*self.defaultHeight)
                         self.WIDTH = self.HEIGHT
                         self.update()
-                        s = openSettings(self.WIDTH, self.HEIGHT, False)
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
                     # vertical screen
                     elif pygame.Rect(self.SD2).collidepoint(pygame.mouse.get_pos()):
-                        self.HEIGHT = self.defaultHeight - (.1*self.defaultHeight)
+                        self.HEIGHT = self.defaultHeight - (.3*self.defaultHeight)
                         self.WIDTH = self.HEIGHT * (2/3)
                         self.update()
-                        s = openSettings(self.WIDTH, self.HEIGHT, False)
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
                     # landscape screen
                     elif pygame.Rect(self.SD3).collidepoint(pygame.mouse.get_pos()):
-                        self.HEIGHT = self.defaultHeight - (.1*self.defaultHeight)
-                        self.WIDTH = self.defaultWidth - (.1*self.defaultWidth)
+                        # self.HEIGHT = self.defaultHeight - (.1*self.defaultHeight)
+                        # self.WIDTH = self.defaultWidth - (.1*self.defaultWidth)
+                        self.HEIGHT = 900
+                        self.WIDTH = 1600
                         self.update()
-                        s = openSettings(self.WIDTH, self.HEIGHT, False)
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
                     # fullscreen screen
                     elif pygame.Rect(self.SD4).collidepoint(pygame.mouse.get_pos()):
-                        self.fullscreen = True
-                        try:
-                            self.WIDTH, self.HEIGHT = pyautogui.size()
-                        except:
-                            self.WIDTH, self.HEIGHT = 800, 600
+                        self.WIDTH, self.HEIGHT = self.defaultWidth, self.defaultHeight
                         self.update()
-                        s = openSettings(self.WIDTH, self.HEIGHT, True)
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
                     # set FPS to 20
@@ -365,8 +388,7 @@ class openSettings:
 
                         self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentjoystick + ' ', True, (255, 255, 255), (0, 0, 0)), joystickLocation)
                             
-
-                pygame.display.flip()
+                pygame.display.update()
             if retearly: break
         user_settings.SETTINGS_JSON = {
             "WIDTH": int(self.WIDTH),

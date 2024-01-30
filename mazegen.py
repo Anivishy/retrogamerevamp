@@ -17,7 +17,7 @@ import colors
 from wall_generation import *
 
 
-
+# create player images
 p1 = pygame.transform.scale(pygame.image.load(sanitize_path('Images/player-1.png')), (RADIUS * 2, RADIUS * 2))
 p2 = pygame.transform.scale(pygame.image.load(sanitize_path('Images/player-2.png')), (RADIUS * 2, RADIUS * 2))
 p1_hurt = pygame.transform.scale(pygame.image.load(sanitize_path('Images/player-hurt-1.png')), (RADIUS * 2, RADIUS * 2))
@@ -25,9 +25,14 @@ p2_hurt = pygame.transform.scale(pygame.image.load(sanitize_path('Images/player-
 
 
 def main():
+    # initializin stuff
     import time
 
     wincheck = False
+
+    font = pygame.font.Font('freesansbold.ttf', 32)
+
+    fps_text = None
 
     pygame.init()
     player_health = health.healthbar()
@@ -45,15 +50,6 @@ def main():
     swap_time = time.time()
     swap = True
     #temp = 0 testing variable for shield regen
-
-    # try:
-    #     import pyautogui
-    #     WIDTH, HEIGHT = pyautogui.size()
-    # except:
-    #     WIDTH = 800
-    #     HEIGHT = 600
-
-
 
     player_health = health.healthbar()
 
@@ -75,18 +71,9 @@ def main():
 
     walls = set()
 
-
-
     defeated_bosses = set()
 
-
-
-
-
-
     import time
-
-
 
     playerx = WIDTH // 2 + SQUARE_SIZE // 2
     playery = HEIGHT // 2 + SQUARE_SIZE // 2
@@ -123,6 +110,7 @@ def main():
     player_protected = False
     protected_timer = 0
 
+    # set up joysticks (controller)
     joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
     if len(joysticks) > 0:
         joystick = joysticks[0]
@@ -130,30 +118,21 @@ def main():
         joystick = None
 
     import big_maze_ghosts as bmg
-    a_ghost = bmg.Ghost(window, 1, 0, 0)
-    # a_ghost.ty = int(playery // SQUARE_SIZE)
-    #a_ghost.astar(int((playerx + WIDTH // 2) // SQUARE_SIZE), int((playery + HEIGHT // 2) // SQUARE_SIZE))
-
 
     targettime = time.time()
 
+    # create ghosts
     ghosts = []
     for _ in range(12):
-        #ghosts.append(bmg.Ghost(window, 1, -MAP_RADIUS + real_round((WIDTH / 2) / SQUARE_SIZE) - int(0.2 * MAP_RADIUS), -MAP_RADIUS + real_round((HEIGHT / 2) / SQUARE_SIZE) - int(0.2 * MAP_RADIUS)))
-        
         ghosts.append(bmg.Ghost(window, 1, -int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), -int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
         ghosts.append(bmg.Ghost(window, 2, int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), -int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
         ghosts.append(bmg.Ghost(window, 3, -int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
         ghosts.append(bmg.Ghost(window, 4, int(0.4 * MAP_RADIUS) + round(WIDTH / 2 / SQUARE_SIZE), int(0.4 * MAP_RADIUS) + round(HEIGHT / 2 / SQUARE_SIZE)))
         
     velocity = PLAYER_SPEED
-
-    calc_fps = 0
-    calc_time = 0
-    calc_counter = 0
-
     pygame.mouse.set_visible(False)
     direction = 1
+
     while True:
         # events
         for event in pygame.event.get():
@@ -173,13 +152,10 @@ def main():
                     direction = 4
                 if event.key == pygame.K_SPACE:
                     breakpoint()
-                if event.key == pygame.K_q:
-                    a_ghost.step()
             elif event.type == pygame.JOYDEVICEADDED and not joystick:
                 joystick = pygame.joystick.Joystick(event.device_index)
             elif event.type == pygame.JOYDEVICEREMOVED and joystick:
                 joystick = None
-
             elif event.type == pygame.MOUSEBUTTONUP:
                 # shooting place
                 cur_time = time.time()
@@ -209,6 +185,7 @@ def main():
         for bullet in current_bullets:
             bullet_poscopy[bullet] = (bullet.x, bullet.y)
         
+        # handle keypresses
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] or keys[pygame.K_a] or (joystick and joystick.get_axis(0) <= -JOYSTICK_THRESHOLD) or (joystick and joystick.get_hat(0)[0] == -1):
             last_key = "left" 
@@ -297,11 +274,7 @@ def main():
             else:
                 pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/no_bullets.wav"))
 
-        #print(current_bullets)
-
-                
-        
-
+            
 
         #Old shooting code, ignore for now, do not delete
 
@@ -318,12 +291,10 @@ def main():
         #     for i in cur_proj:
         #         player_weapon.track_laser(window)
 
-
+        # create new camera position
         startx = (playerx - (WIDTH // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
         starty = (playery - (HEIGHT // 2) - (SQUARE_SIZE // 2)) / SQUARE_SIZE
         
-
-        # print(playerx - (startx * SQUARE_SIZE))
         
         # collision detection
         # find walls surrounding player
@@ -349,20 +320,19 @@ def main():
             starty = cy
 
         
-
+        # create new walls when the player moves to a new square
         if int(startx) != lastx or int(starty) != lasty:
             walls = gen_walls(int(startx), int(starty)) - walls_to_remove
             lastx = int(startx)
             lasty  = int(starty)
 
             last_walls = walls
-            
-
         else:
             walls = last_walls
         
         walls -= walls_to_remove
         
+        # boss spawning
         if playerx - WIDTH // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADX else 0)) and playery - HEIGHT // 2 < (-BOUND + (BOSS_AREA * SQUARE_SIZE) - (SQUARE_SIZE // 2 if PADY else 0)):
             if 1 not in defeated_bosses:
                 if not wall_lock:
@@ -400,10 +370,12 @@ def main():
                     ACTIVE_BOSS = BossBR(window)
                 last_walls = walls
 
+        # figuring out if the boss is defeated
         if ACTIVE_BOSS:
             if ACTIVE_BOSS.health <= 0:
                 defeated_bosses.add(ACTIVE_BOSS.type_)
 
+        # defeating the boss
         if playerx - WIDTH // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)) and playery - HEIGHT // 2 < (-BOUND + ((BOSS_AREA + 1) * SQUARE_SIZE)):
             if 1 in defeated_bosses:
                 ACTIVE_BOSS = None
@@ -446,6 +418,7 @@ def main():
             -RADIUS - SQUARE_SIZE // 2 -starty * SQUARE_SIZE + playery, 
             RADIUS*2, RADIUS*2)
         
+        # detect if the player collided with any ghosts
         do_damage = False
         if not player_protected:
             for ghost in ghosts:
@@ -460,6 +433,7 @@ def main():
                     player_protected = True
                     break
         
+        # detect if the player collided with any boss projectiles
         if not player_protected and ACTIVE_BOSS:
             for projectile in ACTIVE_BOSS.projectiles:
                 pos = projectile[0]
@@ -477,11 +451,14 @@ def main():
                     player_protected = True
                     break
 
+
+        # game over screen
         if player_health.player_health <= 0:
             import game_over
             game_over.GameOver(WIDTH, HEIGHT, FULLSCREEN, real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2)))
             return
         
+        # win screen
         if len(defeated_bosses) == 4:
             if wincheck:
                 import win
@@ -490,6 +467,7 @@ def main():
             else:
                 wincheck = True
 
+        # apply damage to player
         if do_damage:
             if player_health.player_shield > 0:
                 player_health.player_shield -= 10
@@ -502,6 +480,7 @@ def main():
             targettime = time.time()
             pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_hurt.wav"))
 
+        # if the player is protected from more damage, see if that invincibility needs to be removed
         if player_protected:
             targettime = time.time()
             velocity = PLAYER_SPEED * 0.6
@@ -520,6 +499,7 @@ def main():
                     velocity = PLAYER_SPEED
                     targettime = time.time()
 
+        # only detecting if the player is touching walls immediately around them
         walls_to_check = set()
         for x in range(0, 2):
             for y in range(0, 2):
@@ -527,6 +507,7 @@ def main():
 
         walls_to_check = walls_to_check.intersection(walls)
 
+        # wall collision checks
         # thank you eJames https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection
         for wall in walls_to_check:
             if wall[0][0] == wall[1][0]:
@@ -566,6 +547,7 @@ def main():
                     bullet.x, bullet.y = bullet_poscopy[bullet]
                 break 
 
+        # if the player camera moved, adjust the bullets accordingly
         dsx = startx - copysx
         dsy = starty - copysy
 
@@ -603,18 +585,13 @@ def main():
         # draw calls - a LOT of them
         window.fill((0, 0, 0))
 
-        
-        
-
+        # displaying the proper player imagge
         if not player_protected:
-
             if swap:
                 img = p1
             else: 
                 img = p2
-            #pygame.draw.circle(window, (255, 255, 0), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
         else:
-            #pygame.draw.circle(window, (255, 127, 80), (real_round(playerx - startx * SQUARE_SIZE - (SQUARE_SIZE // 2)), real_round(playery - starty * SQUARE_SIZE - (SQUARE_SIZE // 2))), RADIUS)
             if swap:
                 img = p1_hurt
             else: 
@@ -630,6 +607,8 @@ def main():
             RADIUS*2, RADIUS*2)
         
         window.blit(pygame.transform.rotate(img, -90*(direction - 1)), player_rect)
+        
+        # create all of the small pellets for the player to pick up
         conx = min(max(playerx, -BORDER_X * SQUARE_SIZE + WIDTH // 2), BORDER_X * SQUARE_SIZE + WIDTH // 2) // SQUARE_SIZE
         cony = min(max(playery, -BORDER_Y * SQUARE_SIZE + HEIGHT // 2), BORDER_Y * SQUARE_SIZE + HEIGHT // 2) // SQUARE_SIZE
         
@@ -656,6 +635,7 @@ def main():
                     if indicator not in intersected:            
                         pygame.draw.rect(window, (170, 170, 0), rect)
 
+        # manual boss camera update
         if ACTIVE_BOSS:        
             ACTIVE_BOSS.update_cam(
                 startx + BORDER_X,
@@ -665,7 +645,7 @@ def main():
             )
             ACTIVE_BOSS.update(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, frame_count)
 
-        
+        # draw all the walls
         for wall in walls:
             wall_color = colors.DEFAULT_BLUE
             if wall[0][0] > (WIDTH // 2 // SQUARE_SIZE) and wall[0][1] > (HEIGHT // 2 // SQUARE_SIZE):
@@ -689,25 +669,18 @@ def main():
                             ((wall[0][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[0][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)),
                             ((wall[1][0]-startx) * SQUARE_SIZE - (SQUARE_SIZE // 2), (wall[1][1]-starty) * SQUARE_SIZE - (SQUARE_SIZE // 2)), WALL_WIDTH)
 
-        
+        # move all the ghosts
         for ghost in ghosts:
             ghost.update(startx, starty)
         
-        # draw player
-        # yellow circle at center of screen
-
-        #health bar init and score init
-        #shield regen 
-        # print("SRT" + str(shield_regen_timer))
-        # print("Regen time" + str(regen_time))
-        # print("Difference" + str(shield_regen_timer - regen_time))
+        
         if (cur_health == player_health.get_health()):
             regen_time = time.time()
         else:
             shield_regen_timer = time.time()
 
 
-
+        # determine if the player should start regen
         if (time.time() - targettime > REGEN_DELAY):
             if FPS:
                 player_health.regen(1/FPS * (50 / 10))
@@ -718,7 +691,36 @@ def main():
         player_score.display_score(window, WIDTH)
         player_score.display_ammo(window, WIDTH)    
         player_target.update_target(window, (0,0))
+
+        # update displayed fps
+        if UNCAPPED_FPS:
+            frame_count += 1
+            if frame_count % 100 == 0:
+                calc_fps = str(real_round(1/(time.time() - delay_to)))
+                fps_text = font.render("FPS: " + calc_fps, True, (255, 255, 255))
+                
+
+            last = delay_to
+            delay_to = time.time()
+            UCFD.delay = delay_to - last
+        else:
+            frame_count = (frame_count + 1) % FPS
+            clock.tick(FPS)
+            if frame_count == 0:
+                calc_fps = str(real_round(clock.get_fps()))
+                fps_text = font.render("FPS: " + calc_fps, True, (255, 255, 255))
+                
         
+        if fps_text:
+            r = fps_text.get_rect()
+            w, h = r.width, r.height
+            window.blit(fps_text, pygame.Rect(
+                10, 10,
+                w, h
+            ))
+
+        
+        # all bullet checks - ghosts, big ghosts, walls, and drawing to screen
         for bullet in current_bullets:
             bullet.shoot(window)
             leave = False
@@ -751,22 +753,11 @@ def main():
             if bullet.check_wall_col(window, startx, starty, use_boss=(ACTIVE_BOSS is not None)):
                 current_bullets.remove(bullet)
 
+        # and finally, updating
         pygame.display.update()
         
-        if UNCAPPED_FPS:
-            frame_count += 1
-            if frame_count % 1000 == 0:
-                #print(real_round(1/(time.time() - delay_to)))
-                ...
-            last = delay_to
-            delay_to = time.time()
-            UCFD.delay = delay_to - last
-        else:
-            frame_count = (frame_count + 1) % FPS
-            clock.tick(FPS)
-            if frame_count == 0:
-                #print(real_round(clock.get_fps()))
-                ...
+        
+
 
 if __name__ == "__main__":
     main()

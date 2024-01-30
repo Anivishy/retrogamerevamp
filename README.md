@@ -10,6 +10,8 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;In the main game users can experience 4 distinct biomes with unique ghosts and boss fights available in each, and since the maze is procedurally generated, no two playthroughs will ever quite be the same.
 
+&nbsp;&nbsp;&nbsp;&nbsp;As the user, you will first be met a recreation of the first level of the original pacman game
+
 ### **Running the Game:**
 
 To run the game first download the following libraries.
@@ -39,7 +41,15 @@ Upon running this you will be presented a screen including instructions, setting
 
 &nbsp;&nbsp;&nbsp;&nbsp;The mazegen file serves as the central collection and implementation of many classes that make our main game. This is where our main game loop is run, where movements and key presses are tracked, interactions between the player and game objects are handled and where calls to helper classes are managed. In order to ensure a clear and easy to manage game streucutre, we seperated each game element or feature into its own class or collection. Furthermore, we ensured that elements and features that were logically connected to eachother were developed together in their own class, making the integration into the central mazegen file much easier. 
 
-  - **Health: **The health file contains code focused around genertaing the palyer's health and sheild bar, which are grouped together due to their similar nature and their interaction with eachother. The class handles everything to do with these values, including calculations for regeneration, and tracking both values. There are also helper functions to take care of healing and taking damage, which can simply be called within the game loop in the mazegen file whenever specific interactions occour. This makes handling damage and healing much easier and consice.
+  - **Health:** The health file contains code focused around genertaing the palyer's health and sheild bar, which are grouped together due to their similar nature and their interaction with eachother. The class handles everything to do with these values, including calculations for regeneration, and tracking both values. There are also helper functions to take care of healing and taking damage, which can simply be called within the game loop in the mazegen file whenever specific interactions occour. This makes handling damage and healing much easier and consice.
+
+  - **Pelletsandammo:** The pellets and ammo file contains all the code pertaining to score tracking, when a player picks up pellets, as well as handling ammo, which is gained for every 5 pellets that the player picks up. The display and UI aspect for both of these elements is also taken care of in this file. The file also contians helper methods which can be called in the main game loop to increment and decrement the player's score and ammo with specific interactions, such as when the players shoots or when the player collects a pellet. 
+
+  - **Mousetargettracker:** The mouse target tracker is simply a file which handles the crossair that player usues to aim their shots in the game. This file was created for the purpose of keeping the main game loop clean and organized. the file take care of loading in and re-rendering the crossair as the user moves their mouse pointer, only requiring a call to the class' draw function to acheive this
+
+  - **UpdatedShooting:** This is the third itteration of the shooting logic for the player. This file consists of functions to calculate and render the bullets shot by the player. Each bullet is created as its own object, with a x and y velocity calculated based on the angled between the player's current coordinates and the coordinates of the player's mouse (where the crossair is located.) The bullet object is called and created in the main game loop everytime the player shoots, where these objects are added to a list. This file also contains a funcction to update and re-render the bullet as it moves, which is once again called on every bullet object in the list of current bullets in the main game loop. 
+
+  - **WallGeneration:** 
 
 ### **Diagram:**
 
@@ -70,16 +80,13 @@ Overall, the game is meant to provide a fresh spin on a classic game, the combin
 
 ## Retrospective
 ### Overall Process:
-Overall, the process of writing this game went smoothly. Due to the task tracker, we all had clarity on our responsibilities, what others are currently working on, and what items were pending. 
-This eliminated any duplication of work, or confusion about what to work on. 
+Overall, the process of writing this game went smoothly. Due to the task tracker, we all had clarity on our responsibilities, what others are currently working on, and what items were pending. This eliminated any duplication of work, or confusion about what to work on. 
 
-We did not have any significant issues with GitHub or syncing code, mainly because we each focused on a different portion of the code. 
-This allowed all of us to keep our code up to date. 
+We did not have any significant issues with GitHub or syncing code, mainly because we each focused on a different portion of the code. This allowed all of us to keep our code up to date. 
 
 With a clear idea of what needed to be worked on, and well-managed code and tasks, we were able to make effective use of class time, which is why we were able to get the key aspects of our game done within the given time. 
 
-Finally, throughout the project our group had a consensus on what we wanted to create, and how to go about it. 
-This was essential in that it allowed us to move forward with our project, without conflicting ideas/functions in different parts of the game. 
+Finally, throughout the project our group had a consensus on what we wanted to create, and how to go about it. This was essential in that it allowed us to move forward with our project, without conflicting ideas/functions in different parts of the game. 
 
 ### Communication: 
 Throughout our project, our main source of communication – our high point - was in our standups. During each standup, we shared what we had done since our last meeting, our plan for the day, and any other significant information. 
@@ -92,6 +99,9 @@ One low point in terms of communication was that, when encountering challenges, 
 In the future, we may be more intentional in asking others for help when stuck, as asking for help from others who may have a solution allows for a quicker resolution of issues. 
 
 ### Surprises: 
+One issue we faced was in the settings page. We had more settings to fit than space on the page, for which we attempted to add a scrollbar to allow users to see all the settings. However, anytime the scrollbar was moved, the page took a long time to reprint all of the UI elements. Due to this, we chose to add an additional page instead of a scrollbar to hold the additional settings. 
+
+Another issue we faced was _. 
 
 ### Takeaways:
 Throughout our project, we learned a few things, some of which we can improve from changing, and others we plan to continue with. 

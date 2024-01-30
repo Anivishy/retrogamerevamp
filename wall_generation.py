@@ -4,7 +4,7 @@ import random
 
 import time
 if CONSTANT_SEED:
-    seed = 1706076342
+    seed = 0
 else:
     seed = int(time.time())
 
