@@ -56,19 +56,18 @@ class openSettings:
         self.difficultyToggle = (.47*self.WIDTH, .875*self.HEIGHT, .06*self.WIDTH, .045* self.HEIGHT)
 
         self.volumeSliderOutline = ((.25)*self.WIDTH, (.525)*self.HEIGHT, (.6)*self.WIDTH, (.02)*self.HEIGHT)
-        self.volumeSliderStart = .26*self.WIDTH + (.6)*self.WIDTH - .03*self.WIDTH
+        self.volumeSliderStart = .28*self.WIDTH + ((.57)*self.WIDTH * (self.currentVolume/100) - (.02)*self.WIDTH)
         self.volumeSlider = (self.volumeSliderStart, (.5275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
         self.volLocation = ((self.volumeSliderOutline[0] - .1 * self.WIDTH), self.volumeSliderOutline[1])
 
         self.joystickSliderOutline = ((.25)*self.WIDTH, (.625)*self.HEIGHT, (.6)*self.WIDTH, (.02)*self.HEIGHT)
-        self.joystickSliderStart = .26*self.WIDTH + (.3)*self.WIDTH - .03*self.WIDTH
+        self.joystickSliderStart = .28*self.WIDTH + ((.57)*self.WIDTH * (self.currentjoystick/100) - (.02)*self.WIDTH)
         self.joystickSlider = (self.joystickSliderStart, (.6275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
         self.joystickLocation = ((self.joystickSliderOutline[0] - .1 * self.WIDTH), self.joystickSliderOutline[1])
         
         self.nextButton = ((.75)*self.WIDTH, (.9)*self.HEIGHT, (.2)*self.WIDTH, (.06)*self.HEIGHT)
 
     def text(self, i, h):
-
         i.printText("Settings", (.1 * self.HEIGHT), True, self.start, self.screen)
         i.printText("Screen Dimensions", (.2 * self.HEIGHT), False, self.start, self.screen)
         i.printText("Fullscreen", (.35 * self.HEIGHT), False, self.start, self.screen)
@@ -121,6 +120,28 @@ class openSettings:
         a, b, c, d = self.nextButton
         x, y = h.CenterButtons("More Settings \u2193", a, b, c, d, buttonFont)
         self.screen.blit(buttonFont.render("More Settings \u2193", True, (255, 255, 255)), (x, y))
+        
+        # fullscreen toggle label 
+        if self.fullscreen:
+            a, b, c, d = self.fullscreenToggle
+            x, y = h.CenterButtons("on", a, b, c, d, buttonFont)
+            self.screen.blit(buttonFont.render("on", True, (255, 255, 255)), (x, y))
+            
+        else:
+            a, b, c, d = self.fullscreenToggle
+            x, y = h.CenterButtons("off", a, b, c, d, buttonFont)
+            self.screen.blit(buttonFont.render("off", True, (0, 0, 0)), (x, y))
+            
+        # difficulty toggle label
+        if self.difficulty:
+            a, b, c, d = self.difficultyToggle
+            x, y = h.CenterButtons("on", a, b, c, d, buttonFont)
+            self.screen.blit(buttonFont.render("on", True, (255, 255, 255)), (x, y))
+            
+        else:
+            a, b, c, d = self.difficultyToggle
+            x, y = h.CenterButtons("off", a, b, c, d, buttonFont)
+            self.screen.blit(buttonFont.render("off", True, (0, 0, 0)), (x, y))
 
         pygame.display.flip()
 
@@ -130,23 +151,57 @@ class openSettings:
 
         # printing exit button
         a, b, _, _ = self.exitButton
-        self.screen.blit(pygame.font.SysFont("monospace", int(60*self.WIDTH/1536)).render("<", True, (255, 255, 255)), (a, b))
+        self.screen.blit(pygame.font.SysFont("monospace", int(80*self.WIDTH/1536)).render("<", True, (255, 255, 255)), (a, b))
 
         # printing more settings button
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.nextButton), 5)
 
         # printing screen dimension buttons
-        pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.SD1), 7)
-        pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.SD2), 7)
-        pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.SD3), 7)
-        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.SD4), 7)
+        if (self.WIDTH == self.HEIGHT):
+            pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.SD1), 11)
+        else:
+            pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.SD1), 5)
+            
+        if (self.WIDTH < self.HEIGHT):
+            pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.SD2), 11)
+        else:
+            pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.SD2), 5)
+        
+        if (self.WIDTH == 1600 and self.HEIGHT == 900):
+            pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.SD3), 11)
+        else:
+            pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.SD3), 5)
+        
+        if (self.WIDTH == self.defaultWidth and self.HEIGHT == self.defaultHeight):
+            pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.SD4), 11)
+        else:
+            pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.SD4), 5)
 
         # printing fps buttons
-        pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.FPS1), 7)
-        pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.FPS2), 7)
-        pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.FPS3), 7)
-        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.FPS4), 7)
-        pygame.draw.rect(self.screen, (34, 139, 34), pygame.Rect(self.FPS5), 7)
+        if (self.currentFPS == 20):
+            pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.FPS1), 11)
+        else:
+            pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.FPS1), 5)
+            
+        if (self.currentFPS == 60):
+            pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.FPS2), 11)
+        else:
+            pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.FPS2), 5)
+            
+        if (self.currentFPS == 90):
+            pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.FPS3), 11)
+        else:    
+            pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.FPS3), 5)
+        
+        if (self.currentFPS == 120):
+            pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.FPS4), 11)
+        else:
+            pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.FPS4), 5)
+        
+        if (self.currentFPS == None):
+            pygame.draw.rect(self.screen, (34, 139, 34), pygame.Rect(self.FPS5), 11)
+        else:
+            pygame.draw.rect(self.screen, (34, 139, 34), pygame.Rect(self.FPS5), 5)
 
         # printing volume slider + current value
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.volumeSliderOutline))
@@ -261,6 +316,8 @@ class openSettings:
                     elif pygame.Rect(self.difficultyToggle).collidepoint(pygame.mouse.get_pos()):
                         self.difficulty = not self.difficulty
                         self.update()
+                        s = openSettings(self.WIDTH, self.WIDTH, self.fullscreen)
+                        s.run()
 
                     # square screen
                     elif pygame.Rect(self.SD1).collidepoint(pygame.mouse.get_pos()):
@@ -298,22 +355,37 @@ class openSettings:
                     # set FPS to 20
                     elif pygame.Rect(self.FPS1).collidepoint(pygame.mouse.get_pos()):
                         self.currentFPS = 20
+                        self.update()
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        s.run()
 
                     # set FPS to 60
                     elif pygame.Rect(self.FPS2).collidepoint(pygame.mouse.get_pos()):
                         self.currentFPS = 60
+                        self.update()
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        s.run()
 
                     # set FPS to 90
                     elif pygame.Rect(self.FPS3).collidepoint(pygame.mouse.get_pos()):
                         self.currentFPS = 90
+                        self.update()
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        s.run()
 
                     # set FPS to 120
                     elif pygame.Rect(self.FPS4).collidepoint(pygame.mouse.get_pos()):
                         self.currentFPS = 120
+                        self.update()
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        s.run()
 
                     # set FPS to uncapped
                     elif pygame.Rect(self.FPS5).collidepoint(pygame.mouse.get_pos()):
                         self.currentFPS = None
+                        self.update()
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        s.run()
 
                     # volume slider moved
                     elif pygame.Rect(self.volumeSliderOutline).collidepoint(pygame.mouse.get_pos()):
@@ -355,7 +427,7 @@ class openSettings:
                         self.currentVolume = ((a - min) / (max-min)) * 100
                         
                         self.currentVolume = str(round(self.currentVolume))
-                        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentVolume + ' ', True, (255, 255, 255), (0, 0, 0)), self.volLocation)
+                        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentVolume + '  ', True, (255, 255, 255), (0, 0, 0)), self.volLocation)
                         
                 # if joystick slider being moved
                 if mouseDownjoystick:
@@ -386,7 +458,7 @@ class openSettings:
                         joystickX = x - .1 * self.WIDTH
                         joystickLocation = (joystickX, joystickY)
 
-                        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentjoystick + ' ', True, (255, 255, 255), (0, 0, 0)), joystickLocation)
+                        self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentjoystick + '  ', True, (255, 255, 255), (0, 0, 0)), joystickLocation)
                             
                 pygame.display.update()
             if retearly: break

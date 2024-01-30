@@ -125,6 +125,9 @@ def main():
 
     targettime = time.time()
 
+    cursor_x = WIDTH // 2
+    cursor_y = HEIGHT // 2
+
     # create ghosts
     ghosts = []
     for _ in range(12):
@@ -160,13 +163,16 @@ def main():
                 joystick = pygame.joystick.Joystick(event.device_index)
             elif event.type == pygame.JOYDEVICEREMOVED and joystick:
                 joystick = None
-            elif event.type == pygame.MOUSEBUTTONUP:
+            elif event.type == pygame.MOUSEBUTTONUP or (joystick and joystick.get_axis(5) > 0):
                 # shooting place
                 cur_time = time.time()
                 if player_score.get_ammo() > 0:
                     if (cur_time - start_time > .75):
                         start_time = cur_time
-                        current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, mousex, mousey, HEIGHT, WIDTH))
+                        if not joystick:
+                            current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, mousex, mousey, HEIGHT, WIDTH))
+                        else:
+                            current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, player_target.bx, player_target.by, HEIGHT, WIDTH))
                         player_score.use_ammo(1)
                         pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_bullet.wav"))
                 else:
@@ -705,7 +711,7 @@ def main():
         player_health.gen_shieldbar(window, WIDTH)
         player_score.display_score(window, WIDTH)
         player_score.display_ammo(window, WIDTH)    
-        player_target.update_target(window, (0,0))
+        player_target.update_target(window, (0,0), joystick)
 
         # update displayed fps
         if UNCAPPED_FPS:
