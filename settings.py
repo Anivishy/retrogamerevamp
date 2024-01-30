@@ -242,7 +242,7 @@ class openSettings:
                         self.HEIGHT = self.defaultHeight - (.3*self.defaultHeight)
                         self.WIDTH = self.HEIGHT
                         self.update()
-                        s = openSettings(self.WIDTH, self.HEIGHT, False)
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
                     # vertical screen
@@ -250,7 +250,7 @@ class openSettings:
                         self.HEIGHT = self.defaultHeight - (.3*self.defaultHeight)
                         self.WIDTH = self.HEIGHT * (2/3)
                         self.update()
-                        s = openSettings(self.WIDTH, self.HEIGHT, False)
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
                     # landscape screen
@@ -260,15 +260,14 @@ class openSettings:
                         self.HEIGHT = 900
                         self.WIDTH = 1600
                         self.update()
-                        s = openSettings(self.WIDTH, self.HEIGHT, False)
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
                     # fullscreen screen
                     elif pygame.Rect(self.SD4).collidepoint(pygame.mouse.get_pos()):
-                        self.fullscreen = True
                         self.WIDTH, self.HEIGHT = self.defaultWidth, self.defaultHeight
                         self.update()
-                        s = openSettings(self.WIDTH, self.HEIGHT, True)
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
                     # set FPS to 20
