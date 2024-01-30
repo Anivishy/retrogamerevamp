@@ -23,12 +23,7 @@ class createInstructions:
 
         self.exitButtonOutline = ((50/1536)*self.WIDTH, (70/1024)*self.HEIGHT, (50/1536)*self.WIDTH, (50/1024)*self.HEIGHT)
 
-    def printText(self, text, y, title, start, screen):
-        font = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
-
-        if title:
-            font = pygame.font.SysFont("monospace", int(50*self.WIDTH/1536))
-
+    def printText(self, text, y, title, start, screen, font):
         lines = self.breakLines(text, font)
 
         for l in lines:
@@ -51,7 +46,7 @@ class createInstructions:
 
                 pygame.display.flip()
 
-                if title:
+                if title and start:
                     pygame.time.wait(20) #20
 
                 elif start:
@@ -102,30 +97,33 @@ class createInstructions:
         return lines
 
     def printInstructions(self):
-        titleFont = pygame.font.SysFont("monospace", 50)
-        bodyFont = pygame.font.SysFont("monospace", 35)
+        titleFont = pygame.font.SysFont("monospace", int(50*self.WIDTH/1536))
+        subtitleFont = pygame.font.SysFont("monospace", int(40*self.WIDTH/1536))
+        bodyFont = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
 
-        self.printText("Instructions", (.1 * self.HEIGHT), True, True, self.screen)
+        self.printText("Instructions", (.05 * self.HEIGHT), True, True, self.screen, titleFont)
 
-        controls = "Use your up, down, left, and right arrows for movement. Press 'esc' to exit the game."
+        controls = "Use your up, down, left, and right arrows for movement. In the main game, Press 'esc' to exit the game."
 
-        goal = "In the intro level, collect all pellets in the area. Then, use your weapons to defeat each of the bosses."
-
-        powerups = "In each of the zones, you can pick up special powerups, including _"
-
+        introGoal = "You will first play the intro level, where you want to collect all pellets in the area without losing all your lives. You have 3 lives and lose one each time a ghost hits you."
+        
+        mainGoal = "In the main game, you must travel to the corner of each of the 4 zones, where you will find a boss. To beat them, shoot by left clicking (on keyboard) or with the right trigger (with a controller) until they lose their health. You gain 1 ammo to shoot for every 5 pellets you collect. You must beat all 4 bosses to win the game."
+        mainGoal2 = "While in or travelling between zones, if you are hit by a ghost or take damage from a boss, you are slowed down and have a brief period of invincibility. You also lose a little bit of your health. If your health runs out, you lose the game. You will have a health shield of 50 that regenerates every 10 seconds to help you in the game."
+        
         zones = "This game consists of an intro level, similar to standard Pacman, followed by 4 different Zones, each with a boss to beat."
 
-        self.printText("Controls", (.2 * self.HEIGHT), True, True, self.screen)
-        self.printText(controls, (.275 * self.HEIGHT), False, True, self.screen)
+        self.printText("Controls", (.15 * self.HEIGHT), True, True, self.screen, subtitleFont)
+        self.printText(controls, (.225 * self.HEIGHT), False, True, self.screen, bodyFont)
 
-        self.printText("Zones", (.4 * self.HEIGHT), True, True, self.screen)
-        self.printText(zones, (.475 * self.HEIGHT), False, True, self.screen)
+        self.printText("Zones", (.325 * self.HEIGHT), True, True, self.screen, subtitleFont)
+        self.printText(zones, (.4 * self.HEIGHT), False, True, self.screen, bodyFont)
 
-        self.printText("Goal", (.6 * self.HEIGHT), True, True, self.screen)
-        self.printText(goal, (.675 * self.HEIGHT), False, True, self.screen)
+        self.printText("Intro Level Goal", (.5 * self.HEIGHT), True, True, self.screen, subtitleFont)
+        self.printText(introGoal, (.575 * self.HEIGHT), False, True, self.screen, bodyFont)
 
-        self.printText("Powerups", (.8 * self.HEIGHT), True, True, self.screen)
-        self.printText(powerups, (.875 * self.HEIGHT), False, True, self.screen)
+        self.printText("Main Game Goal", (.7 * self.HEIGHT), True, True, self.screen, subtitleFont)
+        self.printText(mainGoal, (.775 * self.HEIGHT), False, True, self.screen, bodyFont)
+        self.printText(mainGoal2, (0.975 * self.HEIGHT), False, True, self.screen, bodyFont)
 
         pygame.display.flip()
 

@@ -5,18 +5,19 @@ import instructions
 import pyautogui
 import settings
 import user_settings
+import colors
 
 class openSettings2:
     def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
         pygame.init()
 
-        self.WIDTH = user_settings.WIDTH 
-        self.HEIGHT = user_settings.HEIGHT 
+        self.WIDTH = WIDTH
+        self.HEIGHT = HEIGHT
 
-        try:
-            self.WIDTH, self.HEIGHT = pyautogui.size()
-        except:
-            self.WIDTH, self.HEIGHT = 800, 600
+        # try:
+        #     self.WIDTH, self.HEIGHT = pyautogui.size()
+        # except:
+        #     self.WIDTH, self.HEIGHT = 800, 600
 
         if (FULLSCREEN):
             self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
@@ -44,10 +45,18 @@ class openSettings2:
         
         self.start = False
         
+        self.red = colors.LAVA
+        self.blue = colors.ICE
+        self.green = colors.FOREST
+        self.gray = colors.SHADOW
+        
     def text(self, i, h):
-        i.printText("Settings", (.1 * self.HEIGHT), True, self.start, self.screen)
-        i.printText("Color Options", (.2 * self.HEIGHT), False, self.start, self.screen)
-        i.printText("Constant Seed", (.35 * self.HEIGHT), False, self.start, self.screen)
+        titleFont = pygame.font.SysFont("monospace", int(50*self.WIDTH/1536))
+        subtitleFont = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
+        
+        i.printText("Settings", (.1 * self.HEIGHT), True, self.start, self.screen, titleFont)
+        i.printText("Color Options", (.2 * self.HEIGHT), False, self.start, self.screen, subtitleFont)
+        i.printText("Constant Seed", (.35 * self.HEIGHT), False, self.start, self.screen, subtitleFont)
 
         buttonFont = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
 
@@ -79,13 +88,20 @@ class openSettings2:
 
         # printing exit button
         a, b, _, _ = self.exitButton
-        self.screen.blit(pygame.font.SysFont("monospace", int(60*self.WIDTH/1536)).render("<", True, (255, 255, 255)), (a, b))
+        char = pygame.font.SysFont("monospace", int(80*self.WIDTH/1536)).render("<", True, (255, 255, 255))
+        self.exitButton = list(self.exitButton)
+        self.exitButton[2] = char.get_rect().width
+        self.exitButton[3] = char.get_rect().height
+        self.exitButton = tuple(self.exitButton)
+
+
+        self.screen.blit(char, (a, b))
 
         # printing color setting buttons
-        pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.C1), 7)
-        pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.C2), 7)
-        pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.C3), 7)
-        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.C4), 7)
+        pygame.draw.rect(self.screen, self.red, pygame.Rect(self.C1), 7)
+        pygame.draw.rect(self.screen, self.blue, pygame.Rect(self.C2), 7)
+        pygame.draw.rect(self.screen, self.green, pygame.Rect(self.C3), 7)
+        pygame.draw.rect(self.screen, self.gray, pygame.Rect(self.C4), 7)
         
         # printing previous settings button
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.returnButton), 5)
@@ -131,10 +147,6 @@ class openSettings2:
                     import sys; sys.exit()
 
                 elif event.type == pygame.VIDEORESIZE:
-                    s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
-                    s.run()
-
-                elif event.type == pygame.VIDEOEXPOSE:
                     s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                     s.run()
 
