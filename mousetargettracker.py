@@ -33,10 +33,15 @@ class mouseTarget:
             #     self.by = max(0, self.by + 1)
             
             if abs(joystick.get_axis(2)) > JOYSTICK_THRESHOLD / 5:
-                self.bx = min(max(0, self.bx + (joystick.get_axis(2) * 20)), WIDTH)
+                if FPS:
+                    self.bx = min(max(0, self.bx + (joystick.get_axis(2) * 12.5 / FPS * SQUARE_SIZE)), WIDTH)
+                else:
+                    self.bx = min(max(0, self.bx + (joystick.get_axis(2) * 12.5 * UCFD.delay * SQUARE_SIZE)), WIDTH)
             if abs(joystick.get_axis(3)) > JOYSTICK_THRESHOLD / 5:
-                self.by = min(max(0, self.by + (joystick.get_axis(3) * 20)), HEIGHT)
-            
+                if FPS:
+                    self.by = min(max(0, self.by + (joystick.get_axis(3) * 12.5 / FPS * SQUARE_SIZE)), HEIGHT)
+                else:
+                    self.by = min(max(0, self.by + (joystick.get_axis(3) * 12.5 * UCFD.delay * SQUARE_SIZE)), HEIGHT)
 
 
 
