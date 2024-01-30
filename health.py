@@ -8,8 +8,10 @@ class healthbar:
     pygame.init()
 
     def __init__ (self):
-        self.player_health = 100
-        self.player_shield = 0
+        #Value of player's starting health
+        self.player_health = 100 
+        #Shield init value, starts at 0 until regeneration begins
+        self.player_shield = 0 
         
         #Fonts
         self.font = pygame.font.Font('freesansbold.ttf', 32)
@@ -29,7 +31,9 @@ class healthbar:
         self.COLOR = ()
 
 
+    #Generation of the healthbar
     def gen_healthbar(self, window, WIDTH):
+        #Checks to change color based on the player's health, changing form green to yellow to red as they get clsoer to loosing all of their health
         if self.player_health <= 100 and self.player_health > 50:
             self.COLOR = self.GREEN
             pygame.draw.rect(window, self.GREEN, [WIDTH - 350, 10, 300 * (self.player_health/100), 50])
