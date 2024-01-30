@@ -151,7 +151,14 @@ class openSettings:
 
         # printing exit button
         a, b, _, _ = self.exitButton
-        self.screen.blit(pygame.font.SysFont("monospace", int(80*self.WIDTH/1536)).render("<", True, (255, 255, 255)), (a, b))
+        char = pygame.font.SysFont("monospace", int(80*self.WIDTH/1536)).render("<", True, (255, 255, 255))
+        self.exitButton = list(self.exitButton)
+        self.exitButton[2] = char.get_rect().width
+        self.exitButton[3] = char.get_rect().height
+        self.exitButton = tuple(self.exitButton)
+
+
+        self.screen.blit(char, (a, b))
 
         # printing more settings button
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.nextButton), 5)
@@ -267,9 +274,6 @@ class openSettings:
                     s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
                     s.run()
 
-                elif event.type == pygame.VIDEOEXPOSE:
-                    s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
-                    s.run()
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -459,7 +463,7 @@ class openSettings:
                         joystickLocation = (joystickX, joystickY)
 
                         self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentjoystick + '  ', True, (255, 255, 255), (0, 0, 0)), joystickLocation)
-                            
+      
                 pygame.display.update()
             if retearly: break
         user_settings.SETTINGS_JSON = {

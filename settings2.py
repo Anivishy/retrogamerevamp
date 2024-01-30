@@ -13,10 +13,10 @@ class openSettings2:
         self.WIDTH = user_settings.WIDTH 
         self.HEIGHT = user_settings.HEIGHT 
 
-        try:
-            self.WIDTH, self.HEIGHT = pyautogui.size()
-        except:
-            self.WIDTH, self.HEIGHT = 800, 600
+        # try:
+        #     self.WIDTH, self.HEIGHT = pyautogui.size()
+        # except:
+        #     self.WIDTH, self.HEIGHT = 800, 600
 
         if (FULLSCREEN):
             self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN)
@@ -79,7 +79,14 @@ class openSettings2:
 
         # printing exit button
         a, b, _, _ = self.exitButton
-        self.screen.blit(pygame.font.SysFont("monospace", int(60*self.WIDTH/1536)).render("<", True, (255, 255, 255)), (a, b))
+        char = pygame.font.SysFont("monospace", int(80*self.WIDTH/1536)).render("<", True, (255, 255, 255))
+        self.exitButton = list(self.exitButton)
+        self.exitButton[2] = char.get_rect().width
+        self.exitButton[3] = char.get_rect().height
+        self.exitButton = tuple(self.exitButton)
+
+
+        self.screen.blit(char, (a, b))
 
         # printing color setting buttons
         pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.C1), 7)
@@ -131,10 +138,6 @@ class openSettings2:
                     import sys; sys.exit()
 
                 elif event.type == pygame.VIDEORESIZE:
-                    s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
-                    s.run()
-
-                elif event.type == pygame.VIDEOEXPOSE:
                     s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                     s.run()
 
