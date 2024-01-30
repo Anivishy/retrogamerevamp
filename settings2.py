@@ -3,10 +3,10 @@ import sys
 import homescreen
 import instructions
 import pyautogui
-
+import settings
 import user_settings
 
-class openSettings:
+class openSettings2:
     def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
         pygame.init()
 
@@ -33,6 +33,7 @@ class openSettings:
         self.constantSeed = user_settings.CONSTANT_SEED
 
         self.exitButton = ((55/1536)*self.WIDTH, (75/1024)*self.HEIGHT, (40/1536)*self.WIDTH, (40/1024)*self.HEIGHT)
+        self.returnButton = ((.7)*self.WIDTH, (.9)*self.HEIGHT, (.25)*self.WIDTH, (.06)*self.HEIGHT)
 
         self.C1 = ((.125)*self.WIDTH, (.25)*self.HEIGHT, (.15)*self.WIDTH, (.06)*self.HEIGHT)
         self.C2 = ((.325)*self.WIDTH, (.25)*self.HEIGHT, (.15)*self.WIDTH, (.06)*self.HEIGHT)
@@ -67,6 +68,11 @@ class openSettings:
         x, y = h.CenterButtons("Tritanopia", a, b, c, d, buttonFont)
         self.screen.blit(buttonFont.render("Tritanopia", True, (255, 255, 255)), (x, y))
         
+        # previous page label 
+        a, b, c, d = self.returnButton
+        x, y = h.CenterButtons("Previous Settings \u2191", a, b, c, d, buttonFont)
+        self.screen.blit(buttonFont.render("Previous Settings \u2191", True, (255, 255, 255)), (x, y))
+        
     def setup(self):
         i = instructions.createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
         h = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
@@ -80,6 +86,9 @@ class openSettings:
         pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.C2), 7)
         pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.C3), 7)
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.C4), 7)
+        
+        # printing previous settings button
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.returnButton), 5)
         
         # printing constant seed toggle (is filled in if true)
         if self.constantSeed:
@@ -122,11 +131,11 @@ class openSettings:
                     import sys; sys.exit()
 
                 elif event.type == pygame.VIDEORESIZE:
-                    s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                    s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                     s.run()
 
                 elif event.type == pygame.VIDEOEXPOSE:
-                    s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                    s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                     s.run()
 
                 elif event.type == pygame.KEYDOWN:
@@ -141,40 +150,46 @@ class openSettings:
                         self.update()
                         c = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
                         c.run(False)
+                        
+                    # return button pressed, go to settings
+                    if pygame.Rect(self.returnButton).collidepoint(pygame.mouse.get_pos()):
+                        self.update()
+                        s = settings.openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        s.run()
 
                     # constant seed toggle
                     elif pygame.Rect(self.constantSeedToggle).collidepoint(pygame.mouse.get_pos()):
                         self.constantSeed = not self.constantSeed
                         self.update()
-                        s = s = openSettings(self.WIDTH, self.WIDTH, self.fullscreen)
+                        s = s = openSettings2(self.WIDTH, self.WIDTH, self.fullscreen)
                         s.run()
                         
                     # color 0
                     elif pygame.Rect(self.C1).collidepoint(pygame.mouse.get_pos()):
                         self.colorSetting = 0
                         self.update()
-                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
                     # color 1
                     elif pygame.Rect(self.C2).collidepoint(pygame.mouse.get_pos()):
                         self.colorSetting = 1
                         self.update()
-                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
                     # color 2
                     elif pygame.Rect(self.C3).collidepoint(pygame.mouse.get_pos()):
                         self.colorSetting = 2
                         self.update()
-                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
                     # color 3
                     elif pygame.Rect(self.C4).collidepoint(pygame.mouse.get_pos()):
                         self.colorSetting = 3
                         self.update()
-                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
                         
                 pygame.display.update()
@@ -205,5 +220,5 @@ if __name__ == "__main__":
         WIDTH = 800
         HEIGHT = 600
 
-    s = openSettings(WIDTH, HEIGHT, user_settings.FULLSCREEN)
+    s = openSettings2(WIDTH, HEIGHT, user_settings.FULLSCREEN)
     s.run()
