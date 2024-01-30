@@ -15,7 +15,7 @@ class createInstructions:
             self.fullscreen = True
 
         else:
-            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
             self.fullscreen = False
 
         self.screen.fill((0, 0, 0))
@@ -144,8 +144,16 @@ class createInstructions:
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
+                        c = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        c.run(False)
+
+                elif event.type == pygame.VIDEORESIZE:
+                    s = createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
+                    s.run()
+
+                elif event.type == pygame.VIDEOEXPOSE:
+                    s = createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
+                    s.run()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.Rect(self.exitButtonOutline).collidepoint(pygame.mouse.get_pos()):

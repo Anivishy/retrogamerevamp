@@ -29,7 +29,7 @@ class openSettings:
             self.fullscreen = True
 
         else:
-            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), 0)
+            self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
             self.fullscreen = False
 
         self.screen.fill((0, 0, 0))
@@ -197,11 +197,21 @@ class openSettings:
             for event in pygame.event.get():
 
                 if event.type == pygame.QUIT:
-                    retearly = True; break
+                    import sys; sys.exit()
+
+                elif event.type == pygame.VIDEORESIZE:
+                    s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                    s.run()
+
+                elif event.type == pygame.VIDEOEXPOSE:
+                    s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+                    s.run()
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                       retearly = True; break
+                        self.update()
+                        c = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        c.run(False)
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     # back button pressed, return to homescreen
@@ -364,7 +374,7 @@ class openSettings:
                         self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentjoystick + ' ', True, (255, 255, 255), (0, 0, 0)), joystickLocation)
                             
 
-                pygame.display.flip()
+                pygame.display.update()
             if retearly: break
         user_settings.SETTINGS_JSON = {
             "WIDTH": int(self.WIDTH),
