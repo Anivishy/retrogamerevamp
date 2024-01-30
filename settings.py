@@ -3,6 +3,7 @@ import sys
 import homescreen
 import instructions
 import pyautogui
+import settings2
 
 import user_settings
 
@@ -63,6 +64,8 @@ class openSettings:
         self.joystickSliderStart = .26*self.WIDTH + (.3)*self.WIDTH - .03*self.WIDTH
         self.joystickSlider = (self.joystickSliderStart, (.6275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
         self.joystickLocation = ((self.joystickSliderOutline[0] - .1 * self.WIDTH), self.joystickSliderOutline[1])
+        
+        self.nextButton = ((.75)*self.WIDTH, (.9)*self.HEIGHT, (.2)*self.WIDTH, (.06)*self.HEIGHT)
 
     def text(self, i, h):
 
@@ -113,6 +116,11 @@ class openSettings:
         a, b, c, d = self.FPS5
         x, y = h.CenterButtons("Uncapped", a, b, c, d, buttonFont)
         self.screen.blit(buttonFont.render("Uncapped", True, (255, 255, 255)), (x, y))
+        
+        # next page label 
+        a, b, c, d = self.nextButton
+        x, y = h.CenterButtons("More Settings \u2193", a, b, c, d, buttonFont)
+        self.screen.blit(buttonFont.render("More Settings \u2193", True, (255, 255, 255)), (x, y))
 
         pygame.display.flip()
 
@@ -123,6 +131,9 @@ class openSettings:
         # printing exit button
         a, b, _, _ = self.exitButton
         self.screen.blit(pygame.font.SysFont("monospace", int(60*self.WIDTH/1536)).render("<", True, (255, 255, 255)), (a, b))
+
+        # printing more settings button
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.nextButton), 5)
 
         # printing screen dimension buttons
         pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.SD1), 7)
@@ -217,6 +228,12 @@ class openSettings:
                         self.update()
                         c = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
                         c.run(False)
+                        
+                    # more settings button pressed, go to settings 2
+                    if pygame.Rect(self.nextButton).collidepoint(pygame.mouse.get_pos()):
+                        self.update()
+                        s2 = settings2.openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
+                        s2.run()
 
                     # fullscreen
                     elif pygame.Rect(self.fullscreenToggle).collidepoint(pygame.mouse.get_pos()):
