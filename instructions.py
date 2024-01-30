@@ -98,8 +98,8 @@ class createInstructions:
 
     def printInstructions(self):
         titleFont = pygame.font.SysFont("monospace", int(50*self.WIDTH/1536))
-        subtitleFont = pygame.font.SysFont("monospace", int(40*self.WIDTH/1536))
-        bodyFont = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
+        subtitleFont = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
+        bodyFont = pygame.font.SysFont("monospace", int(24*self.WIDTH/1536))
 
         self.printText("Instructions", (.05 * self.HEIGHT), True, True, self.screen, titleFont)
 
@@ -113,23 +113,30 @@ class createInstructions:
         zones = "This game consists of an intro level, similar to standard Pacman, followed by 4 different Zones, each with a boss to beat."
 
         self.printText("Controls", (.15 * self.HEIGHT), True, True, self.screen, subtitleFont)
-        self.printText(controls, (.225 * self.HEIGHT), False, True, self.screen, bodyFont)
+        self.printText(controls, (.2 * self.HEIGHT), False, True, self.screen, bodyFont)
 
-        self.printText("Zones", (.325 * self.HEIGHT), True, True, self.screen, subtitleFont)
-        self.printText(zones, (.4 * self.HEIGHT), False, True, self.screen, bodyFont)
+        self.printText("Zones", (.3 * self.HEIGHT), True, True, self.screen, subtitleFont)
+        self.printText(zones, (.35 * self.HEIGHT), False, True, self.screen, bodyFont)
 
-        self.printText("Intro Level Goal", (.5 * self.HEIGHT), True, True, self.screen, subtitleFont)
-        self.printText(introGoal, (.575 * self.HEIGHT), False, True, self.screen, bodyFont)
+        self.printText("Intro Level Goal", (.45 * self.HEIGHT), True, True, self.screen, subtitleFont)
+        self.printText(introGoal, (.5 * self.HEIGHT), False, True, self.screen, bodyFont)
 
-        self.printText("Main Game Goal", (.7 * self.HEIGHT), True, True, self.screen, subtitleFont)
-        self.printText(mainGoal, (.775 * self.HEIGHT), False, True, self.screen, bodyFont)
-        self.printText(mainGoal2, (0.975 * self.HEIGHT), False, True, self.screen, bodyFont)
+        self.printText("Main Game Goal", (.625 * self.HEIGHT), True, True, self.screen, subtitleFont)
+        self.printText(mainGoal, (.675 * self.HEIGHT), False, True, self.screen, bodyFont)
+        self.printText(mainGoal2, (0.825 * self.HEIGHT), False, True, self.screen, bodyFont)
 
         pygame.display.flip()
 
     def run(self):
         a, b, _, _ = self.exitButtonOutline
-        self.screen.blit(pygame.font.SysFont("monospace", int(60*self.WIDTH/1536)).render("<", True, (255, 255, 255)), (a, b))
+        char = pygame.font.SysFont("monospace", int(80*self.WIDTH/1536)).render("<", True, (255, 255, 255))
+        self.exitButtonOutline = list(self.exitButtonOutline)
+        self.exitButtonOutline[2] = char.get_rect().width
+        self.exitButtonOutline[3] = char.get_rect().height
+        self.exitButtonOutline = tuple(self.exitButtonOutline)
+        
+        self.screen.blit(char, (a, b))
+        
         self.printInstructions()
 
         while True:
@@ -145,10 +152,6 @@ class createInstructions:
                         c.run(False)
 
                 elif event.type == pygame.VIDEORESIZE:
-                    s = createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
-                    s.run()
-
-                elif event.type == pygame.VIDEOEXPOSE:
                     s = createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
                     s.run()
 
