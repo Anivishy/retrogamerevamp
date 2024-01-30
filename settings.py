@@ -48,7 +48,7 @@ class openSettings:
         self.FPS4 = ((.5875)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
         self.FPS5 = ((.7375)*self.WIDTH, (.725)*self.HEIGHT, (.125)*self.WIDTH, (.06)*self.HEIGHT)
 
-        self.start = True
+        self.start = False
 
         self.fullscreenToggle = (.47*self.WIDTH, .4*self.HEIGHT, .06*self.WIDTH, .045* self.HEIGHT)
 
@@ -64,17 +64,15 @@ class openSettings:
         self.joystickSlider = (self.joystickSliderStart, (.6275)*self.HEIGHT, (.01)*self.WIDTH, (.015)*self.HEIGHT)
         self.joystickLocation = ((self.joystickSliderOutline[0] - .1 * self.WIDTH), self.joystickSliderOutline[1])
 
-        self.updateNow = ((.125)*self.WIDTH, (.25)*self.HEIGHT, (.615)*self.WIDTH, (.195)*self.HEIGHT)
-
     def text(self, i, h):
 
-        i.printText("Settings", (.1 * self.HEIGHT), True, False)
-        i.printText("Screen Dimensions", (.2 * self.HEIGHT), False, False)
-        i.printText("Fullscreen", (.35 * self.HEIGHT), False, False)
-        i.printText("Volume", (.475 * self.HEIGHT), False, False)
-        i.printText("Joystick Threshold", (.575 * self.HEIGHT), False, False)
-        i.printText("FPS", (.675 * self.HEIGHT), False, False)
-        i.printText("Increase Final Level Difficulty?", (.825 * self.HEIGHT), False, False)
+        i.printText("Settings", (.1 * self.HEIGHT), True, self.start, self.screen)
+        i.printText("Screen Dimensions", (.2 * self.HEIGHT), False, self.start, self.screen)
+        i.printText("Fullscreen", (.35 * self.HEIGHT), False, self.start, self.screen)
+        i.printText("Volume", (.475 * self.HEIGHT), False, self.start, self.screen)
+        i.printText("Joystick Threshold", (.575 * self.HEIGHT), False, self.start, self.screen)
+        i.printText("FPS", (.675 * self.HEIGHT), False, self.start, self.screen)
+        i.printText("Increase Final Level Difficulty?", (.825 * self.HEIGHT), False, self.start, self.screen)
 
         buttonFont = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
 
@@ -243,7 +241,7 @@ class openSettings:
                         s.run()
 
                     # change final level difficulty
-                    elif pygame.Rect(self.fullscreenToggle).collidepoint(pygame.mouse.get_pos()):
+                    elif pygame.Rect(self.difficultyToggle).collidepoint(pygame.mouse.get_pos()):
                         self.difficulty = not self.difficulty
                         self.update()
 
@@ -373,7 +371,6 @@ class openSettings:
 
                         self.screen.blit(pygame.font.SysFont("monospace", int(30*self.WIDTH/1536)).render(self.currentjoystick + ' ', True, (255, 255, 255), (0, 0, 0)), joystickLocation)
                             
-
                 pygame.display.update()
             if retearly: break
         user_settings.SETTINGS_JSON = {
