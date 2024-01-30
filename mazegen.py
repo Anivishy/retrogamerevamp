@@ -166,7 +166,7 @@ def main():
                     if (cur_time - start_time > .75):
                         start_time = cur_time
                         if not joystick:
-                            current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, player_target.bx, player_target.by, HEIGHT, WIDTH))
+                            current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, mousex, mousey, HEIGHT, WIDTH))
                         else:
                             current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, player_target.bx, player_target.by, HEIGHT, WIDTH))
                         player_score.use_ammo(1)
