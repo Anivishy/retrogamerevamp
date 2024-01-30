@@ -16,6 +16,8 @@ import colors
 
 from wall_generation import *
 
+import boss_health
+
 
 # create player images
 p1 = pygame.transform.scale(pygame.image.load(sanitize_path('Images/player-1.png')), (RADIUS * 2, RADIUS * 2))
@@ -37,6 +39,8 @@ def main():
     pygame.init()
     player_health = health.healthbar()
     player_score = pelletsandammo.pellets()
+    boss_healthbar = boss_health.bossbar()
+    generate_health = False
     #player_bullets = new_shooting.lazer_bullet()
     #player_weapon = weapons.weapons()
     start_time = time.time()
@@ -370,6 +374,8 @@ def main():
                     ACTIVE_BOSS = BossBR(window)
                 last_walls = walls
 
+
+
         # figuring out if the boss is defeated
         if ACTIVE_BOSS:
             if ACTIVE_BOSS.health <= 0:
@@ -584,6 +590,15 @@ def main():
 
         # draw calls - a LOT of them
         window.fill((0, 0, 0))
+
+        if ACTIVE_BOSS:
+            generate_health = True
+        else:
+            generate_health = False
+
+        if generate_health:
+            boss_healthbar.gen_bossbar(window, WIDTH, ACTIVE_BOSS.health)
+            
 
         # displaying the proper player imagge
         if not player_protected:
