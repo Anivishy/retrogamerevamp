@@ -432,15 +432,18 @@ def main():
         do_damage = False
         if not player_protected:
             for ghost in ghosts:
-                if ghost.dead: continue
+                #if ghost.dead: continue
                 ghost_rect = pygame.Rect(
                     ghost.x * SQUARE_SIZE - startx * SQUARE_SIZE - ghost.width // 2,
                     ghost.y * SQUARE_SIZE - starty * SQUARE_SIZE - ghost.height // 2,
                     ghost.width, ghost.height
                 )
                 if ghost_rect.colliderect(player_rect):
-                    player_health.take_damage(15)
-                    player_protected = True
+                    if ghost.dead:
+                        ghosts.remove(ghost)
+                    else:
+                        player_health.take_damage(15)
+                        player_protected = True
                     
                     targettime = time.time()
                     pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_hurt.wav"))
