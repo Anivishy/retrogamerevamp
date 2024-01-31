@@ -80,35 +80,32 @@ Overall, the game is meant to provide a fresh spin on a classic game, the combin
 
 ## Retrospective
 ### Overall Process:
-Overall, the process of writing this game went smoothly. Due to the task tracker, we all had clarity on our responsibilities, what others are currently working on, and what items were pending. This eliminated any duplication of work, or confusion about what to work on. 
+&nbsp;&nbsp;&nbsp;&nbsp;Overall, the process of writing this game went smoothly. Due to the task tracker, we all had clarity on our responsibilities, what others are currently working on, and what items were pending. This eliminated any duplication of work, or confusion about what to work on. 
 
-We did not have any significant issues with GitHub or syncing code, mainly because we each focused on a different portion of the code. This allowed all of us to keep our code up to date. 
+&nbsp;&nbsp;&nbsp;&nbsp;We did not have any significant issues with GitHub or syncing code, mainly because we each focused on a different portion of the code. This allowed all of us to keep our code up to date. 
 
-With a clear idea of what needed to be worked on, and well-managed code and tasks, we were able to make effective use of class time, which is why we were able to get the key aspects of our game done within the given time. 
+&nbsp;&nbsp;&nbsp;&nbsp;With a clear idea of what needed to be worked on, and well-managed code and tasks, we were able to make effective use of class time, which is why we were able to get the key aspects of our game done within the given time. 
 
-Finally, throughout the project our group had a consensus on what we wanted to create, and how to go about it. This was essential in that it allowed us to move forward with our project, without conflicting ideas/functions in different parts of the game. 
+&nbsp;&nbsp;&nbsp;&nbsp;Finally, throughout the project our group had a consensus on what we wanted to create, and how to go about it. This was essential in that it allowed us to move forward with our project, without conflicting ideas/functions in different parts of the game. 
 
 ### Communication: 
-Throughout our project, our main source of communication – our high point - was in our standups. During each standup, we shared what we had done since our last meeting, our plan for the day, and any other significant information. 
-This allowed everyone to stay updated on what is currently being worked on, and what changes have been made, throughout the project. 
+&nbsp;&nbsp;&nbsp;&nbsp;Throughout our project, our main source of communication – our high point - was in our standups. During each standup, we shared what we had done since our last meeting, our plan for the day, and any other significant information. This allowed everyone to stay updated on what is currently being worked on, and what changes have been made, throughout the project. 
 
-Outside of this, we asked questions of one another periodically, whenever we required help or found something important to update others on. 
-This allowed us to take other’s input into account and incorporate details to accommodate their code. 
+&nbsp;&nbsp;&nbsp;&nbsp;Outside of this, we asked questions of one another periodically, whenever we required help or found something important to update others on. This allowed us to take other’s input into account and incorporate details to accommodate their code. 
 
-One low point in terms of communication was that, when encountering challenges, we had a tendency to resolve it on our own, rather than asking others if they know of a solution. 
-In the future, we may be more intentional in asking others for help when stuck, as asking for help from others who may have a solution allows for a quicker resolution of issues. 
+&nbsp;&nbsp;&nbsp;&nbsp;One low point in terms of communication was that, when encountering challenges, we had a tendency to resolve it on our own, rather than asking others if they know of a solution. In the future, we may be more intentional in asking others for help when stuck, as asking for help from others who may have a solution allows for a quicker resolution of issues. 
 
 ### Surprises: 
-One issue we faced was in the settings page. We had more settings to fit than space on the page, for which we attempted to add a scrollbar to allow users to see all the settings. However, anytime the scrollbar was moved, the page took a long time to render the many UI elements. Due to this, we chose to add an additional page instead of a scrollbar to hold the additional settings. 
+&nbsp;&nbsp;&nbsp;&nbsp;One issue we faced was in the settings page. We had more settings to fit than space on the page, for which we attempted to add a scrollbar to allow users to see all the settings. However, anytime the scrollbar was moved, the page took a long time to render the many UI elements. Due to this, we chose to add an additional page instead of a scrollbar to hold the additional settings. 
 
-Throughout the project, it was surprising how simple issues like these pushed us to choose different functionality than we had originally planned. 
+&nbsp;&nbsp;&nbsp;&nbsp;Throughout the project, it was surprising how simple issues like these pushed us to choose different functionality than we had originally planned. 
 
 ### Takeaways:
-Throughout our project, we learned a few things, some of which we can improve from changing, and others we plan to continue with. 
+&nbsp;&nbsp;&nbsp;&nbsp;Throughout our project, we learned a few things, some of which we can improve from changing, and others we plan to continue with. 
 
-Next time, we may try to improve on our timeline, as we orignially had goals to create a final boss, but ended up running out of time to do this. 
+&nbsp;&nbsp;&nbsp;&nbsp;Next time, we may try to improve on our timeline, as we orignially had goals to create a final boss, but ended up running out of time to do this. 
 To avoid this, we could try having an earlier deadline to have a fully functioning basic game, and then add more details from there, rather than working on each section independently and combining them at the end. 
 
-Something we plan to continue is task tracking. By using this, we were able to see what others were working on, preventing duplication of work, and we knew what tasks were pending. These allowed us to work more efficiently.
+&nbsp;&nbsp;&nbsp;&nbsp;Something we plan to continue is task tracking. By using this, we were able to see what others were working on, preventing duplication of work, and we knew what tasks were pending. These allowed us to work more efficiently.
 
-Finally, by using standups throughout our project, we were able to ensure everyone was on the same page about what others are working on, and what needed to be done for the day. By continuing to use this, we will produce higher quality work through discussion to refine ideas, and efficiency through clarity on tasks. 
+&nbsp;&nbsp;&nbsp;&nbsp;Finally, by using standups throughout our project, we were able to ensure everyone was on the same page about what others are working on, and what needed to be done for the day. By continuing to use this, we will produce higher quality work through discussion to refine ideas, and efficiency through clarity on tasks. 
