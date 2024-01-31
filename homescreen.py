@@ -71,7 +71,7 @@ class createHomescreen:
             pygame.display.flip()
 
             if start:
-                pygame.time.wait(50) #50
+                pygame.time.wait(65) #65
 
     def CenterText(self, text):
         textWidth, textHeight = self.openingFont.size(text)

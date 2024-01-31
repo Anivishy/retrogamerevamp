@@ -47,10 +47,10 @@ class createInstructions:
                 pygame.display.flip()
 
                 if title and start:
-                    pygame.time.wait(20) #20
+                    pygame.time.wait(27) #27
 
                 elif start:
-                    pygame.time.wait(5) #5
+                    pygame.time.wait(3) #3
 
             x2 = x
             textWidth, textHeight = font.size(text)
