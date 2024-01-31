@@ -49,7 +49,6 @@ Upon running this you will be presented a screen including instructions, setting
 
   - **UpdatedShooting:** This is the third itteration of the shooting logic for the player. This file consists of functions to calculate and render the bullets shot by the player. Each bullet is created as its own object, with a x and y velocity calculated based on the angled between the player's current coordinates and the coordinates of the player's mouse (where the crossair is located.) The bullet object is called and created in the main game loop everytime the player shoots, where these objects are added to a list. This file also contains a funcction to update and re-render the bullet as it moves, which is once again called on every bullet object in the list of current bullets in the main game loop. 
 
-  - **WallGeneration:** 
 
 ### **Diagram:**
 
@@ -97,6 +96,8 @@ Overall, the game is meant to provide a fresh spin on a classic game, the combin
 
 ### Surprises: 
 &nbsp;&nbsp;&nbsp;&nbsp;One surprise we encountered was through an issue we faced in the settings page. We had more settings to fit than space on the page, for which we attempted to add a scrollbar to allow users to see all the settings. However, anytime the scrollbar was moved, the page took a long time to render the many UI elements. Due to this, we chose to add an additional page instead of a scrollbar to hold the additional settings. 
+
+&nbsp;&nbsp;&nbsp;&nbsp;Another issue that we encouontered was our shooting logic, as there were many itterations to go through. The first itteration of this code relied on simply drawing the image of the projectile when the shoot button was pressed and redrawing it over time to show its movement. However, this required an async function in order to run at the same time as our main game loop, causing the code to be extremley slow and laggy, especially when handling multiple projectiles. Our solution to this was to approach shooting by treating each individual bullet as a sprite. This allowed each bullet to move on its own, but still proved to be inefficient and caused the game to lag heavily once a few bullets were rendered. We finally reconstructed the shooting class using a individual bullet object. This allowed us to handle each bullet in a list of these projectile objects and allowed us to move each one in small increments every single tick in the game, allowing us to handle the movement of multiple projectiles without lagging the game. We also faced further challenges with the velocity of bullets as we needed to coveret our own corrdinate system, which was used to track player position, to pygame's inheret coordinate system, which the projectile objects used.
 
 &nbsp;&nbsp;&nbsp;&nbsp;Throughout the project, it was surprising how issues like these pushed us to choose different functionality and come up with different ways to code the game than we had originally planned. 
 
