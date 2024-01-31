@@ -67,7 +67,6 @@ def main():
 
 
 
-    pygame.display.set_caption("Maze Generator")
     pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
 
     clock = pygame.time.Clock()
@@ -604,8 +603,6 @@ def main():
         else:
             generate_health = False
 
-        if generate_health:
-            boss_healthbar.gen_bossbar(window, WIDTH, ACTIVE_BOSS.health)
             
 
         # displaying the proper player imagge
@@ -775,6 +772,10 @@ def main():
 
             if bullet.check_wall_col(window, startx, starty, use_boss=(ACTIVE_BOSS is not None)):
                 current_bullets.remove(bullet)
+
+        
+        if generate_health:
+            boss_healthbar.gen_bossbar(window, WIDTH, ACTIVE_BOSS.health)
 
         # and finally, updating
         pygame.display.update()

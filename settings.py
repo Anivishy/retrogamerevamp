@@ -37,7 +37,7 @@ class openSettings:
             self.fullscreen = False
 
         self.screen.fill((0, 0, 0))
-        pygame.display.set_caption("Settings")
+        pygame.display.set_caption("Smack-man")
 
         self.exitButton = ((55/1536)*self.WIDTH, (75/1024)*self.HEIGHT, (40/1536)*self.WIDTH, (40/1024)*self.HEIGHT)
 

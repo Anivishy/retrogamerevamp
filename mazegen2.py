@@ -27,7 +27,7 @@ assert HEIGHT % SQUARE_SIZE == 0
 FPS = 60
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Maze Generator")
+pygame.display.set_caption("Smack-man")
 
 # clock
 clock = pygame.time.Clock()

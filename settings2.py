@@ -29,7 +29,7 @@ class openSettings2:
             self.fullscreen = False
 
         self.screen.fill((0, 0, 0))
-        pygame.display.set_caption("Settings2")
+        pygame.display.set_caption("Smack-man")
         
         self.colorSetting = user_settings.CB_COLOR_OVERRIDE
         self.constantSeed = user_settings.CONSTANT_SEED

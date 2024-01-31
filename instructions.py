@@ -20,7 +20,7 @@ class createInstructions:
             self.fullscreen = False
 
         self.screen.fill((0, 0, 0))
-        pygame.display.set_caption("Instructions")
+        pygame.display.set_caption("Smack-man")
 
         self.exitButtonOutline = ((50/1536)*self.WIDTH, (70/1024)*self.HEIGHT, (50/1536)*self.WIDTH, (50/1024)*self.HEIGHT)
 

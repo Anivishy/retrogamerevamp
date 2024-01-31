@@ -24,7 +24,7 @@ class createHomescreen:
             self.fullscreen = False
 
         self.screen.fill((0, 0, 0))
-        pygame.display.set_caption("Homescreen")
+        pygame.display.set_caption("Smack-man")
         self.openingFont = pygame.font.SysFont("monospace", int(50*self.WIDTH/1536))
 
         self.size = 115
