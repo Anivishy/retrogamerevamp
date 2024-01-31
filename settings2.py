@@ -45,10 +45,7 @@ class openSettings2:
         
         self.start = False
         
-        self.red = colors.LAVA
-        self.blue = colors.ICE
-        self.green = colors.FOREST
-        self.gray = colors.SHADOW
+        self.green, self.blue, self.red, self.gray = self.colorUpdate()
         
     def text(self, i, h):
         titleFont = pygame.font.SysFont("monospace", int(50*self.WIDTH/1536))
@@ -104,7 +101,6 @@ class openSettings2:
         self.exitButton[2] = char.get_rect().width
         self.exitButton[3] = char.get_rect().height
         self.exitButton = tuple(self.exitButton)
-
 
         self.screen.blit(char, (a, b))
 
@@ -162,6 +158,16 @@ class openSettings2:
             }
         user_settings.save_vars()
         user_settings.reload_vars()
+        
+    def colorUpdate(self):
+        if self.colorSetting == 0:
+            return ((30, 220, 50), (75, 150, 230), (240, 30, 40), (120, 50, 120))
+        elif self.colorSetting == 1:
+            return ((220, 108, 30), (75, 175, 230), (221, 240, 30), (159, 70, 202))
+        elif self.colorSetting == 2:
+            return ((255, 72, 72), (75, 22, 230), (190, 208, 13), (159, 70, 202))
+        elif self.colorSetting == 3:
+            return ((75, 230, 203), (0, 145, 255), (208, 167, 13), (173, 106, 255))
 
     def run(self):
         # buttons, titles, labels

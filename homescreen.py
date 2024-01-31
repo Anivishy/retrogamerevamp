@@ -5,6 +5,7 @@ import sys
 import instructions
 import settings
 import pyautogui
+import settings2
 
 class createHomescreen:
     def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
@@ -38,6 +39,9 @@ class createHomescreen:
         self.settingButton = ((310/1536)*self.WIDTH, (710/1024)*self.HEIGHT, (380/1536)*self.WIDTH, (130/1024)*self.HEIGHT)
         self.quitButtonOutline = ((800/1536)*self.WIDTH, (700/1024)*self.HEIGHT, (400/1536)*self.WIDTH, (150/1024)*self.HEIGHT)
         self.quitButton = ((810/1536)*self.WIDTH, (710/1024)*self.HEIGHT, (380/1536)*self.WIDTH, (130/1024)*self.HEIGHT)
+        
+        s2 = settings2.openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
+        self.green, self.blue, self.red, self.gray = s2.colorUpdate()
 
     def grid(self, x, y, start):
         move = [(1, 0), (-1, 0), (0, 1), (0, -1)]
@@ -49,7 +53,7 @@ class createHomescreen:
             if -1 < x2 < self.cols and -1 < y2 < self.rows and not self.table [y2][x2]:
                 self.table [y2][x2] = True
 
-                pygame.draw.line(self.screen, (0, 0, 255), (x * self.size, y * self.size), (x2 * self.size, y2 * self.size), 3)
+                pygame.draw.line(self.screen, self.blue, (x * self.size, y * self.size), (x2 * self.size, y2 * self.size), 3)
                 pygame.display.flip()
                 if start:
                     pygame.time.wait(15) #15
@@ -92,28 +96,28 @@ class createHomescreen:
         self.openingText(instructions, self.CenterText(instructions), (.25 * self.HEIGHT), start, self.openingFont)
 
         # begin button
-        pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(self.beginButtonOutline), 10)
+        pygame.draw.rect(self.screen, self.red, pygame.Rect(self.beginButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.beginButton))
         a, b, c, d = self.beginButtonOutline
         x, y = self.CenterButtons("Begin", a, b, c, d, self.openingFont)
         self.openingText("Begin", x, y, start, self.openingFont)
 
         # instructions button
-        pygame.draw.rect(self.screen, (30, 144, 255), pygame.Rect(self.instructionButtonOutline), 10)
+        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.instructionButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.instructionButton))
         a, b, c, d = self.instructionButtonOutline
         x, y = self.CenterButtons("Instructions", a, b, c, d, self.openingFont)
         self.openingText("Instructions", x, y, start, self.openingFont)
 
         # settings button
-        pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect(self.settingButtonOutline), 10)
+        pygame.draw.rect(self.screen, self.green, pygame.Rect(self.settingButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.settingButton))
         a, b, c, d = self.settingButtonOutline
         x, y = self.CenterButtons("Settings", a, b, c, d, self.openingFont)
         self.openingText("Settings", x, y, start, self.openingFont)
 
         # quit button
-        pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.quitButtonOutline), 10)
+        pygame.draw.rect(self.screen, self.gray, pygame.Rect(self.quitButtonOutline), 10)
         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.quitButton))
         a, b, c, d = self.quitButtonOutline
         x, y = self.CenterButtons("Quit", a, b, c, d, self.openingFont)

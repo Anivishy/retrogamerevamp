@@ -68,10 +68,8 @@ class openSettings:
         
         self.nextButton = ((.75)*self.WIDTH, (.9)*self.HEIGHT, (.2)*self.WIDTH, (.06)*self.HEIGHT)
         
-        self.red = colors.LAVA
-        self.blue = colors.ICE
-        self.green = colors.FOREST
-        self.gray = colors.SHADOW
+        s2 = settings2.openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
+        self.green, self.blue, self.red, self.gray = s2.colorUpdate()
 
     def text(self, i, h):
         titleFont = pygame.font.SysFont("monospace", int(50*self.WIDTH/1536))
