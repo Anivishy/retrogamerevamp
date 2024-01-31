@@ -96,9 +96,9 @@ Overall, the game is meant to provide a fresh spin on a classic game, the combin
 &nbsp;&nbsp;&nbsp;&nbsp;One low point in terms of communication was that, when encountering challenges, we had a tendency to resolve it on our own, rather than asking others if they know of a solution. In the future, we may be more intentional in asking others for help when stuck, as asking for help from others who may have a solution allows for a quicker resolution of issues. 
 
 ### Surprises: 
-&nbsp;&nbsp;&nbsp;&nbsp;One issue we faced was in the settings page. We had more settings to fit than space on the page, for which we attempted to add a scrollbar to allow users to see all the settings. However, anytime the scrollbar was moved, the page took a long time to render the many UI elements. Due to this, we chose to add an additional page instead of a scrollbar to hold the additional settings. 
+&nbsp;&nbsp;&nbsp;&nbsp;One surprise we encountered was through an issue we faced in the settings page. We had more settings to fit than space on the page, for which we attempted to add a scrollbar to allow users to see all the settings. However, anytime the scrollbar was moved, the page took a long time to render the many UI elements. Due to this, we chose to add an additional page instead of a scrollbar to hold the additional settings. 
 
-&nbsp;&nbsp;&nbsp;&nbsp;Throughout the project, it was surprising how simple issues like these pushed us to choose different functionality than we had originally planned. 
+&nbsp;&nbsp;&nbsp;&nbsp;Throughout the project, it was surprising how issues like these pushed us to choose different functionality and come up with different ways to code the game than we had originally planned. 
 
 ### Takeaways:
 &nbsp;&nbsp;&nbsp;&nbsp;Throughout our project, we learned a few things, some of which we can improve from changing, and others we plan to continue with. 
