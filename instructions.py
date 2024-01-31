@@ -4,6 +4,7 @@ import homescreen
 import pyautogui
 
 class createInstructions:
+    # initializing and setting page-specific constants and variables
     def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
         pygame.init()
 
@@ -23,6 +24,7 @@ class createInstructions:
 
         self.exitButtonOutline = ((50/1536)*self.WIDTH, (70/1024)*self.HEIGHT, (50/1536)*self.WIDTH, (50/1024)*self.HEIGHT)
 
+    # printing text character by character with options to change font, printing location, and typewriter effect
     def printText(self, text, y, title, start, screen, font):
         lines = self.breakLines(text, font)
 
@@ -58,10 +60,13 @@ class createInstructions:
         
         self.start = False
 
+    # centers text on page based on width and height
     def centerText(self, text, font):
         textWidth, textHeight = font.size(text)
         return (self.WIDTH - textWidth) / 2
         
+    # parses through characters to break apart lines of text to fit screen automatically
+    # basic idea inspiration from https://stackoverflow.com/questions/42014195/rendering-text-with-multiple-lines-in-pygame
     def breakLines(self, text, font):
         maxWidth = self.WIDTH - (.2 * self.WIDTH)
         chars = len(text)
@@ -96,6 +101,7 @@ class createInstructions:
         lines.append(lineText)
         return lines
 
+    # printing page-specific text (titles, sections, instructions) using above functions
     def printInstructions(self):
         titleFont = pygame.font.SysFont("monospace", int(50*self.WIDTH/1536))
         subtitleFont = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
@@ -127,21 +133,25 @@ class createInstructions:
 
         pygame.display.flip()
 
+    # event handling loop
     def run(self):
+        
+        # printing back button
         a, b, _, _ = self.exitButtonOutline
         char = pygame.font.SysFont("monospace", int(80*self.WIDTH/1536)).render("<", True, (255, 255, 255))
         self.exitButtonOutline = list(self.exitButtonOutline)
         self.exitButtonOutline[2] = char.get_rect().width
         self.exitButtonOutline[3] = char.get_rect().height
         self.exitButtonOutline = tuple(self.exitButtonOutline)
-        
         self.screen.blit(char, (a, b))
         
+        # printing text on screen
         self.printInstructions()
 
         while True:
             for event in pygame.event.get():
 
+                # manages exiting/resizing of page
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -160,6 +170,7 @@ class createInstructions:
                         c = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
                         c.run(False)
 
+# used to test page directly
 if __name__ == "__main__":
     try:
         WIDTH, HEIGHT = pyautogui.size()
@@ -169,9 +180,3 @@ if __name__ == "__main__":
 
     i = createInstructions(WIDTH, HEIGHT, True)
     i.run()
-
-    # update tasks, improve visuals, add a 'back' button, fix text for 2nd screen setting
-
-    # create a scrollbar if needed: https://copyprogramming.com/howto/pygame-scrolling-down-page#pygame-scrolling-down-page
-
-    

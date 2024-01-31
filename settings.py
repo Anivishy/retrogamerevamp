@@ -9,15 +9,17 @@ import colors
 import user_settings
 
 class openSettings:
+    # initializing and setting values of constants and variables
     def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
         pygame.init()
 
-        self.WIDTH = user_settings.WIDTH # value to use in settings
-        self.HEIGHT = user_settings.HEIGHT # value to use in settings
-        self.currentFPS = user_settings.FPS  # FPS Value to use in game
-        self.currentVolume = int(user_settings.SFX_VOLUME * 100) # Volume value to use in game
-        self.currentjoystick = int(user_settings.JOYSTICK_THRESHOLD * 100) # Joystick Threshold value to use in game
-        self.difficulty = user_settings.BULLET_HELL_BOTTOM_RIGHT # Botton Right, value to use in games
+        # Values to use in game:
+        self.WIDTH = user_settings.WIDTH # Screen Width
+        self.HEIGHT = user_settings.HEIGHT # Screen Height
+        self.currentFPS = user_settings.FPS  # FPS Value
+        self.currentVolume = int(user_settings.SFX_VOLUME * 100) # Volume Value
+        self.currentjoystick = int(user_settings.JOYSTICK_THRESHOLD * 100) # Joystick Threshold Value
+        self.difficulty = user_settings.BULLET_HELL_BOTTOM_RIGHT # Botton Right Difficulty Value
 
         self.defaultWidth = WIDTH
         self.defaultHeight = HEIGHT
@@ -71,10 +73,12 @@ class openSettings:
         s2 = settings2.openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
         self.green, self.blue, self.red, self.gray = s2.colorUpdate()
 
+    # printing titles and button labels using functions from homescreen and setting for correct location and effect
     def text(self, i, h):
         titleFont = pygame.font.SysFont("monospace", int(50*self.WIDTH/1536))
         subtitleFont = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
         
+        # printing titles
         i.printText("Settings", (.1 * self.HEIGHT), True, self.start, self.screen, titleFont)
         i.printText("Screen Dimensions", (.2 * self.HEIGHT), False, self.start, self.screen, subtitleFont)
         i.printText("Fullscreen", (.35 * self.HEIGHT), False, self.start, self.screen, subtitleFont)
@@ -152,6 +156,7 @@ class openSettings:
 
         pygame.display.flip()
 
+    # printing all shapes to screen, with correct effect (emphasis, colors, etc) for the current setting
     def setup(self):
         i = instructions.createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
         h = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
@@ -242,6 +247,7 @@ class openSettings:
         # calling function to print titles and labels
         self.text(i, h)
 
+    # updates values from settings to settings.json, to be applied to main game
     def update(self):
         user_settings.SETTINGS_JSON = {
                 "WIDTH": int(self.WIDTH),
@@ -262,9 +268,9 @@ class openSettings:
         user_settings.save_vars()
         user_settings.reload_vars()
 
+    # event handling loop
     def run(self):
-        # adding buttons, titles, labels
-        self.setup()
+        self.setup() # adding buttons, titles, labels
 
         # used to track if either slider is moved
         mouseDownVol = False
@@ -273,7 +279,8 @@ class openSettings:
         while True:
             retearly = False
             for event in pygame.event.get():
-
+                
+                # manages exiting the page, or resizing the screen
                 if event.type == pygame.QUIT:
                     import sys; sys.exit()
 
@@ -300,7 +307,7 @@ class openSettings:
                         s2 = settings2.openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s2.run()
 
-                    # fullscreen
+                    # changes fullscreen 
                     elif pygame.Rect(self.fullscreenToggle).collidepoint(pygame.mouse.get_pos()):
                         if self.fullscreen:
                             try:
@@ -322,7 +329,7 @@ class openSettings:
                         self.update()
                         s.run()
 
-                    # change final level difficulty
+                    # changes final level difficulty 
                     elif pygame.Rect(self.difficultyToggle).collidepoint(pygame.mouse.get_pos()):
                         self.difficulty = not self.difficulty
                         self.update()
@@ -420,6 +427,7 @@ class openSettings:
                         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.volumeSlider))
                         a, _ = pygame.mouse.get_pos()
 
+                        # sets min and max values where the slider can be, and keeps it within bounds
                         min = self.volumeSliderOutline[0] + .01*self.WIDTH
                         max = self.volumeSliderOutline[0] + self.volumeSliderOutline[2] - .01*self.WIDTH - self.volumeSlider[2]
 
@@ -434,6 +442,7 @@ class openSettings:
                         self.volumeSlider = (a, b, c, d)
                         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.volumeSlider))
 
+                        # prints value of current volume based on slider distance relative to slider outline
                         self.currentVolume = ((a - min) / (max-min)) * 100
                         
                         self.currentVolume = str(round(self.currentVolume))
@@ -445,6 +454,7 @@ class openSettings:
                         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.joystickSlider))
                         a, _ = pygame.mouse.get_pos()
 
+                        # sets min and max of slider locations, keeps it within bounds
                         min = self.joystickSliderOutline[0] + .01*self.WIDTH
                         max = self.joystickSliderOutline[0] + self.joystickSliderOutline[2] - .01*self.WIDTH - self.joystickSlider[2]
 
@@ -459,6 +469,7 @@ class openSettings:
                         self.joystickSlider = (a, b, c, d)
                         pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(self.joystickSlider))
 
+                        # calculates and prints current joystick threshold value, based on slider location relative to slider outline
                         self.currentjoystick = (((a - min) / (max-min)) * 100)
                         
                         self.currentjoystick = str(round(self.currentjoystick))
@@ -491,6 +502,7 @@ class openSettings:
         user_settings.save_vars()
         user_settings.reload_vars()
 
+# used to test page directly
 if __name__ == "__main__":
     try:
         WIDTH, HEIGHT = pyautogui.size()

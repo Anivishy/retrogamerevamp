@@ -8,6 +8,7 @@ import user_settings
 import colors
 
 class openSettings2:
+    # initializing and setting page-specific constants and variables
     def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
         pygame.init()
 
@@ -47,7 +48,10 @@ class openSettings2:
         
         self.green, self.blue, self.red, self.gray = self.colorUpdate()
         
+    # printing text for titles and buttons
     def text(self, i, h):
+        
+        # printing titles
         titleFont = pygame.font.SysFont("monospace", int(50*self.WIDTH/1536))
         subtitleFont = pygame.font.SysFont("monospace", int(30*self.WIDTH/1536))
         
@@ -130,7 +134,7 @@ class openSettings2:
         # printing previous settings button
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.returnButton), 5)
         
-        # printing constant seed toggle (is filled in if true)
+        # printing constant seed toggle (filled if true)
         if self.constantSeed:
             pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.constantSeedToggle), 7)
         else:
@@ -139,6 +143,7 @@ class openSettings2:
         # calling function to print titles and labels
         self.text(i, h)
 
+    # updates last two settings (color, constant seed) based on changes made in this page
     def update(self):
         user_settings.SETTINGS_JSON = {
                 "WIDTH": user_settings.WIDTH,
@@ -159,6 +164,7 @@ class openSettings2:
         user_settings.save_vars()
         user_settings.reload_vars()
         
+    # updates rgb values for color scheme based on color option
     def colorUpdate(self):
         if self.colorSetting == 0:
             return ((30, 220, 50), (75, 150, 230), (240, 30, 40), (120, 50, 120))
@@ -169,14 +175,15 @@ class openSettings2:
         elif self.colorSetting == 3:
             return ((75, 230, 203), (0, 145, 255), (208, 167, 13), (173, 106, 255))
 
+    # event handling loop
     def run(self):
-        # buttons, titles, labels
-        self.setup()
+        self.setup() # prints buttons, titles, labels
         
         while True:
             retearly = False
             for event in pygame.event.get():
 
+                # handles exiting or resizing of page
                 if event.type == pygame.QUIT:
                     import sys; sys.exit()
 
@@ -210,28 +217,28 @@ class openSettings2:
                         s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
                         
-                    # color 0
+                    # color option 0
                     elif pygame.Rect(self.C1).collidepoint(pygame.mouse.get_pos()):
                         self.colorSetting = 0
                         self.update()
                         s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
-                    # color 1
+                    # color option 1
                     elif pygame.Rect(self.C2).collidepoint(pygame.mouse.get_pos()):
                         self.colorSetting = 1
                         self.update()
                         s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
-                    # color 2
+                    # color option 2
                     elif pygame.Rect(self.C3).collidepoint(pygame.mouse.get_pos()):
                         self.colorSetting = 2
                         self.update()
                         s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
-                    # color 3
+                    # color option 3
                     elif pygame.Rect(self.C4).collidepoint(pygame.mouse.get_pos()):
                         self.colorSetting = 3
                         self.update()
@@ -259,6 +266,7 @@ class openSettings2:
         user_settings.save_vars()
         user_settings.reload_vars()
 
+# used to test page directly 
 if __name__ == "__main__":
     try:
         WIDTH, HEIGHT = pyautogui.size()

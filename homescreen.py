@@ -8,6 +8,7 @@ import pyautogui
 import settings2
 
 class createHomescreen:
+    # initializing and setting constant and variable values
     def __init__(self, WIDTH, HEIGHT, FULLSCREEN):
         pygame.init()
 
@@ -43,6 +44,8 @@ class createHomescreen:
         s2 = settings2.openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
         self.green, self.blue, self.red, self.gray = s2.colorUpdate()
 
+    # generating maze background, moves 1 unit in a random direction until no spots are left
+    # initial inspiration from https://medium.com/swlh/fun-with-python-1-maze-generator-931639b4fb7e
     def grid(self, x, y, start):
         move = [(1, 0), (-1, 0), (0, 1), (0, -1)]
         random.shuffle(move)
@@ -59,6 +62,8 @@ class createHomescreen:
                     pygame.time.wait(15) #15
                 self.grid(x2, y2, start)
             
+    # printing text character by character with a "|" in front, to create a typewriter effect
+    # refered to this website when stuck: https://davy.ai/display-text-in-pygame-with-a-typewriter-effect/
     def openingText(self, text, x, y, start, font):
         for i in range(len(text)):
             char = font.render(text[i], True, (255, 255, 255), (0, 0, 0))
@@ -73,20 +78,23 @@ class createHomescreen:
             if start:
                 pygame.time.wait(65) #65
 
+    # returns width value at which text will be centered on the screen
     def CenterText(self, text):
         textWidth, textHeight = self.openingFont.size(text)
         return ((self.WIDTH - textWidth) / 2)
 
+    # returns width and height value at which text will be centered within a previously declared button
     def CenterButtons(self, text, buttonX, buttonY, buttonWidth, buttonHeight, font):
         textWidth, textHeight = font.size(text)
         startX = buttonX + (buttonWidth - textWidth) / 2
         startY = buttonY + (buttonHeight - textHeight) / 2
         return (startX, startY)
     
+    # printing text, buttons, and background maze to screen
     def setup(self, start):
         self.grid(0, 0, start)
 
-        # title
+        # title text
         self.openingText("Welcome!", self.CenterText("Welcome!"), (.15 * self.HEIGHT), start, self.openingFont)
 
         if start:
@@ -123,11 +131,13 @@ class createHomescreen:
         x, y = self.CenterButtons("Quit", a, b, c, d, self.openingFont)
         self.openingText("Quit", x, y, start, self.openingFont)
 
+    # event handling loop
     def run(self, start):
-        self.setup(start)
+        self.setup(start) # prints all UI elements
         pygame.mouse.set_visible(True)
         out = False
         while True:
+            # handles exiting of page
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -146,7 +156,7 @@ class createHomescreen:
                     
                     # begin button clicked
                     elif pygame.Rect(self.beginButtonOutline).collidepoint(pygame.mouse.get_pos()):
-                        import introlevel # fix this!!
+                        import introlevel 
                         introlevel.run()
                         # import mazegen
                         # mazegen.main()
@@ -165,7 +175,7 @@ class createHomescreen:
             if out: break
             pygame.display.flip()
 
-
+# user settings used to create correct colors, screen dimensions, etc, when first opening the game
 import user_settings
 
 if __name__ == "__main__":
