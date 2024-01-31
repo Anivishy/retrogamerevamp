@@ -82,6 +82,17 @@ class openSettings2:
         x, y = h.CenterButtons("Previous Settings \u2191", a, b, c, d, buttonFont)
         self.screen.blit(buttonFont.render("Previous Settings \u2191", True, (255, 255, 255)), (x, y))
         
+        # constant seed toggle label
+        if self.constantSeed:
+            a, b, c, d = self.constantSeedToggle
+            x, y = h.CenterButtons("on", a, b, c, d, buttonFont)
+            self.screen.blit(buttonFont.render("on", True, (255, 255, 255)), (x, y))
+            
+        else:
+            a, b, c, d = self.constantSeedToggle
+            x, y = h.CenterButtons("off", a, b, c, d, buttonFont)
+            self.screen.blit(buttonFont.render("off", True, (0, 0, 0)), (x, y))
+        
     def setup(self):
         i = instructions.createInstructions(self.WIDTH, self.HEIGHT, self.fullscreen)
         h = homescreen.createHomescreen(self.WIDTH, self.HEIGHT, self.fullscreen)
@@ -98,10 +109,27 @@ class openSettings2:
         self.screen.blit(char, (a, b))
 
         # printing color setting buttons
-        pygame.draw.rect(self.screen, self.red, pygame.Rect(self.C1), 7)
-        pygame.draw.rect(self.screen, self.blue, pygame.Rect(self.C2), 7)
-        pygame.draw.rect(self.screen, self.green, pygame.Rect(self.C3), 7)
-        pygame.draw.rect(self.screen, self.gray, pygame.Rect(self.C4), 7)
+        s = settings.openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
+        
+        if (self.colorSetting == 0):
+            pygame.draw.rect(self.screen, self.red, pygame.Rect(self.C1), 13)
+        else:
+            pygame.draw.rect(self.screen, self.red, pygame.Rect(self.C1), 5)
+            
+        if (self.colorSetting == 1):
+            pygame.draw.rect(self.screen, self.blue, pygame.Rect(self.C2), 13)
+        else:
+            pygame.draw.rect(self.screen, self.blue, pygame.Rect(self.C2), 5)
+        
+        if (self.colorSetting == 2):
+            pygame.draw.rect(self.screen, self.green, pygame.Rect(self.C3), 13)
+        else:
+            pygame.draw.rect(self.screen, self.green, pygame.Rect(self.C3), 5)
+        
+        if (self.colorSetting == 3):
+            pygame.draw.rect(self.screen, self.gray, pygame.Rect(self.C4), 13)
+        else:
+            pygame.draw.rect(self.screen, self.gray, pygame.Rect(self.C4), 5)
         
         # printing previous settings button
         pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.returnButton), 5)
@@ -173,7 +201,7 @@ class openSettings2:
                     elif pygame.Rect(self.constantSeedToggle).collidepoint(pygame.mouse.get_pos()):
                         self.constantSeed = not self.constantSeed
                         self.update()
-                        s = s = openSettings2(self.WIDTH, self.WIDTH, self.fullscreen)
+                        s = openSettings2(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
                         
                     # color 0
@@ -232,5 +260,5 @@ if __name__ == "__main__":
         WIDTH = 800
         HEIGHT = 600
 
-    s = openSettings2(WIDTH, HEIGHT, user_settings.FULLSCREEN)
+    s = openSettings2(WIDTH, HEIGHT, True)
     s.run()

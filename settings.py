@@ -174,48 +174,48 @@ class openSettings:
 
         # printing screen dimension buttons
         if (self.WIDTH == self.HEIGHT):
-            pygame.draw.rect(self.screen, self.red, pygame.Rect(self.SD1), 11)
+            pygame.draw.rect(self.screen, self.red, pygame.Rect(self.SD1), 13)
         else:
             pygame.draw.rect(self.screen, self.red, pygame.Rect(self.SD1), 5)
             
         if (self.WIDTH < self.HEIGHT):
-            pygame.draw.rect(self.screen, self.blue, pygame.Rect(self.SD2), 11)
+            pygame.draw.rect(self.screen, self.blue, pygame.Rect(self.SD2), 13)
         else:
             pygame.draw.rect(self.screen, self.blue, pygame.Rect(self.SD2), 5)
         
         if (self.WIDTH == 1600 and self.HEIGHT == 900):
-            pygame.draw.rect(self.screen, self.green, pygame.Rect(self.SD3), 11)
+            pygame.draw.rect(self.screen, self.green, pygame.Rect(self.SD3), 13)
         else:
             pygame.draw.rect(self.screen, self.green, pygame.Rect(self.SD3), 5)
         
         if (self.WIDTH == self.defaultWidth and self.HEIGHT == self.defaultHeight):
-            pygame.draw.rect(self.screen, self.gray, pygame.Rect(self.SD4), 11)
+            pygame.draw.rect(self.screen, self.gray, pygame.Rect(self.SD4), 13)
         else:
             pygame.draw.rect(self.screen, self.gray, pygame.Rect(self.SD4), 5)
 
         # printing fps buttons
         if (self.currentFPS == 20):
-            pygame.draw.rect(self.screen, self.red, pygame.Rect(self.FPS1), 11)
+            pygame.draw.rect(self.screen, self.red, pygame.Rect(self.FPS1), 13)
         else:
             pygame.draw.rect(self.screen, self.red, pygame.Rect(self.FPS1), 5)
             
         if (self.currentFPS == 60):
-            pygame.draw.rect(self.screen, self.blue, pygame.Rect(self.FPS2), 11)
+            pygame.draw.rect(self.screen, self.blue, pygame.Rect(self.FPS2), 13)
         else:
             pygame.draw.rect(self.screen, self.blue, pygame.Rect(self.FPS2), 5)
             
         if (self.currentFPS == 90):
-            pygame.draw.rect(self.screen, self.green, pygame.Rect(self.FPS3), 11)
+            pygame.draw.rect(self.screen, self.green, pygame.Rect(self.FPS3), 13)
         else:    
             pygame.draw.rect(self.screen, self.green, pygame.Rect(self.FPS3), 5)
         
         if (self.currentFPS == 120):
-            pygame.draw.rect(self.screen, self.gray, pygame.Rect(self.FPS4), 11)
+            pygame.draw.rect(self.screen, self.gray, pygame.Rect(self.FPS4), 13)
         else:
             pygame.draw.rect(self.screen, self.gray, pygame.Rect(self.FPS4), 5)
         
         if (self.currentFPS == None):
-            pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.FPS5), 11)
+            pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.FPS5), 13)
         else:
             pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.FPS5), 5)
 
@@ -283,7 +283,6 @@ class openSettings:
                     s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
                     s.run()
 
-
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.update()
@@ -329,7 +328,7 @@ class openSettings:
                     elif pygame.Rect(self.difficultyToggle).collidepoint(pygame.mouse.get_pos()):
                         self.difficulty = not self.difficulty
                         self.update()
-                        s = openSettings(self.WIDTH, self.WIDTH, self.fullscreen)
+                        s = openSettings(self.WIDTH, self.HEIGHT, self.fullscreen)
                         s.run()
 
                     # square screen
