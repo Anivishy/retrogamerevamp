@@ -113,7 +113,7 @@ class createInstructions:
 
         introGoal = "You will first play the intro level, where you want to collect all pellets in the area without losing all your lives. You have 3 lives and lose one each time a ghost hits you."
         
-        mainGoal = "In the main game, you must travel to the corner of each of the 4 zones, where you will find a boss. To beat them, shoot by left clicking (on keyboard) or with the right trigger (with a controller) until they lose their health. You gain 1 ammo to shoot for every 5 pellets you collect. You must beat all 4 bosses to win the game."
+        mainGoal = "In the main game, you must travel to the corner of each of the 4 zones, where you will find a boss. To beat them, shoot by left clicking (with mouse) or with the right trigger (with a controller) until they lose their health. You gain 1 ammo to shoot for every 5 pellets you collect. You must beat all 4 bosses to win the game."
         mainGoal2 = "While in or travelling between zones, if you are hit by a ghost or take damage from a boss, you are slowed down and have a brief period of invincibility. You also lose a little bit of your health. If your health runs out, you lose the game. You will have a health shield of 50 that regenerates every 10 seconds to help you in the game."
         
         zones = "This game consists of an intro level, similar to standard Pacman, followed by 4 different Zones, each with a boss to beat."
