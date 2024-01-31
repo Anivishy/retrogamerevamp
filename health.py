@@ -70,7 +70,7 @@ class healthbar:
         window.blit(health, healthRect)
 
     def take_damage(self, dmg):
-        if self.player_shield > dmg:
+        if self.player_shield >= dmg:
             self.player_shield -= dmg
         elif self.player_shield > 0 and self.player_shield < dmg:
             dmg -= self.player_shield

@@ -166,15 +166,14 @@ def main():
             elif event.type == pygame.MOUSEBUTTONUP or (joystick and joystick.get_axis(5) > 0):
                 # shooting place
                 cur_time = time.time()
-                if player_score.get_ammo() > 0:
-                    if (cur_time - start_time > .75):
-                        start_time = cur_time
-                        if not joystick:
-                            current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, mousex, mousey, HEIGHT, WIDTH))
-                        else:
-                            current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, player_target.bx, player_target.by, HEIGHT, WIDTH))
-                        player_score.use_ammo(1)
-                        pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_bullet.wav"))
+                if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
+                    start_time = cur_time
+                    if not joystick:
+                        current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, mousex, mousey, HEIGHT, WIDTH))
+                    else:
+                        current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, player_target.bx, player_target.by, HEIGHT, WIDTH))
+                    player_score.use_ammo(1)
+                    pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_bullet.wav"))
                 else:
                     pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/no_bullets.wav"))
         
@@ -275,12 +274,11 @@ def main():
         if keys [pygame.K_RSHIFT]:
             # shooting place
             cur_time = time.time()
-            if player_score.get_ammo() > 0:
-                if (cur_time - start_time > .75):
-                    start_time = cur_time
-                    current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, mousex, mousey, HEIGHT, WIDTH))
-                    player_score.use_ammo(1)
-                    pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_bullet.wav"))
+            if player_score.get_ammo() > 0 and (cur_time - start_time > 1):
+                start_time = cur_time
+                current_bullets.append(new_shooting.lazer_bullet(playerx - (startx * SQUARE_SIZE) - SQUARE_SIZE // 2, playery - (starty * SQUARE_SIZE) - SQUARE_SIZE // 2, mousex, mousey, HEIGHT, WIDTH))
+                player_score.use_ammo(1)
+                pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_bullet.wav"))
             else:
                 pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/no_bullets.wav"))
 
@@ -441,8 +439,11 @@ def main():
                     ghost.width, ghost.height
                 )
                 if ghost_rect.colliderect(player_rect):
-                    do_damage = True
+                    player_health.take_damage(15)
                     player_protected = True
+                    
+                    targettime = time.time()
+                    pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_hurt.wav"))
                     break
         
         # detect if the player collided with any boss projectiles
@@ -459,8 +460,11 @@ def main():
                         ACTIVE_BOSS.projectiles.discard(projectile)
                     else:
                         ACTIVE_BOSS.projectiles.remove(projectile)
-                    do_damage = True
+                    player_health.take_damage(20)
                     player_protected = True
+                    
+                    targettime = time.time()
+                    pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_hurt.wav"))
                     break
 
 
@@ -482,20 +486,18 @@ def main():
         # apply damage to player
         if do_damage:
             if player_health.player_shield > 0:
-                player_health.player_shield -= 10
+                player_health.player_shield -= 15
                 if player_health.player_shield < 0:
                     player_health.player_health -= abs(player_health.player_shield)
                     player_health.player_shield = 0
             else:
-                player_health.player_health -= 10 
+                player_health.player_health -= 15 
             player_protected = True
-            targettime = time.time()
-            pygame.mixer.Sound.play(pygame.mixer.Sound("sfx/player_hurt.wav"))
 
         # if the player is protected from more damage, see if that invincibility needs to be removed
         if player_protected:
             targettime = time.time()
-            velocity = PLAYER_SPEED * 0.6
+            velocity = PLAYER_SPEED * 0.4
             if not UNCAPPED_FPS:
                 protected_timer += 1
                 if protected_timer >= FPS * PLAYER_PROTECT:
