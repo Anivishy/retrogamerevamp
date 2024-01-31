@@ -79,6 +79,9 @@ class healthbar:
         else:            
             self.player_health -= dmg
 
+        self.player_health = int(round(max(self.player_health, 0)))
+        self.player_shield = int(round(max(self.player_shield, 0)))
+
     def heal(self, recover):
         if self.player_health < 100:
             if self.player_health + recover > 100:

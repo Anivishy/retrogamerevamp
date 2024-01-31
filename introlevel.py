@@ -67,7 +67,7 @@ class Renderer:
             self._screen.fill((0, 0, 0))
             self._handle_events()
             if self.exit_out:
-                break
+                return
            
     
     def new_object(self, object):
@@ -180,6 +180,8 @@ class Renderer:
                 for ghost in self._ghosts:
                     ghost.flash_state = not ghost.flash_state
             
+
+            
             if event.type == self._wall_event and self.destroy_wall and len(self.walls) > 0 and not self.paused:
                 wall = self.walls.pop()
                 self._objects.remove(wall)
@@ -189,6 +191,7 @@ class Renderer:
                     import mazegen
                     mazegen.main()
                     self.exit_out = True
+                    return
         
         key_pressed = pygame.key.get_pressed()
 
