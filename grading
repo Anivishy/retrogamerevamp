@@ -1,0 +1,57 @@
+Project 3
+-------------------------------------------------------------------------------
+
+retrogamerevamp
+
+Contributor Code Docu Asst Adj. Score
+----------- ---- ---- ---- ---- -----
+Ananya      1073   30        +0
+Anikait      632   22        +0
+Colin        715   61        +0
+Lucas       2341             +0
+
+-------------------------------------------------------------------------------
+
+Rubric:
+1. Baseline:   15
+2. Creativity: +2
+3. Design:     +2
+4. Clean code: +0.5
+5. Document:   +0.5
+   Total:      20
+
+-------------------------------------------------------------------------------
+
+Comments:
+* Great job overall. You ended up with a game that is fun, original, and
+  looks good.
+
+* The idea of adding shooting to pacman is kinda crazy, but you pulled it off!
+
+* As you've pointed out, the transition from the first level to the infinite
+  maze could be a little smoother. It feels like the work of different
+  authors, which is maybe not completely untrue.
+
+* For long projects like this, I would suggest in the future that you break it
+  into pieces, say, A, B, C, and D, and then _all_ work on piece A together,
+  followed by all working on piece B etc. This seems less efficient, but it
+  keeps everyone more engaged, and you get the benefit of everyone's thought on
+  each part, resulting in a better final product.
+
+* Your code is generally easy to read, but you have some embarrassingly long
+  functions.
+
+* It's a bit odd to have a file full of constants that are computed rather than
+  being constants. I would suggest making that a class instead.
+
+* Colin, I like your ascii_maze approach.
+
+* Lucas, you wrote a bunch of "naked" functions that aren't in a class. In the
+  early days of python a lot of code was written like this, but in our more
+  enlightened age, and especially if you're working on a group project, you
+  should definitely get into the habit of adopting an object- oriented style.
+
+* Issues: 38 created. Looks like you made use of issues, but not yet at a very
+  granual level, and hardly any commits are tagged.
+
+-------------------------------------------------------------------------------
